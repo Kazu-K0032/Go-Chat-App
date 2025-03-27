@@ -1,7 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"security_chat_app/app/controllers"
+	_ "security_chat_app/config"
+)
 
 func main() {
-    fmt.Println("Hello, Go!")
+	controllers.StartMainServer()
 }
