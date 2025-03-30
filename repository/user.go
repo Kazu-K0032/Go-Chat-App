@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"time"
 
 	firebase "firebase.google.com/go/v4"
@@ -33,7 +33,7 @@ func GenerateUUID() string {
 // InitFirebaseClient Firebaseクライアントを初期化する
 func InitFirebaseClient() (*firebase.App, error) {
 	// サービスアカウントキーの読み込み
-	serviceAccountKey, err := ioutil.ReadFile("config/serviceAccountKey.json")
+	serviceAccountKey, err := os.ReadFile("config/serviceAccountKey.json")
 	if err != nil {
 		return nil, fmt.Errorf("サービスアカウントキーの読み込みに失敗: %v", err)
 	}
@@ -52,8 +52,8 @@ func InitFirebaseClient() (*firebase.App, error) {
 		ClientX509CertURL       string `json:"client_x509_cert_url"`
 	}
 
-	if err := json.Unmarshal(serviceAccountKey, &serviceAccount); err != nil {
-		return nil, fmt.Errorf("サービスアカウントキーのパースに失敗: %v", err)
+	if parseErr := json.Unmarshal(serviceAccountKey, &serviceAccount); parseErr != nil {
+		return nil, fmt.Errorf("サービスアカウントキーのパースに失敗: %v", parseErr)
 	}
 
 	// Firebase初期化オプションの設定
@@ -64,7 +64,7 @@ func InitFirebaseClient() (*firebase.App, error) {
 		ProjectID: serviceAccount.ProjectID,
 	}, opt)
 	if err != nil {
-		return nil, fmt.Errorf("Firebase初期化に失敗: %v", err)
+		return nil, fmt.Errorf("firebase初期化に失敗: %v", err)
 	}
 
 	return app, nil

@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"net/http"
 
-	"security_chat_app/config"
 	"security_chat_app/service"
 )
 
@@ -59,6 +58,10 @@ func Middleware(next http.Handler) http.Handler {
 func SetupRouter(chatUsecase service.ChatUsecase) *http.ServeMux {
 	mux := http.NewServeMux()
 
+	// 静的ファイル (CSS/JS)
+	mux.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("app/css"))))
+	mux.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("app/js"))))
+
 	// 静的ファイルの提供
 	fs := http.FileServer(http.Dir("app/static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
@@ -71,14 +74,4 @@ func SetupRouter(chatUsecase service.ChatUsecase) *http.ServeMux {
 	mux.HandleFunc("/signup/confirm", service.SignupConfirmHandler)
 
 	return mux
-}
-
-func StartMainServer(chatUsecase service.ChatUsecase) error {
-	mux := SetupRouter(chatUsecase)
-
-	// 静的ファイル (CSS/JS)
-	mux.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("app/css"))))
-	mux.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("app/js"))))
-
-	return http.ListenAndServe(":"+config.Config.Port, mux)
 }
