@@ -32,5 +32,39 @@
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit"
     }
+  },
+
+  // Watch Sassファイル
+  "liveSassCompile.settings.formats": [
+    {
+      "format": "expanded",
+      "extensionName": ".css",
+      "savePath": "~/../css",
+      "generateMap": false
+    }
+  ],
+  "liveSassCompile.settings.generateMap": false,
+
+  "editor.codeActionsOnSave": {
+    "source.fixAll.stylelint": "explicit"
+  },
+
+  "editor.formatOnSave": true,
+
+  // デフォルトのフォーマッターをPrettierに設定
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // 各言語ごとのフォーマッター設定
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }

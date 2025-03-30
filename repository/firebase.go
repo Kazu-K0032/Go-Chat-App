@@ -1,0 +1,38 @@
+package repository
+
+import (
+	"context"
+	"log"
+	"time"
+
+	"cloud.google.com/go/firestore"
+	firebase "firebase.google.com/go"
+	"google.golang.org/api/option"
+)
+
+func InitFirebase() (*firestore.Client, error) {
+	opt := option.WithCredentialsFile("config/serviceAccountKey.json")
+
+	// Firebase設定を明示的に指定
+	config := &firebase.Config{
+		ProjectID: "go-chat-app-cf888",
+	}
+
+	app, err := firebase.NewApp(context.Background(), config, opt)
+	if err != nil {
+		log.Printf("Firebaseアプリの初期化に失敗: %v", err)
+		return nil, err
+	}
+
+	// タイムアウトを設定したコンテキストを使用
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	client, err := app.Firestore(ctx)
+	if err != nil {
+		log.Printf("Firestoreクライアント作成に失敗: %v", err)
+		return nil, err
+	}
+
+	return client, nil
+}

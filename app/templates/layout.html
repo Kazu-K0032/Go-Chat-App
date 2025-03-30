@@ -1,0 +1,23 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/top.css" />
+    <title>ChatApp</title>
+  </head>
+  <body>
+    <div class="l-app">
+      <!-- header -->
+      {{template "header"}}
+
+      <!-- main -->
+      <main class="l-main">{{template "content"}}</main>
+
+      <!-- footer -->
+      {{template "footer"}}
+    </div>
+  </body>
+</html>
+{{end}}

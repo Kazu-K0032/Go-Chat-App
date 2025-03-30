@@ -1,0 +1,55 @@
+/**
+ * フッターのLayoutスタイルを管理するファイル
+ * footer.htmlにて`l-`が接頭辞につくものが対象
+*/
+
+@use "../foundation/_reset";
+@use "../foundation/_base";
+@use "../foundation/_variables" as *;
+
+.l-footer {
+  background-color: #fff;
+  padding: 2rem 0;
+  margin-top: auto;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  &__nav {
+    display: flex;
+    gap: 2rem;
+  }
+
+  &__social {
+    display: flex;
+    gap: 1rem;
+  }
+
+  &__bottom {
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+}
+
+// ==============================================
+// MEDIUM
+// ==============================================
+@media screen and (width <= 1024px) {
+}
+
+// ==============================================
+// SMALL
+// ==============================================
+@media screen and (width <= 649px) {
+}

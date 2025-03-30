@@ -1,0 +1,39 @@
+/**
+ * FLOCSSにおけるComponentスタイルを管理するファイル
+ * 全htmlファイルにて`c-`が接頭辞につくものが対象
+*/
+
+@use "../foundation/_reset";
+@use "../foundation/_base";
+@use "../foundation/_variables" as *;
+
+.c-button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+
+  &--secondary {
+    background-color: #6c757d;
+    &:hover {
+      background-color: #545b62;
+    }
+  }
+}
+
+// ==============================================
+// MEDIUM
+// ==============================================
+@media screen and (width <= 1024px) {
+}
+
+// ==============================================
+// SMALL
+// ==============================================
+@media screen and (width <= 649px) {
+}

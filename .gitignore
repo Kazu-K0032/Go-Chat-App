@@ -1,3 +1,4 @@
 main
 debug.log
-
+serviceAccountKey.json
+node_modules/

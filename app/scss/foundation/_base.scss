@@ -1,0 +1,28 @@
+/**
+ * ベーススタイルを管理するファイル
+*/
+
+html {
+  background-color: #f4fbff;
+  color: #333;
+  font-size: 16px;
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+}
+
+.l-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.l-main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}

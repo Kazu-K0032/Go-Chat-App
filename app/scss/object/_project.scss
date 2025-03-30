@@ -1,0 +1,86 @@
+/**
+ * FLOCSSにおけるProjectスタイルを管理するファイル
+ * 全htmlファイルにて`p-`が接頭辞につくものが対象
+*/
+
+@use "../foundation/_reset";
+@use "../foundation/_base";
+@use "../foundation/_variables" as *;
+
+.p-messageBoard {
+  &__input {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  &__textarea {
+    flex: 1;
+    padding: 10px;
+    height: 60px;
+  }
+
+  &__list {
+    min-height: 300px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  &__item {
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+  }
+}
+.p-navLink {
+  color: #666;
+  font-weight: 500;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #007bff;
+  }
+}
+
+.p-footerLink {
+  color: #666;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #007bff;
+  }
+}
+
+.p-socialLink {
+  color: #666;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #007bff;
+  }
+}
+
+.p-footerLogo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.p-copyright {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+// ==============================================
+// MEDIUM
+// ==============================================
+@media screen and (width <= 1024px) {
+}
+
+// ==============================================
+// SMALL
+// ==============================================
+@media screen and (width <= 649px) {
+}

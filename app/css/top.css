@@ -1,0 +1,469 @@
+@charset "UTF-8";
+/**
+ * トップページのスタイルを管理するファイル
+*/
+*,
+::before,
+::after {
+  min-width: 0;
+  border-width: 0;
+  border-style: solid;
+  box-sizing: border-box;
+}
+
+html {
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+     -moz-text-size-adjust: 100%;
+          text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  display: block;
+}
+
+p,
+table,
+blockquote,
+address,
+pre,
+iframe,
+form,
+figure,
+dl {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+dt {
+  font-weight: bold;
+}
+
+dd {
+  margin-left: 0;
+}
+
+hr {
+  overflow: visible;
+  clear: both;
+  height: 0;
+  margin: 0;
+  border-top-width: 1px;
+  box-sizing: content-box;
+  color: inherit;
+}
+
+pre {
+  font-size: inherit;
+  font-family: monospace, monospace;
+}
+
+address {
+  font-style: inherit;
+}
+
+a {
+  background-color: transparent;
+  color: inherit;
+  text-decoration: none;
+}
+
+abbr[title] {
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
+}
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+code,
+kbd,
+samp {
+  font-size: inherit;
+  font-family: monospace, monospace;
+}
+
+small {
+  font-size: 80%;
+}
+
+sub,
+sup {
+  position: relative;
+  font-size: 75%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+svg,
+img,
+embed,
+object,
+iframe {
+  vertical-align: bottom;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  vertical-align: middle;
+  text-transform: inherit;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+
+button,
+[type=button],
+[type=reset],
+[type=submit] {
+  cursor: pointer;
+}
+
+button:disabled,
+[type=button]:disabled,
+[type=reset]:disabled,
+[type=submit]:disabled {
+  cursor: default;
+}
+
+:-moz-focusring {
+  outline: auto;
+}
+
+select:disabled {
+  opacity: inherit;
+}
+
+option {
+  padding: 0;
+}
+
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+progress {
+  vertical-align: baseline;
+}
+
+textarea {
+  overflow: auto;
+}
+
+[type=number]::-webkit-inner-spin-button,
+[type=number]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+[type=search] {
+  outline-offset: -2px;
+}
+
+[type=search]::-webkit-search-decoration {
+  -webkit-appearance: none;
+          appearance: none;
+}
+
+::-webkit-file-upload-button {
+  font: inherit;
+  -webkit-appearance: button;
+          appearance: button;
+}
+
+[type=number] {
+  -webkit-appearance: textfield;
+     -moz-appearance: textfield;
+          appearance: textfield;
+}
+
+label[for] {
+  cursor: pointer;
+}
+
+details {
+  display: block;
+}
+
+summary {
+  display: list-item;
+}
+
+[contenteditable]:focus {
+  outline: auto;
+}
+
+table {
+  border-color: inherit;
+  border-collapse: collapse;
+}
+
+caption {
+  text-align: left;
+}
+
+td,
+th {
+  padding: 0;
+  vertical-align: top;
+}
+
+th {
+  font-weight: bold;
+  text-align: left;
+}
+
+/**
+ * ベーススタイルを管理するファイル
+*/
+html {
+  background-color: #f4fbff;
+  color: #333;
+  font-size: 16px;
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+}
+
+.l-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.l-main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/**
+ * 変数を格納するファイル
+*/
+/**
+ * ヘッダーのLayoutスタイルを管理するファイル
+ * header.htmlにて`l-`が接頭辞につくものが対象
+*/
+.l-header {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.l-nav {
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.l-nav__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.l-nav__logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+.l-nav__list {
+  display: flex;
+  gap: 2rem;
+}
+
+.p-navLink {
+  text-decoration: none;
+  color: #666666;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+.p-navLink:hover {
+  color: #007bff;
+}
+
+/**
+ * フッターのLayoutスタイルを管理するファイル
+ * footer.htmlにて`l-`が接頭辞につくものが対象
+*/
+.l-footer {
+  background-color: #fff;
+  padding: 2rem 0;
+  margin-top: auto;
+}
+.l-footer__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.l-footer__content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.l-footer__nav {
+  display: flex;
+  gap: 2rem;
+}
+.l-footer__social {
+  display: flex;
+  gap: 1rem;
+}
+.l-footer__bottom {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+/**
+ * メインコンテンツのLayoutスタイルを管理するファイル
+ * <main>タグにて`l-`が接頭辞につくものが対象
+*/
+.l-message {
+  width: 80%;
+  margin: 20px auto;
+}
+
+/**
+ * FLOCSSにおけるComponentスタイルを管理するファイル
+ * 全htmlファイルにて`c-`が接頭辞につくものが対象
+*/
+.c-button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+.c-button:hover {
+  background-color: #0056b3;
+}
+.c-button--secondary {
+  background-color: #6c757d;
+}
+.c-button--secondary:hover {
+  background-color: #545b62;
+}
+
+/**
+ * FLOCSSにおけるProjectスタイルを管理するファイル
+ * 全htmlファイルにて`p-`が接頭辞につくものが対象
+*/
+.p-messageBoard__input {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.p-messageBoard__textarea {
+  flex: 1;
+  padding: 10px;
+  height: 60px;
+}
+.p-messageBoard__list {
+  min-height: 300px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+.p-messageBoard__item {
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+.p-navLink {
+  color: #666;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+.p-navLink:hover {
+  color: #007bff;
+}
+
+.p-footerLink {
+  color: #666;
+  transition: color 0.3s ease;
+}
+.p-footerLink:hover {
+  color: #007bff;
+}
+
+.p-socialLink {
+  color: #666;
+  transition: color 0.3s ease;
+}
+.p-socialLink:hover {
+  color: #007bff;
+}
+
+.p-footerLogo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.p-copyright {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+/**
+ * FLOCSSにおけるUtilityスタイルを管理するファイル
+ * 全htmlファイルにて`u-`が接頭辞につくものが対象
+*/
