@@ -19,6 +19,9 @@
   },
   "homepage": "https://github.com/Kazu-K0032/security_chat_app#readme",
   "devDependencies": {
+    "browser-sync": "^3.0.3",
+    "gulp": "^5.0.0",
+    "gulp-sass": "^6.0.1",
     "sass": "^1.86.0"
   }
 }

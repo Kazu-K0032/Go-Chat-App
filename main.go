@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	_ "security_chat_app/config"
 	"security_chat_app/repository"
@@ -19,7 +20,15 @@ func main() {
 	chatRepo := repository.NewChatRepository(client)
 	chatUsecase := service.NewChatUsecase(chatRepo)
 
-	if err := router.StartMainServer(chatUsecase); err != nil {
-		log.Fatalf("サーバー起動に失敗: %v", err)
+	// ルーティングの設定
+	mux := router.SetupRouter(chatUsecase)
+
+	// セッション管理のミドルウェアを適用
+	handler := router.Middleware(mux)
+
+	// サーバーの起動
+	log.Println("サーバーを起動します...")
+	if err := http.ListenAndServe(":8080", handler); err != nil {
+		log.Fatal(err)
 	}
 }

@@ -36,3 +36,19 @@ func InitFirebase() (*firestore.Client, error) {
 
 	return client, nil
 }
+
+// コレクションにデータを追加する
+func AddData(collection string, data interface{}) error {
+	client, err := InitFirebase()
+	if err != nil {
+		return err
+	}
+	defer client.Close()
+
+	ctx := context.Background()
+	_, _, err = client.Collection(collection).Add(ctx, data)
+	if err != nil {
+		return err
+	}
+	return nil
+}

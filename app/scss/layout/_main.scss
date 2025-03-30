@@ -7,18 +7,52 @@
 @use "../foundation/_base";
 @use "../foundation/_variables" as *;
 
-.l-message {
-    width: 80%;
-    margin: 20px auto;
+.l-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+.l-main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.l-message {
+  width: 80%;
+  margin: 20px auto;
+}
+
+.l-login {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__btnWrap {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    width: 80%;
+  }
+}
 
 // ==============================================
 // MEDIUM
 // ==============================================
-@media screen and (width <= 1024px) {}
+@media screen and (width <= 1024px) {
+}
 
 // ==============================================
 // SMALL
 // ==============================================
-@media screen and (width <= 649px) {}
+@media screen and (width <= 649px) {
+}

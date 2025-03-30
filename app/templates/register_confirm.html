@@ -1,0 +1,32 @@
+{{ define "content" }}
+<h1 class="c-lgTtl">登録内容の確認</h1>
+<form class="l-login" role="form" action="/signup/confirm" method="post">
+  <input type="hidden" name="name" value="{{.SignupForm.Name}}" />
+  <input type="hidden" name="email" value="{{.SignupForm.Email}}" />
+  <input type="hidden" name="password" value="{{.SignupForm.Password}}" />
+
+  <div class="p-confirm">
+    <div class="p-confirm__item">
+      <label class="p-confirm__label c-label">ユーザー名</label>
+      <p class="p-confirm__txt c-txt">{{.SignupForm.Name}}</p>
+    </div>
+    <div class="p-confirm__item">
+      <label class="p-confirm__label c-label">メールアドレス</label>
+      <p class="p-confirm__txt c-txt">{{.SignupForm.Email}}</p>
+    </div>
+  </div>
+
+  {{if .Error}}
+  <div class="c-error">
+    <p class="c-error__txt">{{.Error}}</p>
+  </div>
+  {{end}}
+
+  <div class="c-btnWrap">
+    <button type="button" class="c-btn --secondary" onclick="history.back()">
+      戻る
+    </button>
+    <button class="c-btn" type="submit">登録する</button>
+  </div>
+</form>
+{{end}}

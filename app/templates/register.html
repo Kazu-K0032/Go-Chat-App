@@ -1,0 +1,41 @@
+{{ define "content" }}
+<h1 class="c-lgTtl">新規登録</h1>
+<form class="l-login" role="form" action="/signup" method="post">
+  <input
+    type="text"
+    name="name"
+    class="c-input"
+    placeholder="ユーザー名"
+    required
+    autofocus
+    value="{{.SignupForm.Name}}"
+  />
+  <input
+    type="email"
+    name="email"
+    class="c-input"
+    placeholder="メールアドレス"
+    required
+    value="{{.SignupForm.Email}}"
+  />
+  <input
+    type="password"
+    name="password"
+    class="c-input"
+    placeholder="パスワード"
+    required
+    value="{{.SignupForm.Password}}"
+  />
+
+  {{if .Error}}
+  <div class="c-error">
+    <p class="c-error__txt">{{.Error}}</p>
+  </div>
+  {{end}}
+
+  <br />
+  <button class="c-btn" type="submit">登録</button>
+  <br />
+  <a class="c-link" href="/login">ログイン</a>
+</form>
+{{end}}

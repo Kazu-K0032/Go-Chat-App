@@ -13,9 +13,7 @@
 
 html {
   line-height: 1.15;
-  -webkit-text-size-adjust: 100%;
-     -moz-text-size-adjust: 100%;
-          text-size-adjust: 100%;
+  text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -91,8 +89,7 @@ a {
 }
 
 abbr[title] {
-  -webkit-text-decoration: underline dotted;
-          text-decoration: underline dotted;
+  text-decoration: underline dotted;
 }
 
 b,
@@ -149,9 +146,7 @@ textarea {
   text-align: inherit;
   vertical-align: middle;
   text-transform: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 button,
@@ -208,20 +203,16 @@ textarea {
 }
 
 [type=search]::-webkit-search-decoration {
-  -webkit-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 ::-webkit-file-upload-button {
   font: inherit;
-  -webkit-appearance: button;
-          appearance: button;
+  appearance: button;
 }
 
 [type=number] {
-  -webkit-appearance: textfield;
-     -moz-appearance: textfield;
-          appearance: textfield;
+  appearance: textfield;
 }
 
 label[for] {
@@ -266,26 +257,12 @@ th {
 html {
   background-color: #f4fbff;
   color: #333;
-  font-size: 16px;
+  font-size: 62.5%;
   font-family: "Noto Sans JP", sans-serif;
 }
 
 body {
   background-color: #f5f5f5;
-}
-
-.l-app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.l-main {
-  flex: 1;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
 }
 
 /**
@@ -374,30 +351,104 @@ body {
  * メインコンテンツのLayoutスタイルを管理するファイル
  * <main>タグにて`l-`が接頭辞につくものが対象
 */
+.l-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.l-main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
 .l-message {
   width: 80%;
   margin: 20px auto;
+}
+
+.l-login {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.l-login__btnWrap {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: 80%;
 }
 
 /**
  * FLOCSSにおけるComponentスタイルを管理するファイル
  * 全htmlファイルにて`c-`が接頭辞につくものが対象
 */
-.c-button {
+.c-lgTtl {
+  text-align: center;
+  font-size: 2.4rem;
+  margin: 40px 0;
+  color: #333;
+}
+
+.c-input {
+  width: 100%;
+  padding: 1.2rem;
+  margin-bottom: 1.6rem;
+  border: 1px solid #000;
+  border-radius: 4px;
+  font-size: 1.6rem;
+  transition: border-color 0.3s ease;
+}
+.c-input:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
+.c-input::placeholder {
+  color: #999;
+}
+
+.c-btn {
+  width: 100%;
   padding: 0.5rem 1rem;
   background-color: #007bff;
-  color: white;
+  color: #fff;
   border-radius: 4px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   transition: background-color 0.3s ease;
 }
-.c-button:hover {
+.c-btn:hover {
   background-color: #0056b3;
 }
-.c-button--secondary {
+.c-btn.--secondary {
   background-color: #6c757d;
 }
-.c-button--secondary:hover {
+.c-btn.--secondary:hover {
   background-color: #545b62;
+}
+
+.c-link {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  color: #4a90e2;
+  text-decoration: none;
+  font-size: 1.8rem;
+}
+.c-link:hover {
+  text-decoration: underline;
 }
 
 /**
@@ -461,6 +512,34 @@ body {
 .p-copyright {
   color: #666;
   font-size: 0.875rem;
+}
+
+.p-confirm {
+  border-radius: 4px;
+  margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+.p-confirm__item {
+  background: #f5f5f5;
+  padding: 1.6rem;
+  margin-bottom: 15px;
+}
+.p-confirm__item:last-child {
+  margin-bottom: 0;
+}
+.p-confirm__label {
+  display: block;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+.p-confirm__txt {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
 }
 
 /**
