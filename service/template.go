@@ -8,11 +8,12 @@ import (
 
 // TemplateData テンプレートに渡すデータ構造体
 type TemplateData struct {
-	IsLoggedIn bool
-	SignupForm SignupForm
-	LoginForm  LoginForm
-	Error      string
-	Success    string
+	IsLoggedIn       bool
+	SignupForm       SignupForm
+	LoginForm        LoginForm
+	Error            string
+	Success          string
+	ValidationErrors []string
 }
 
 // GenerateHTML layout.htmlをベースとしたHTMLを生成し、レスポンスに書きだす

@@ -14,11 +14,9 @@ type LoginForm struct {
 
 // LoginHandler ログイン処理を実行
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	isLoggedIn := r.Header.Get("X-Is-Logged-In") == "true"
-
 	if r.Method == http.MethodGet {
 		data := TemplateData{
-			IsLoggedIn: isLoggedIn,
+			IsLoggedIn: false,
 		}
 		GenerateHTML(w, data, "layout", "header", "login", "footer")
 		return
@@ -31,22 +29,42 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			Password: r.FormValue("password"),
 		}
 
-		// ユーザー認証
-		user, err := repository.GetUserByEmail(form.Email)
-		if err != nil {
+		// バリデーション
+		var validationErrors []string
+		if form.Email == "" {
+			validationErrors = append(validationErrors, "メールアドレスを入力してください")
+		}
+		if form.Password == "" {
+			validationErrors = append(validationErrors, "パスワードを入力してください")
+		}
+
+		if len(validationErrors) > 0 {
 			data := TemplateData{
-				IsLoggedIn: isLoggedIn,
-				LoginForm:  form,
-				Error:      "認証エラーが発生しました",
+				IsLoggedIn:       false,
+				LoginForm:        form,
+				ValidationErrors: validationErrors,
 			}
 			GenerateHTML(w, data, "layout", "header", "login", "footer")
 			return
 		}
-		if user == nil || user.Password != form.Password { // 実際の実装ではパスワードのハッシュ化が必要
+
+		// ユーザー認証
+		user, err := repository.GetUserByEmail(form.Email)
+		if err != nil {
 			data := TemplateData{
-				IsLoggedIn: isLoggedIn,
-				LoginForm:  form,
-				Error:      "メールアドレスまたはパスワードが誤っています",
+				IsLoggedIn:       false,
+				LoginForm:        form,
+				ValidationErrors: []string{"認証エラーが発生しました"},
+			}
+			GenerateHTML(w, data, "layout", "header", "login", "footer")
+			return
+		}
+
+		if user == nil || user.Password != form.Password {
+			data := TemplateData{
+				IsLoggedIn:       false,
+				LoginForm:        form,
+				ValidationErrors: []string{"メールアドレスまたはパスワードが誤っています"},
 			}
 			GenerateHTML(w, data, "layout", "header", "login", "footer")
 			return
@@ -56,9 +74,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		session, err := CreateSession(user)
 		if err != nil {
 			data := TemplateData{
-				IsLoggedIn: isLoggedIn,
-				LoginForm:  form,
-				Error:      "セッション作成エラーが発生しました",
+				IsLoggedIn:       false,
+				LoginForm:        form,
+				ValidationErrors: []string{"セッション作成エラーが発生しました"},
 			}
 			GenerateHTML(w, data, "layout", "header", "login", "footer")
 			return
@@ -68,7 +86,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		SetSessionCookie(w, session)
 
 		// ログイン成功後、ホームページにリダイレクト
-		http.Redirect(w, r, "/?success=ログインしました！", http.StatusSeeOther)
+		http.Redirect(w, r, "/?success=ログインしました", http.StatusSeeOther)
 	}
 }
 

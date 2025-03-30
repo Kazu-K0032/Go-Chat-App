@@ -52,3 +52,24 @@ func AddData(collection string, data interface{}) error {
 	}
 	return nil
 }
+
+// コレクションとドキュメントIDから特定フィールドを更新する
+func UpdateField(collection string, documentID string, field string, value interface{}) error {
+	client, err := InitFirebase()
+	if err != nil {
+		return err
+	}
+	defer client.Close()
+
+	ctx := context.Background()
+	_, err = client.Collection(collection).Doc(documentID).Update(ctx, []firestore.Update{
+		{
+			Path:  field,
+			Value: value,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}

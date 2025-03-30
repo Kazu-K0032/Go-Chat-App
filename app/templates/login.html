@@ -1,11 +1,13 @@
 {{ define "content" }}
-<h1 class="c-lgTtl">login</h1>
-<form
-  class="l-login"
-  role="form"
-  action="/auth"
-  method="post"
->
+<h1 class="c-lgTtl">ログイン</h1>
+{{if .ValidationErrors}}
+<div class="c-validation">
+  {{range .ValidationErrors}}
+  <p class="c-validation__text">{{.}}</p>
+  {{end}}
+</div>
+{{end}}
+<form class="l-login" role="form" action="/login" method="post">
   <input
     type="email"
     name="email"
@@ -21,10 +23,11 @@
     placeholder="password"
   />
   <br />
-  <button class="c-btn" type="submit">
-    ログイン
-  </button>
+  <button class="c-btn" type="submit">ログイン</button>
   <br />
-  <a class="c-link" href="/signup">登録</a>
+  <div class="l-login__links">
+    <a class="c-link" href="/signup">登録</a>
+    <a class="c-link" href="/reset-password">パスワードを忘れた方</a>
+  </div>
 </form>
 {{end}}
