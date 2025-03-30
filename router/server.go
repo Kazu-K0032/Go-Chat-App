@@ -75,3 +75,8 @@ func SetupRouter(chatUsecase service.ChatUsecase) *http.ServeMux {
 
 	return mux
 }
+
+func StartMainServer(chatUsecase service.ChatUsecase) error {
+	mux := SetupRouter(chatUsecase)
+	return http.ListenAndServe(":8080", mux) // <- ここで mux を渡す！
+}
