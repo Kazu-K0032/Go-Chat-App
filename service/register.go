@@ -84,7 +84,7 @@ func SignupConfirmHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Firestoreにユーザーを保存
-		err := repository.AddData("users", user)
+		err := repository.AddData("users", user, user.ID)
 		if err != nil {
 			http.Error(w, "ユーザー登録エラー", http.StatusInternalServerError)
 			return

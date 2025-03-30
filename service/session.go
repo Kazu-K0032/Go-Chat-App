@@ -33,8 +33,8 @@ func CreateSession(user *repository.User) (*Session, error) {
 		CreatedAt: time.Now(),
 	}
 
-	// Firestoreにセッションを保存
-	err := repository.AddData("sessions", session)
+	// Firestoreにセッションを保存（セッションIDをドキュメントIDとして使用）
+	err := repository.AddData("sessions", session, sessionID)
 	if err != nil {
 		return nil, err
 	}

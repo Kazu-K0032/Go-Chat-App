@@ -94,5 +94,8 @@ func GetUserByEmail(email string) (*User, error) {
 		return nil, err
 	}
 
+	// ドキュメントIDをユーザーIDとして設定
+	user.ID = docs[0].Ref.ID
+
 	return &user, nil
 }

@@ -32,7 +32,7 @@ func top(w http.ResponseWriter, r *http.Request) {
 		service.GenerateHTML(w, data, "layout", "header", "top", "footer")
 	} else {
 		fmt.Println("セッションが有効です")
-		http.Redirect(w, r, "/chat", http.StatusFound)
+		service.GenerateHTML(w, data, "layout", "header", "top", "footer")
 	}
 }
 

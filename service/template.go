@@ -14,6 +14,7 @@ type TemplateData struct {
 	Error            string
 	Success          string
 	ValidationErrors []string
+	ResetForm        ResetForm
 }
 
 // GenerateHTML layout.htmlをベースとしたHTMLを生成し、レスポンスに書きだす

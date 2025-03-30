@@ -38,7 +38,7 @@ func InitFirebase() (*firestore.Client, error) {
 }
 
 // コレクションにデータを追加する
-func AddData(collection string, data interface{}) error {
+func AddData(collection string, data interface{}, docID string) error {
 	client, err := InitFirebase()
 	if err != nil {
 		return err
@@ -46,7 +46,13 @@ func AddData(collection string, data interface{}) error {
 	defer client.Close()
 
 	ctx := context.Background()
-	_, _, err = client.Collection(collection).Add(ctx, data)
+	if docID != "" {
+		// カスタムドキュメントIDを使用
+		_, err = client.Collection(collection).Doc(docID).Set(ctx, data)
+	} else {
+		// 自動生成のドキュメントIDを使用
+		_, _, err = client.Collection(collection).Add(ctx, data)
+	}
 	if err != nil {
 		return err
 	}

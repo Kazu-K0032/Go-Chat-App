@@ -370,24 +370,6 @@ body {
   margin: 20px auto;
 }
 
-.l-login {
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.l-login__btnWrap {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  width: 80%;
-}
-
 /**
  * FLOCSSにおけるComponentスタイルを管理するファイル
  * 全htmlファイルにて`c-`が接頭辞につくものが対象
@@ -464,6 +446,24 @@ body {
  * FLOCSSにおけるProjectスタイルを管理するファイル
  * 全htmlファイルにて`p-`が接頭辞につくものが対象
 */
+.p-form {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.p-form__btnWrap {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: 80%;
+}
+
 .p-messageBoard__input {
   display: flex;
   gap: 10px;

@@ -1,6 +1,6 @@
 {{ define "content" }}
 <h1 class="c-lgTtl">登録内容の確認</h1>
-<form class="l-login" role="form" action="/signup/confirm" method="post">
+<form class="p-form" role="form" action="/signup/confirm" method="post">
   <input type="hidden" name="name" value="{{.SignupForm.Name}}" />
   <input type="hidden" name="email" value="{{.SignupForm.Email}}" />
   <input type="hidden" name="password" value="{{.SignupForm.Password}}" />
@@ -22,7 +22,7 @@
   </div>
   {{end}}
 
-  <div class="c-btnWrap">
+  <div class="p-form__btnWrap">
     <button type="button" class="c-btn --secondary" onclick="history.back()">
       戻る
     </button>

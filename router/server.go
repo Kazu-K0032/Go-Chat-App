@@ -72,6 +72,7 @@ func SetupRouter(chatUsecase service.ChatUsecase) *http.ServeMux {
 	mux.HandleFunc("/logout", service.LogoutHandler)
 	mux.HandleFunc("/signup", service.SignupHandler)
 	mux.HandleFunc("/signup/confirm", service.SignupConfirmHandler)
+	mux.HandleFunc("/reset-password", service.ResetPasswordHandler)
 
 	return mux
 }
