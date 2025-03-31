@@ -225,13 +225,21 @@ func StartChat(userID string, targetUserID string) (string, error) {
 func AddChatMessage(chatID string, message map[string]interface{}) error {
 	client, err := InitFirebase()
 	if err != nil {
+		log.Printf("Firebase初期化エラー: %v", err)
 		return err
 	}
 	defer client.Close()
 
 	ctx := context.Background()
-	_, _, err = client.Collection("chats").Doc(chatID).Collection("messages").Add(ctx, message)
+
+	// メッセージIDを生成
+	messageID := fmt.Sprintf("msg_%d", time.Now().UnixNano())
+	message["id"] = messageID
+
+	// メッセージを保存
+	_, err = client.Collection("chats").Doc(chatID).Collection("messages").Doc(messageID).Set(ctx, message)
 	if err != nil {
+		log.Printf("メッセージ保存エラー: %v", err)
 		return err
 	}
 
@@ -242,7 +250,13 @@ func AddChatMessage(chatID string, message map[string]interface{}) error {
 			Value: time.Now(),
 		},
 	})
-	return err
+	if err != nil {
+		log.Printf("チャット更新時刻の更新エラー: %v", err)
+		return err
+	}
+
+	log.Printf("メッセージを保存しました: chatID=%s, messageID=%s", chatID, messageID)
+	return nil
 }
 
 // チャットのメッセージを取得する
