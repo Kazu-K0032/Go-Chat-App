@@ -30,7 +30,7 @@
             <p class="p-chatCard__name">{{ .Contact.Username }}</p>
             {{ if .Messages }}
             <p class="p-chatCard__preview">
-              {{ index .Messages (sub (len .Messages) 1) .Content }}
+              {{ (index .Messages (sub (len .Messages) 1)).Content }}
             </p>
             {{ end }}
           </div>
@@ -67,11 +67,20 @@
       {{ if ne .SenderID $.User.ID }}
       <div class="l-chatMain__message p-message --received">
         <div class="l-chatMain__imgWrap p-message__iconWrap c-icon__wrap">
+          {{ if $.CurrentChat.Contact.Icon }}
           <img
             src="{{ $.CurrentChat.Contact.Icon }}"
             alt="{{ $.CurrentChat.Contact.Username }}のアイコン"
             class="p-message__icon c-icon__img"
+            onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
           />
+          {{ else }}
+          <img
+            src="{{ getRandomDefaultIcon }}"
+            alt="{{ $.CurrentChat.Contact.Username }}のデフォルトアイコン"
+            class="p-message__icon c-icon__img"
+          />
+          {{ end }}
         </div>
         <div class="l-chatMain__content p-message__content">
           <p class="p-message__text c-txt">{{ .Content }}</p>
