@@ -1,7 +1,6 @@
 package router
 
 import (
-	"context"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -35,25 +34,6 @@ func GenerateHTML(writer http.ResponseWriter, data interface{}, filenames ...str
 	}
 }
 
-// Middleware セッション管理のミドルウェア
-func Middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// セッションの検証
-		_, err := service.ValidateSession(w, r)
-		if err != nil {
-			// セッションが無効な場合は、ログインしていない状態として処理
-			data := service.TemplateData{IsLoggedIn: false}
-			r = r.WithContext(context.WithValue(r.Context(), templateDataKey, data))
-		} else {
-			// セッションが有効な場合は、ログインしている状態として処理
-			data := service.TemplateData{IsLoggedIn: true}
-			r = r.WithContext(context.WithValue(r.Context(), templateDataKey, data))
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
-
 // SetupRouter ルーティングの設定
 func SetupRouter(chatUsecase service.ChatUsecase) *http.ServeMux {
 	mux := http.NewServeMux()
@@ -73,11 +53,15 @@ func SetupRouter(chatUsecase service.ChatUsecase) *http.ServeMux {
 	mux.HandleFunc("/signup", service.SignupHandler)
 	mux.HandleFunc("/signup/confirm", service.SignupConfirmHandler)
 	mux.HandleFunc("/reset-password", service.ResetPasswordHandler)
+	mux.HandleFunc("/profile", service.ProfileHandler)
+	mux.HandleFunc("/chat", service.ChatHandler)
+	mux.HandleFunc("/search", service.SearchHandler)
+	mux.HandleFunc("/settings", service.SettingsHandler)
 
 	return mux
 }
 
 func StartMainServer(chatUsecase service.ChatUsecase) error {
 	mux := SetupRouter(chatUsecase)
-	return http.ListenAndServe(":8080", mux) // <- ここで mux を渡す！
+	return http.ListenAndServe(":8080", mux)
 }

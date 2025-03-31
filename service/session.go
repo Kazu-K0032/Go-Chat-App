@@ -15,6 +15,7 @@ type Session struct {
 	UserID    string
 	Email     string
 	CreatedAt time.Time
+	User      *repository.User
 }
 
 // CreateSession セッションを作成する
@@ -31,6 +32,7 @@ func CreateSession(user *repository.User) (*Session, error) {
 		UserID:    user.ID,
 		Email:     user.Email,
 		CreatedAt: time.Now(),
+		User:      user,
 	}
 
 	// Firestoreにセッションを保存（セッションIDをドキュメントIDとして使用）
@@ -81,6 +83,22 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
 		return nil, err
 	}
 
+	// ユーザー情報を取得
+	userData, err := repository.GetData("users", session.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	// ユーザー情報をセッションに設定
+	session.User = &repository.User{
+		ID:        userData["id"].(string),
+		Name:      userData["name"].(string),
+		Email:     userData["email"].(string),
+		Password:  userData["password"].(string),
+		CreatedAt: userData["created_at"].(time.Time),
+		UpdatedAt: userData["updated_at"].(time.Time),
+	}
+
 	return &session, nil
 }
 
@@ -109,4 +127,25 @@ func DeleteSession(w http.ResponseWriter, r *http.Request) error {
 	http.SetCookie(w, cookie)
 
 	return nil
+}
+
+// ログアウト処理
+func Logout(w http.ResponseWriter, r *http.Request) {
+	// セッションを削除
+	err := DeleteSession(w, r)
+	if err != nil {
+		// エラーが発生してもログアウトは成功したものとして扱う
+	}
+
+	// フラッシュメッセージを設定
+	flash := &http.Cookie{
+		Name:   "flash",
+		Value:  "ログアウトしました",
+		Path:   "/",
+		MaxAge: 1,
+	}
+	http.SetCookie(w, flash)
+
+	// トップページにリダイレクト
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

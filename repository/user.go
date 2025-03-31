@@ -19,6 +19,8 @@ type User struct {
 	Name      string    `json:"name" firestore:"name"`
 	Email     string    `json:"email" firestore:"email"`
 	Password  string    `json:"password" firestore:"password"`
+	Icon      string    `json:"icon" firestore:"icon"`
+	IsOnline  bool      `json:"isOnline" firestore:"isOnline"`
 	CreatedAt time.Time `json:"created_at" firestore:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" firestore:"updated_at"`
 }

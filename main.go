@@ -26,7 +26,7 @@ func main() {
 	// セッション管理のミドルウェアを適用
 	handler := router.Middleware(mux)
 
-	// サーバーの起動
+	// サーバーを起動
 	log.Println("サーバーを起動します...")
 	if err := http.ListenAndServe(":8080", handler); err != nil {
 		log.Fatal(err)
