@@ -1,8 +1,11 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"sort"
 	"time"
 
 	"security_chat_app/repository"
@@ -57,7 +60,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// POSTリクエストの場合はメッセージ送信処理
 	if r.Method == http.MethodPost {
 		// フォームデータから情報を取得
-		chatID := r.FormValue("chat_id")
+		chatID := r.FormValue("chatID")
 		content := r.FormValue("content")
 
 		if chatID == "" || content == "" {
@@ -67,9 +70,11 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 		// メッセージを作成
 		message := map[string]interface{}{
-			"user_id":    session.User.ID,
-			"content":    content,
-			"created_at": time.Now(),
+			"sender_id":   session.User.ID,
+			"sender_name": session.User.Name,
+			"content":     content,
+			"created_at":  time.Now(),
+			"is_read":     false,
 		}
 
 		// メッセージを保存
@@ -79,8 +84,12 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// チャットページにリダイレクト
-		http.Redirect(w, r, fmt.Sprintf("/chat?chat_id=%s", chatID), http.StatusSeeOther)
+		// JSONレスポンスを返す
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"content": content,
+			"time":    time.Now().Format("15:04"),
+		})
 		return
 	}
 
@@ -131,6 +140,13 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// 対象ユーザーの存在確認
+	_, err = GetUserData(targetUserID)
+	if err != nil {
+		http.Error(w, "対象ユーザーが見つかりません", http.StatusNotFound)
+		return
+	}
+
 	// 対象ユーザーの情報を取得
 	targetUser, err := GetUserData(targetUserID)
 	if err != nil {
@@ -149,10 +165,12 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	var messages []Message
 	for _, msg := range messagesData {
 		message := Message{
-			ID:       msg["id"].(string),
-			Content:  msg["content"].(string),
-			SenderID: msg["user_id"].(string),
-			Time:     msg["created_at"].(time.Time),
+			ID:         msg["id"].(string),
+			Content:    msg["content"].(string),
+			SenderID:   msg["sender_id"].(string),
+			SenderName: msg["sender_name"].(string),
+			Time:       msg["created_at"].(time.Time),
+			IsRead:     msg["is_read"].(bool),
 		}
 		messages = append(messages, message)
 	}
@@ -196,7 +214,7 @@ func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// フォームデータから情報を取得
-	chatID := r.FormValue("chat_id")
+	chatID := r.FormValue("chatID")
 	content := r.FormValue("content")
 
 	if chatID == "" || content == "" {
@@ -206,9 +224,11 @@ func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// メッセージを作成
 	message := map[string]interface{}{
-		"user_id":    session.User.ID,
-		"content":    content,
-		"created_at": time.Now(),
+		"sender_id":   session.User.ID,
+		"sender_name": session.User.Name,
+		"content":     content,
+		"created_at":  time.Now(),
+		"is_read":     false,
 	}
 
 	// メッセージを保存
@@ -243,15 +263,28 @@ func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 対象ユーザーの存在確認
+	_, err = GetUserData(targetUserID)
+	if err != nil {
+		http.Error(w, "対象ユーザーが見つかりません", http.StatusNotFound)
+		return
+	}
+
 	// チャットを開始
 	chatID, err := repository.StartChat(session.User.ID, targetUserID)
 	if err != nil {
+		log.Printf("チャット開始エラー: %v", err)
 		http.Error(w, "チャットの開始に失敗しました", http.StatusInternalServerError)
 		return
 	}
 
+	log.Printf("チャットを開始しました: chatID=%s, userID=%s, targetUserID=%s",
+		chatID, session.User.ID, targetUserID)
+
 	// チャットページにリダイレクト
-	http.Redirect(w, r, fmt.Sprintf("/chat?chat_id=%s", chatID), http.StatusSeeOther)
+	redirectURL := fmt.Sprintf("/chat?chat_id=%s", chatID)
+	log.Printf("リダイレクト先: %s", redirectURL)
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
 // 連絡先を交換したユーザーのデータを取得
@@ -285,7 +318,7 @@ func getChatHistory(user *repository.User) ([]Chat, error) {
 	}
 
 	var chatHistory []Chat
-	seenUsers := make(map[string]bool) // 重複チェック用のマップ
+	seenChats := make(map[string]bool) // 重複チェック用のマップ
 
 	for _, chatData := range chats {
 		// チャットIDの取得
@@ -313,10 +346,10 @@ func getChatHistory(user *repository.User) ([]Chat, error) {
 			}
 		}
 
-		if !isParticipant || seenUsers[targetUserID] {
+		if !isParticipant || seenChats[chatID] {
 			continue
 		}
-		seenUsers[targetUserID] = true
+		seenChats[chatID] = true
 
 		// メッセージの取得
 		messagesData, err := repository.GetChatMessages(chatID)
@@ -326,41 +359,49 @@ func getChatHistory(user *repository.User) ([]Chat, error) {
 
 		// メッセージの型変換
 		var messages []Message
+		var lastMessageTime time.Time
 		for _, msg := range messagesData {
+			messageTime := msg["created_at"].(time.Time)
 			message := Message{
-				ID:       msg["id"].(string),
-				Content:  msg["content"].(string),
-				SenderID: msg["user_id"].(string),
-				Time:     msg["created_at"].(time.Time),
+				ID:         msg["id"].(string),
+				Content:    msg["content"].(string),
+				SenderID:   msg["sender_id"].(string),
+				SenderName: msg["sender_name"].(string),
+				Time:       messageTime,
+				IsRead:     msg["is_read"].(bool),
 			}
 			messages = append(messages, message)
+
+			// 最新のメッセージ時刻を更新
+			if messageTime.After(lastMessageTime) {
+				lastMessageTime = messageTime
+			}
 		}
 
-		// 連絡先情報の取得
-		contactData, err := repository.GetData("users", targetUserID)
+		// チャット相手の情報を取得
+		targetUser, err := GetUserData(targetUserID)
 		if err != nil {
 			continue
 		}
 
-		// 連絡先情報の型変換
-		name, ok := contactData["name"].(string)
-		if !ok {
-			continue
-		}
-
-		icon, ok := contactData["icon"].(string)
-		if !ok {
-			icon = "" // アイコンがない場合は空文字を設定
-		}
-
 		// チャット履歴に追加
 		chatHistory = append(chatHistory, Chat{
-			ID:        chatID,
-			Contact:   Contact{Username: name, Icon: icon},
+			ID: chatID,
+			Contact: Contact{
+				ID:       targetUser.ID,
+				Username: targetUser.Name,
+				Icon:     targetUser.Icon,
+				LastSeen: time.Now(), // 仮の値として現在時刻を設定
+			},
 			Messages:  messages,
-			UpdatedAt: time.Now(), // 仮の値として現在時刻を設定
+			UpdatedAt: lastMessageTime,
 		})
 	}
+
+	// 更新時刻でソート（新しい順）
+	sort.Slice(chatHistory, func(i, j int) bool {
+		return chatHistory[i].UpdatedAt.After(chatHistory[j].UpdatedAt)
+	})
 
 	return chatHistory, nil
 }

@@ -9,33 +9,35 @@
       <li
         class="l-chat__item p-chatCard {{ if eq .ID $.ChatID }}--active{{ end }}"
       >
-        <div class="l-chat__imgWrap p-chatCard__iconWrap c-icon__wrap">
-          {{ if .Contact.Icon }}
-          <img
-            src="{{ .Contact.Icon }}"
-            alt="{{ .Contact.Username }}のアイコン"
-            class="p-chatCard__icon c-icon__img"
-            onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
-          />
-          {{ else }}
-          <img
-            src="{{ getRandomDefaultIcon }}"
-            alt="{{ .Contact.Username }}のデフォルトアイコン"
-            class="p-chatCard__icon c-icon__img"
-          />
-          {{ end }}
-        </div>
-        <div class="l-chat__info p-chatCard__info">
-          <p class="p-chatCard__name">{{ .Contact.Username }}</p>
-          {{ if .Messages }}
-          <p class="p-chatCard__preview">
-            {{ index .Messages (sub (len .Messages) 1) .Content }}
-          </p>
-          {{ end }}
-        </div>
-        <time class="l-chat__time p-chatCard__time"
-          >{{ .UpdatedAt.Format "15:04" }}</time
-        >
+        <a href="/chat?chat_id={{ .ID }}" class="p-chatCard__link">
+          <div class="l-chat__imgWrap p-chatCard__iconWrap c-icon__wrap">
+            {{ if .Contact.Icon }}
+            <img
+              src="{{ .Contact.Icon }}"
+              alt="{{ .Contact.Username }}のアイコン"
+              class="p-chatCard__icon c-icon__img"
+              onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
+            />
+            {{ else }}
+            <img
+              src="{{ getRandomDefaultIcon }}"
+              alt="{{ .Contact.Username }}のデフォルトアイコン"
+              class="p-chatCard__icon c-icon__img"
+            />
+            {{ end }}
+          </div>
+          <div class="l-chat__info p-chatCard__info">
+            <p class="p-chatCard__name">{{ .Contact.Username }}</p>
+            {{ if .Messages }}
+            <p class="p-chatCard__preview">
+              {{ (index .Messages (sub (len .Messages) 1)).Content }}
+            </p>
+            {{ end }}
+          </div>
+          <time class="l-chat__time p-chatCard__time"
+            >{{ .UpdatedAt.Format "15:04" }}</time
+          >
+        </a>
       </li>
       {{ end }}
     </ul>
@@ -65,11 +67,20 @@
       {{ if ne .SenderID $.User.ID }}
       <div class="l-chatMain__message p-message --received">
         <div class="l-chatMain__imgWrap p-message__iconWrap c-icon__wrap">
+          {{ if $.CurrentChat.Contact.Icon }}
           <img
             src="{{ $.CurrentChat.Contact.Icon }}"
             alt="{{ $.CurrentChat.Contact.Username }}のアイコン"
             class="p-message__icon c-icon__img"
+            onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
           />
+          {{ else }}
+          <img
+            src="{{ getRandomDefaultIcon }}"
+            alt="{{ $.CurrentChat.Contact.Username }}のデフォルトアイコン"
+            class="p-message__icon c-icon__img"
+          />
+          {{ end }}
         </div>
         <div class="l-chatMain__content p-message__content">
           <p class="p-message__text c-txt">{{ .Content }}</p>
@@ -89,7 +100,7 @@
 
     <!-- 入力エリア -->
     <div class="l-chatMain__input">
-      <form id="messageForm" method="POST" action="/chat/message">
+      <form id="messageForm" class="l-chatMain__form">
         <input type="hidden" name="chatID" value="{{ .CurrentChat.ID }}" />
         <textarea
           class="l-chatMain__textarea"
@@ -111,4 +122,57 @@
     {{ end }}
   </div>
 </div>
+
+<!-- JavaScript -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const messageForm = document.getElementById("messageForm");
+    const messageInput = document.getElementById("js-messageInput");
+    const messageArea = document.getElementById("js-messageArea");
+
+    messageForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(messageForm);
+      const chatID = formData.get("chatID");
+      const content = formData.get("content");
+
+      try {
+        const response = await fetch(window.location.href, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `chatID=${encodeURIComponent(
+            chatID
+          )}&content=${encodeURIComponent(content)}`,
+        });
+
+        if (response.ok) {
+          // メッセージを表示
+          const messageData = await response.json();
+          const messageHtml = `
+          <div class="l-chatMain__message p-message --sent">
+            <div class="l-chatMain__content p-message__content">
+              <p class="p-message__text c-txt">${messageData.content}</p>
+              <time class="p-message__time c-time">${messageData.time}</time>
+            </div>
+          </div>
+        `;
+          messageArea.insertAdjacentHTML("beforeend", messageHtml);
+
+          // 入力欄をクリア
+          messageInput.value = "";
+
+          // メッセージエリアを最下部にスクロール
+          messageArea.scrollTop = messageArea.scrollHeight;
+        } else {
+          console.error("メッセージの送信に失敗しました");
+        }
+      } catch (error) {
+        console.error("エラーが発生しました:", error);
+      }
+    });
+  });
+</script>
 {{ end }}
