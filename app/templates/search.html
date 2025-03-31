@@ -48,8 +48,7 @@
           </p>
         </div>
         <div class="p-userList__action">
-          <form method="POST" action="/search/start-chat">
-            <input type="hidden" name="userID" value="{{ $id }}" />
+          <form method="POST" action="/chat/{{ $id }}">
             <button type="submit" class="p-userList__btn c-btn">
               チャットを開始
             </button>
@@ -93,7 +92,6 @@
         </div>
         <div class="p-userList__action">
           <form method="POST" action="/chat/{{ $id }}">
-            <input type="hidden" name="userID" value="{{ $id }}" />
             <button type="submit" class="p-userList__btn c-btn">
               チャットを開始
             </button>

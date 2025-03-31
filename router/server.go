@@ -37,15 +37,12 @@ func GenerateHTML(writer http.ResponseWriter, data interface{}, filenames ...str
 // SetupRouter ルーティングの設定
 func SetupRouter(chatUsecase service.ChatUsecase) *http.ServeMux {
 	mux := http.NewServeMux()
-
 	// 静的ファイル (CSS/JS)
 	mux.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("app/css"))))
 	mux.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("app/js"))))
-
 	// 静的ファイルの提供
 	fs := http.FileServer(http.Dir("app/static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
-
 	// ルーティングの設定
 	mux.HandleFunc("/", top)
 	mux.HandleFunc("/login", service.LoginHandler)

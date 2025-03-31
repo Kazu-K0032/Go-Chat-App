@@ -93,38 +93,6 @@ func getSearchPageData(user *repository.User, r *http.Request) (SearchPageData, 
 	return data, nil
 }
 
-// チャット開始ハンドラ
-func StartChatHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// セッションの検証
-	session, err := ValidateSession(w, r)
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	// リクエストボディからデータを取得
-	targetUserID := r.FormValue("userID")
-	if targetUserID == "" {
-		http.Error(w, "ユーザーIDが指定されていません", http.StatusBadRequest)
-		return
-	}
-
-	// チャットを開始
-	chatID, err := repository.StartChat(session.User.ID, targetUserID)
-	if err != nil {
-		http.Error(w, "チャットの開始に失敗しました", http.StatusInternalServerError)
-		return
-	}
-
-	// チャットページにリダイレクト
-	http.Redirect(w, r, fmt.Sprintf("/chat?chat_id=%s", chatID), http.StatusSeeOther)
-}
-
 // ユーザーを検索
 func SearchUsers(query string) ([]map[string]interface{}, error) {
 	// ユーザーを検索

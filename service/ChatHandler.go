@@ -36,11 +36,13 @@ type Message struct {
 
 // チャットページのデータ構造体
 type ChatPageData struct {
-	IsLoggedIn bool
-	User       *repository.User
-	ChatID     string
-	TargetUser *repository.User
-	Messages   []map[string]interface{}
+	IsLoggedIn  bool
+	User        *repository.User
+	ChatID      string
+	TargetUser  *repository.User
+	Messages    []Message
+	Chats       []Chat
+	CurrentChat *Chat
 }
 
 // チャットページのハンドラ
@@ -52,10 +54,53 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// POSTリクエストの場合はメッセージ送信処理
+	if r.Method == http.MethodPost {
+		// フォームデータから情報を取得
+		chatID := r.FormValue("chat_id")
+		content := r.FormValue("content")
+
+		if chatID == "" || content == "" {
+			http.Error(w, "チャットIDとメッセージ内容が必要です", http.StatusBadRequest)
+			return
+		}
+
+		// メッセージを作成
+		message := map[string]interface{}{
+			"user_id":    session.User.ID,
+			"content":    content,
+			"created_at": time.Now(),
+		}
+
+		// メッセージを保存
+		err = repository.AddChatMessage(chatID, message)
+		if err != nil {
+			http.Error(w, "メッセージの送信に失敗しました", http.StatusInternalServerError)
+			return
+		}
+
+		// チャットページにリダイレクト
+		http.Redirect(w, r, fmt.Sprintf("/chat?chat_id=%s", chatID), http.StatusSeeOther)
+		return
+	}
+
+	// チャット一覧を取得
+	chats, err := getChatHistory(session.User)
+	if err != nil {
+		http.Error(w, "チャット一覧の取得に失敗しました", http.StatusInternalServerError)
+		return
+	}
+
 	// URLからチャットIDを取得
 	chatID := r.URL.Query().Get("chat_id")
 	if chatID == "" {
-		http.Error(w, "チャットIDが指定されていません", http.StatusBadRequest)
+		// チャットIDがない場合は、チャット一覧を表示
+		data := ChatPageData{
+			IsLoggedIn: true,
+			User:       session.User,
+			Chats:      chats,
+		}
+		GenerateHTML(w, data, "layout", "header", "chat", "footer")
 		return
 	}
 
@@ -94,19 +139,42 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// メッセージを取得
-	messages, err := repository.GetChatMessages(chatID)
+	messagesData, err := repository.GetChatMessages(chatID)
 	if err != nil {
 		http.Error(w, "メッセージの取得に失敗しました", http.StatusInternalServerError)
 		return
 	}
 
+	// メッセージの型変換
+	var messages []Message
+	for _, msg := range messagesData {
+		message := Message{
+			ID:       msg["id"].(string),
+			Content:  msg["content"].(string),
+			SenderID: msg["user_id"].(string),
+			Time:     msg["created_at"].(time.Time),
+		}
+		messages = append(messages, message)
+	}
+
+	// 現在のチャットを特定
+	var currentChat *Chat
+	for _, chat := range chats {
+		if chat.ID == chatID {
+			currentChat = &chat
+			break
+		}
+	}
+
 	// チャットページのデータを取得
 	data := ChatPageData{
-		IsLoggedIn: true,
-		User:       session.User,
-		ChatID:     chatID,
-		TargetUser: targetUser,
-		Messages:   messages,
+		IsLoggedIn:  true,
+		User:        session.User,
+		ChatID:      chatID,
+		TargetUser:  targetUser,
+		Messages:    messages,
+		Chats:       chats,
+		CurrentChat: currentChat,
 	}
 
 	// テンプレートのレンダリング
@@ -154,6 +222,38 @@ func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/chat?chat_id=%s", chatID), http.StatusSeeOther)
 }
 
+// チャット開始ハンドラ
+func StartChatHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// セッションの検証
+	session, err := ValidateSession(w, r)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	// URLから対象ユーザーIDを取得
+	targetUserID := r.URL.Path[len("/chat/"):]
+	if targetUserID == "" {
+		http.Error(w, "ユーザーIDが指定されていません", http.StatusBadRequest)
+		return
+	}
+
+	// チャットを開始
+	chatID, err := repository.StartChat(session.User.ID, targetUserID)
+	if err != nil {
+		http.Error(w, "チャットの開始に失敗しました", http.StatusInternalServerError)
+		return
+	}
+
+	// チャットページにリダイレクト
+	http.Redirect(w, r, fmt.Sprintf("/chat?chat_id=%s", chatID), http.StatusSeeOther)
+}
+
 // 連絡先を交換したユーザーのデータを取得
 func getContacts(user *repository.User) ([]Contact, error) {
 	// 連絡先コレクションからデータを取得
@@ -178,56 +278,91 @@ func getContacts(user *repository.User) ([]Contact, error) {
 
 // チャット履歴を取得
 func getChatHistory(user *repository.User) ([]Chat, error) {
-	// チャットコレクションからデータを取得
-	chatsData, err := repository.GetDataByQuery("chats", "participants", "array-contains", user.ID)
+	// チャット履歴を取得
+	chats, err := repository.GetAllData("chats")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("チャット履歴の取得に失敗しました: %v", err)
 	}
 
-	var chats []Chat
-	for _, data := range chatsData {
-		// メッセージを取得
-		messagesData, err := repository.GetDataByQuery("messages", "chatID", "==", data["id"])
+	var chatHistory []Chat
+	seenUsers := make(map[string]bool) // 重複チェック用のマップ
+
+	for _, chatData := range chats {
+		// チャットIDの取得
+		chatID, ok := chatData["id"].(string)
+		if !ok {
+			continue
+		}
+
+		// 参加者の取得
+		participants, ok := chatData["participants"].([]interface{})
+		if !ok {
+			continue
+		}
+
+		// 現在のユーザーが参加者かチェック
+		isParticipant := false
+		var targetUserID string
+		for _, p := range participants {
+			if participantID, ok := p.(string); ok {
+				if participantID == user.ID {
+					isParticipant = true
+				} else {
+					targetUserID = participantID
+				}
+			}
+		}
+
+		if !isParticipant || seenUsers[targetUserID] {
+			continue
+		}
+		seenUsers[targetUserID] = true
+
+		// メッセージの取得
+		messagesData, err := repository.GetChatMessages(chatID)
 		if err != nil {
 			continue
 		}
 
+		// メッセージの型変換
 		var messages []Message
-		for _, msgData := range messagesData {
+		for _, msg := range messagesData {
 			message := Message{
-				ID:         msgData["id"].(string),
-				Content:    msgData["content"].(string),
-				SenderID:   msgData["senderID"].(string),
-				SenderName: msgData["senderName"].(string),
-				Time:       msgData["time"].(time.Time),
-				IsRead:     msgData["isRead"].(bool),
+				ID:       msg["id"].(string),
+				Content:  msg["content"].(string),
+				SenderID: msg["user_id"].(string),
+				Time:     msg["created_at"].(time.Time),
 			}
 			messages = append(messages, message)
 		}
 
-		// 連絡先情報を取得
-		contactData, err := repository.GetData("users", data["contactID"].(string))
+		// 連絡先情報の取得
+		contactData, err := repository.GetData("users", targetUserID)
 		if err != nil {
 			continue
 		}
 
-		contact := Contact{
-			ID:       contactData["id"].(string),
-			Username: contactData["username"].(string),
-			Icon:     contactData["icon"].(string),
-			LastSeen: contactData["lastSeen"].(time.Time),
+		// 連絡先情報の型変換
+		name, ok := contactData["name"].(string)
+		if !ok {
+			continue
 		}
 
-		chat := Chat{
-			ID:        data["id"].(string),
-			Contact:   contact,
-			Messages:  messages,
-			UpdatedAt: data["updatedAt"].(time.Time),
+		icon, ok := contactData["icon"].(string)
+		if !ok {
+			icon = "" // アイコンがない場合は空文字を設定
 		}
-		chats = append(chats, chat)
+
+		// チャット履歴に追加
+		chatHistory = append(chatHistory, Chat{
+			ID:        chatID,
+			Contact:   Contact{Username: name, Icon: icon},
+			Messages:  messages,
+			UpdatedAt: time.Now(), // 仮の値として現在時刻を設定
+		})
 	}
 
-	return chats, nil
+	return chatHistory, nil
 }
 
 // メッセージIDを生成する
