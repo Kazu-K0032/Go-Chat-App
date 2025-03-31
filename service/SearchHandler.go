@@ -59,16 +59,37 @@ func getSearchPageData(user *repository.User, r *http.Request) (SearchPageData, 
 		return SearchPageData{}, fmt.Errorf("ユーザー情報の取得に失敗しました: %v", err)
 	}
 
+	// チャット履歴を取得
+	chats, err := repository.GetAllData("chats")
+	if err != nil {
+		return SearchPageData{}, fmt.Errorf("チャット履歴の取得に失敗しました: %v", err)
+	}
+
+	// チャット履歴のあるユーザーIDを集める
+	chattedUsers := make(map[string]bool)
+	for _, chatData := range chats {
+		participants, ok := chatData["participants"].([]interface{})
+		if !ok {
+			continue
+		}
+		for _, p := range participants {
+			if participantID, ok := p.(string); ok {
+				chattedUsers[participantID] = true
+			}
+		}
+	}
+
 	// デバッグ用のログ
 	fmt.Printf("取得した全ユーザー数: %d\n", len(users))
 	fmt.Printf("現在のユーザーID: %s\n", user.ID)
+	fmt.Printf("チャット履歴のあるユーザー数: %d\n", len(chattedUsers))
 
-	// 自分以外のユーザーをフィルタリングし、新規追加順にソート
+	// 自分以外かつチャット履歴のないユーザーをフィルタリング
 	var filteredUsers []map[string]interface{}
 	for _, u := range users {
 		userID := u["id"].(string)
 		fmt.Printf("ユーザーID: %s\n", userID)
-		if userID != user.ID {
+		if userID != user.ID && !chattedUsers[userID] {
 			filteredUsers = append(filteredUsers, u)
 		}
 	}

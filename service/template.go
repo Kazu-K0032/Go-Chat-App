@@ -104,7 +104,7 @@ func GenerateHTML(writer http.ResponseWriter, data interface{}, filenames ...str
 	err = templates.ExecuteTemplate(writer, "layout", data)
 	if err != nil {
 		http.Error(writer, "テンプレートの実行に失敗しました", http.StatusInternalServerError)
-		fmt.Println("テンプレート実行エラー:", err)
-		fmt.Printf("渡されたデータ: %#v\n", data)
+		// fmt.Println("テンプレート実行エラー:", err)
+		// fmt.Printf("渡されたデータ: %#v\n", data)
 	}
 }

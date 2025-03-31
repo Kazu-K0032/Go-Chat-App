@@ -37,8 +37,6 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("ユーザー情報の取得に成功しました")
-
 	// プロフィールデータの作成
 	data := TemplateData{
 		IsLoggedIn: true,
