@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/*.go": {
+      "runtime": "go@1.20"
+    }
+  }
+}
