@@ -27,7 +27,7 @@ type TemplateData struct {
 }
 
 // デフォルトアイコンのパス
-const defaultIconPath = "/static/assets/default/user_icon"
+const defaultIconPath = "icons/default"
 
 // デフォルトアイコンの数
 const defaultIconCount = 7
@@ -83,7 +83,7 @@ var templateFuncs = template.FuncMap{
 		// 0から6までのランダムな数字を生成
 		randomNum := localRand.Intn(defaultIconCount)
 		// デフォルトアイコンのパスを生成
-		return fmt.Sprintf("%s/default_icon_%s.png", defaultIconPath, defaultIconNames[randomNum])
+		return fmt.Sprintf("%s/%s.png", defaultIconPath, defaultIconNames[randomNum])
 	},
 }
 

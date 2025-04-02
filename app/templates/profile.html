@@ -8,10 +8,11 @@
       <form action="/profile/icon" method="POST" enctype="multipart/form-data">
         <label for="icon-upload" class="c-icon__label">
           <img
-            src="{{ if .User.IconURL }}{{ .User.IconURL }}{{ else }}{{ getRandomDefaultIcon }}{{ end }}"
+            src="{{ .User.IconURL }}"
             alt="アイコン"
             class="c-icon__img"
             id="profile-icon"
+            onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
           />
           <input
             type="file"
