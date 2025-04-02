@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -39,6 +40,34 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
 		return
+	}
+
+	// アイコンが設定されていない場合はデフォルトアイコンを設定
+	if user.IconURL == "" {
+		// デフォルトアイコンのパスを生成
+		randomNum := rand.Intn(7)
+		defaultIconNames := []string{"elephant", "fox", "hamster", "koala", "monkey", "owl", "puma"}
+		defaultIconPath := fmt.Sprintf("icons/default/default_icon_%s.png", defaultIconNames[randomNum])
+
+		fmt.Printf("デフォルトアイコンを設定中: %s\n", defaultIconPath)
+
+		// デフォルトアイコンのURLを取得
+		iconURL, err := repository.GetDefaultIconURL(defaultIconPath)
+		if err != nil {
+			fmt.Printf("デフォルトアイコンの取得に失敗: %v\n", err)
+			http.Error(w, "デフォルトアイコンの取得に失敗しました", http.StatusInternalServerError)
+			return
+		}
+
+		// ユーザーのIconURLを更新
+		user.IconURL = iconURL
+		err = repository.UpdateField("users", user.ID, "iconURL", iconURL)
+		if err != nil {
+			http.Error(w, "アイコンURLの更新に失敗しました", http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Printf("デフォルトアイコンを設定しました: %s\n", iconURL)
 	}
 
 	// 最終更新日時を現在時刻に更新
