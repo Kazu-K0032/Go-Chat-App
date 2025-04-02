@@ -1,0 +1,1101 @@
+@charset "UTF-8";
+/**
+ * トップページのスタイルを管理するファイル
+*/
+*,
+::before,
+::after {
+  min-width: 0;
+  border-width: 0;
+  border-style: solid;
+  box-sizing: border-box;
+}
+
+html {
+  line-height: 1.15;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  display: block;
+}
+
+p,
+table,
+blockquote,
+address,
+pre,
+iframe,
+form,
+figure,
+dl {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+dt {
+  font-weight: bold;
+}
+
+dd {
+  margin-left: 0;
+}
+
+hr {
+  overflow: visible;
+  clear: both;
+  height: 0;
+  margin: 0;
+  border-top-width: 1px;
+  box-sizing: content-box;
+  color: inherit;
+}
+
+pre {
+  font-size: inherit;
+  font-family: monospace, monospace;
+}
+
+address {
+  font-style: inherit;
+}
+
+a {
+  background-color: transparent;
+  color: inherit;
+  text-decoration: none;
+}
+
+abbr[title] {
+  text-decoration: underline dotted;
+}
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+code,
+kbd,
+samp {
+  font-size: inherit;
+  font-family: monospace, monospace;
+}
+
+small {
+  font-size: 80%;
+}
+
+sub,
+sup {
+  position: relative;
+  font-size: 75%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+svg,
+img,
+embed,
+object,
+iframe {
+  vertical-align: bottom;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  vertical-align: middle;
+  text-transform: inherit;
+  appearance: none;
+}
+
+button,
+[type=button],
+[type=reset],
+[type=submit] {
+  cursor: pointer;
+}
+
+button:disabled,
+[type=button]:disabled,
+[type=reset]:disabled,
+[type=submit]:disabled {
+  cursor: default;
+}
+
+:-moz-focusring {
+  outline: auto;
+}
+
+select:disabled {
+  opacity: inherit;
+}
+
+option {
+  padding: 0;
+}
+
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+progress {
+  vertical-align: baseline;
+}
+
+textarea {
+  overflow: auto;
+}
+
+[type=number]::-webkit-inner-spin-button,
+[type=number]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+[type=search] {
+  outline-offset: -2px;
+}
+
+[type=search]::-webkit-search-decoration {
+  appearance: none;
+}
+
+::-webkit-file-upload-button {
+  font: inherit;
+  appearance: button;
+}
+
+[type=number] {
+  appearance: textfield;
+}
+
+label[for] {
+  cursor: pointer;
+}
+
+details {
+  display: block;
+}
+
+summary {
+  display: list-item;
+}
+
+[contenteditable]:focus {
+  outline: auto;
+}
+
+table {
+  border-color: inherit;
+  border-collapse: collapse;
+}
+
+caption {
+  text-align: left;
+}
+
+td,
+th {
+  padding: 0;
+  vertical-align: top;
+}
+
+th {
+  font-weight: bold;
+  text-align: left;
+}
+
+/**
+ * ベーススタイルを管理するファイル
+*/
+html {
+  background-color: #f4fbff;
+  color: #333;
+  font-size: 62.5%;
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+}
+
+/**
+ * 変数を格納するファイル
+*/
+/**
+ * ヘッダーのLayoutスタイルを管理するファイル
+ * header.htmlにて`l-`が接頭辞につくものが対象
+*/
+.l-header {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.l-nav {
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.l-nav__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.l-nav__logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+.l-nav__list {
+  display: flex;
+  gap: 2rem;
+}
+
+.p-navLink {
+  text-decoration: none;
+  color: #666666;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+.p-navLink:hover {
+  color: #007bff;
+}
+
+/**
+ * フッターのLayoutスタイルを管理するファイル
+ * footer.htmlにて`l-`が接頭辞につくものが対象
+*/
+.l-footer {
+  background-color: #fff;
+  padding: 2rem 0;
+  margin-top: auto;
+}
+.l-footer__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.l-footer__content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.l-footer__nav {
+  display: flex;
+  gap: 2rem;
+}
+.l-footer__social {
+  display: flex;
+  gap: 1rem;
+}
+.l-footer__bottom {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+/**
+ * メインコンテンツのLayoutスタイルを管理するファイル
+ * <main>タグにて`l-`が接頭辞につくものが対象
+*/
+.l-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.l-main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.l-message {
+  width: 80%;
+  margin: 20px auto;
+}
+
+.l-chat {
+  display: flex;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+.l-chat__sidebar {
+  width: 300px;
+  background-color: #fff;
+  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
+}
+.l-chat__list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.l-chat__item {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.l-chat__item:hover {
+  background-color: #f8f8f8;
+}
+.l-chat__item.--active {
+  background-color: #e3f2fd;
+}
+.l-chat__imgWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.l-chat__info {
+  flex: 1;
+  margin-left: 12px;
+}
+.l-chat__time {
+  font-size: 12px;
+  color: #666;
+}
+.l-chat__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  text-align: center;
+}
+.l-chat__emptyText {
+  margin-bottom: 1.5rem;
+  color: #666;
+  font-size: 1rem;
+}
+.l-chat__searchBtn {
+  padding: 0.75rem 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+.l-chat__searchBtn:hover {
+  background-color: #0056b3;
+}
+.l-chatMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+.l-chatMain__header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.l-chatMain__title {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+.l-chatMain__messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+.l-chatMain__message {
+  display: flex;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+.l-chatMain__message.--received .l-chatMain__content {
+  background-color: #f5f5f5;
+  border-radius: 0 12px 12px 12px;
+}
+.l-chatMain__message.--sent {
+  flex-direction: row-reverse;
+}
+.l-chatMain__message.--sent .l-chatMain__content {
+  background-color: #e3f2fd;
+  border-radius: 12px 0 12px 12px;
+}
+.l-chatMain__imgWrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 8px;
+}
+.l-chatMain__content {
+  max-width: 70%;
+  padding: 12px 16px;
+}
+.l-chatMain__input {
+  padding: 15px 20px;
+  border-top: 1px solid #e0e0e0;
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  column-gap: 10px;
+}
+.l-chatMain__textarea {
+  padding: 12px;
+  border: 1px solid #000;
+  border-radius: 4px;
+  resize: none;
+  height: 60px;
+  font-size: 1.6rem;
+  user-select: none;
+  outline: 1px solid #000;
+}
+
+.l-search {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.l-search__header {
+  margin-bottom: 2rem;
+}
+.l-search__content {
+  background: #fff;
+  background: var(--color-white);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.p-searchForm__inputWrap {
+  display: flex;
+  gap: 1rem;
+}
+.p-searchForm__input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+.p-searchForm__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+.p-searchForm__btn {
+  padding: 0.75rem 2rem;
+}
+
+.p-userList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.p-userList__item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.p-userList__item:last-child {
+  border-bottom: none;
+}
+.p-userList__imgWrap {
+  width: 48px;
+  height: 48px;
+  margin-right: 1rem;
+}
+.p-userList__icon {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.p-userList__info {
+  flex: 1;
+}
+.p-userList__name {
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+}
+.p-userList__status {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin: 0;
+}
+.p-userList__action {
+  margin-left: 1rem;
+}
+.p-userList__btn {
+  padding: 0.5rem 1rem;
+}
+
+.p-searchResult {
+  text-align: center;
+  padding: 2rem;
+}
+.p-searchResult__text {
+  color: #666;
+  font-size: 1rem;
+}
+
+.p-searchGuide {
+  text-align: center;
+  padding: 2rem;
+}
+
+.l-settings {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.l-settings__header {
+  margin-bottom: 2rem;
+}
+.l-settings__content {
+  background: var(--color-white);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+.l-settings__item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s;
+}
+.l-settings__item:last-child {
+  border-bottom: none;
+}
+.l-settings__item:hover {
+  background-color: var(--color-hover);
+}
+.l-settings__icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  border-radius: 50%;
+  margin-right: 1rem;
+  color: var(--color-primary);
+}
+.l-settings__textWrap {
+  flex: 1;
+}
+.l-settings__arrow {
+  color: var(--color-text-light);
+}
+.l-settings__toggle {
+  margin-left: 1rem;
+}
+.l-settings__footer {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+}
+.l-settings__logoutForm {
+  display: inline-block;
+}
+.l-settings__logoutBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+}
+
+.l-sectionWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.l-section h2 {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+@media (prefers-color-scheme: dark) {
+  .l-settings__content {
+    background: var(--color-bg-dark);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  .l-settings__item {
+    border-bottom-color: var(--color-border-dark);
+  }
+  .l-settings__item:hover {
+    background-color: var(--color-hover-dark);
+  }
+  .l-settings__icon {
+    background: var(--color-bg-dark);
+  }
+}
+@media screen and (width <= 1024px) {
+  .l-settings {
+    padding: 1rem;
+  }
+  .l-settings__content {
+    padding: 1rem;
+  }
+  .l-settings__item {
+    padding: 0.75rem;
+  }
+}
+/**
+ * FLOCSSにおけるComponentスタイルを管理するファイル
+ * 全htmlファイルにて`c-`が接頭辞につくものが対象
+*/
+.c-lgTtl {
+  text-align: center;
+  font-size: 2.4rem;
+  margin: 40px 0;
+  color: #333;
+}
+
+.c-midTtl {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.c-validation {
+  display: flex;
+  justify-content: center;
+}
+.c-validation__text {
+  color: red;
+  font-size: 1.4rem;
+}
+
+.c-input {
+  width: 100%;
+  padding: 1.2rem;
+  margin-bottom: 1.6rem;
+  border: 1px solid #000;
+  border-radius: 4px;
+  font-size: 1.6rem;
+  transition: border-color 0.3s ease;
+}
+.c-input:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
+.c-input::placeholder {
+  color: #999;
+}
+
+.c-btn {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+.c-btn:hover {
+  background-color: #0056b3;
+}
+.c-btn.--secondary {
+  background-color: #6c757d;
+}
+.c-btn.--secondary:hover {
+  background-color: #545b62;
+}
+
+.c-link {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  color: #4a90e2;
+  text-decoration: none;
+  font-size: 1.8rem;
+}
+.c-link:hover {
+  text-decoration: underline;
+}
+
+.c-icon__wrap {
+  border-radius: 50%;
+  overflow: hidden;
+}
+.c-icon__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.c-time {
+  font-size: 12px;
+  color: #999;
+}
+
+/**
+ * FLOCSSにおけるProjectスタイルを管理するファイル
+ * 全htmlファイルにて`p-`が接頭辞につくものが対象
+*/
+.p-form {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.p-form__btnWrap {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: 80%;
+}
+
+.p-messageBoard__input {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.p-messageBoard__textarea {
+  flex: 1;
+  padding: 10px;
+  height: 60px;
+}
+.p-messageBoard__list {
+  min-height: 300px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+.p-messageBoard__item {
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+.p-navLink {
+  color: #666;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+.p-navLink:hover {
+  color: #007bff;
+}
+
+.p-footerLink {
+  color: #666;
+  transition: color 0.3s ease;
+}
+.p-footerLink:hover {
+  color: #007bff;
+}
+
+.p-chatCard {
+  display: flex;
+  align-items: center;
+}
+.p-chatCard__iconWrap {
+  width: 48px;
+  height: 48px;
+}
+.p-chatCard__icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.p-chatCard__info {
+  flex: 1;
+  margin-left: 12px;
+}
+.p-chatCard__name {
+  margin: 0 0 4px;
+  font-weight: 500;
+  color: #333;
+}
+.p-chatCard__preview {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.p-chatCard__time {
+  font-size: 12px;
+  color: #999;
+}
+
+.p-message__iconWrap {
+  width: 32px;
+  height: 32px;
+}
+.p-message__icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.p-message__content {
+  position: relative;
+}
+.p-message__text {
+  margin: 0;
+  line-height: 1.5;
+  color: #333;
+}
+.p-message__time {
+  position: absolute;
+  bottom: -18px;
+  font-size: 12px;
+  color: #999;
+}
+.--sent .p-message__time {
+  right: 0;
+}
+
+.p-socialLink {
+  color: #666;
+  transition: color 0.3s ease;
+}
+.p-socialLink:hover {
+  color: #007bff;
+}
+
+.p-footerLogo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.p-copyright {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.p-confirm {
+  border-radius: 4px;
+  margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+.p-confirm__item {
+  background: #f5f5f5;
+  padding: 1.6rem;
+  margin-bottom: 15px;
+}
+.p-confirm__item:last-child {
+  margin-bottom: 0;
+}
+.p-confirm__label {
+  display: block;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+.p-confirm__txt {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+}
+
+.p-profile {
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+.p-profile__icon-wrap {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #e1e8ed;
+}
+.p-profile__name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.p-profile__email {
+  font-size: 1rem;
+  color: #657786;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.p-profile__created-date {
+  font-size: 0.875rem;
+  color: #657786;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.p-profile-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid #e1e8ed;
+  padding-top: 1.5rem;
+}
+.p-profile-stats__item {
+  font-size: 0.875rem;
+  color: #657786;
+}
+
+.p-tabs {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e1e8ed;
+}
+.p-tabs__list {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 2rem;
+}
+.p-tabs__link {
+  display: block;
+  padding: 1rem 0;
+  color: #657786;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.2s ease;
+}
+.p-tabs__link:hover {
+  color: #1a1a1a;
+}
+.p-tabs__link.is-active {
+  color: #1a1a1a;
+  font-weight: 700;
+}
+.p-tabs__link.is-active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #1a1a1a;
+}
+
+.p-post-list {
+  display: none;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.p-post-list.is-active {
+  display: block;
+}
+.p-post-list__item {
+  padding: 1rem;
+  border-bottom: 1px solid #e1e8ed;
+}
+.p-post-list__item:last-child {
+  border-bottom: none;
+}
+.p-post-list__content {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+  white-space: pre-wrap;
+}
+.p-post-list__date {
+  font-size: 0.875rem;
+  color: #657786;
+}
+
+@media screen and (width <= 1024px) {
+  .p-profile {
+    padding: 1.5rem;
+  }
+  .p-profile-stats {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  .p-tabs__list {
+    gap: 1rem;
+  }
+  .p-tabs__link {
+    padding: 0.75rem 0;
+    font-size: 0.875rem;
+  }
+}
+/**
+ * FLOCSSにおけるUtilityスタイルを管理するファイル
+ * 全htmlファイルにて`u-`が接頭辞につくものが対象
+*/

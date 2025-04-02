@@ -4,20 +4,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/css/top.css" />
+    <link rel="stylesheet" href="/css/main.css" />
     <title>ChatApp</title>
   </head>
   <body>
     <div class="l-app">
       <!-- header -->
-      {{template "header"}}
+      {{template "header" .}}
 
       <!-- main -->
-      <main class="l-main">{{template "content"}}</main>
+      <main class="l-main">{{template "content" .}}</main>
 
       <!-- footer -->
-      {{template "footer"}}
+      {{template "footer" .}}
     </div>
+    <script>
+      // URLパラメータからsuccessメッセージを取得
+      const urlParams = new URLSearchParams(window.location.search);
+      const successMessage = urlParams.get("success");
+      if (successMessage) {
+        alert(successMessage);
+      }
+    </script>
   </body>
 </html>
 {{end}}
