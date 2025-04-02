@@ -133,11 +133,17 @@ func GetUserData(userID string) (*repository.User, error) {
 		return nil, fmt.Errorf("ユーザー情報の取得に失敗しました: %v", err)
 	}
 
+	// アイコンURLを取得（存在しない場合は空文字列）
+	iconURL := ""
+	if icon, ok := userData["iconURL"].(string); ok {
+		iconURL = icon
+	}
+
 	return &repository.User{
 		ID:       userData["id"].(string),
 		Name:     userData["name"].(string),
 		Email:    userData["email"].(string),
-		IconURL:     userData["icon"].(string),
+		IconURL:  iconURL,
 		IsOnline: userData["isOnline"].(bool),
 	}, nil
 }
