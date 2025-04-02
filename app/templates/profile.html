@@ -5,11 +5,25 @@
   <section class="p-profile">
     <div class="p-profile__icon-wrap c-icon__wrap">
       <!-- アイコン画像 -->
-      <img
-        src="../assets/default/user_icon/default_icon_monkey.png"
-        alt="アイコン"
-        class="c-icon__img"
-      />
+      <form action="/profile/icon" method="POST" enctype="multipart/form-data">
+        <label for="icon-upload" class="c-icon__label">
+          <img
+            src="{{ if .User.IconURL }}{{ .User.IconURL }}{{ else }}{{ getRandomDefaultIcon }}{{ end }}"
+            alt="アイコン"
+            class="c-icon__img"
+            id="profile-icon"
+          />
+          <input
+            type="file"
+            id="icon-upload"
+            name="icon"
+            accept="image/*"
+            class="c-icon__input"
+            style="display: none"
+            onchange="handleIconChange(event)"
+          />
+        </label>
+      </form>
     </div>
 
     <h1 class="p-profile__name">{{.User.Name}}</h1>
@@ -79,4 +93,32 @@
     </section>
   </div>
 </div>
+
+<script>
+  // アイコン画像の変更を処理する関数
+  function handleIconChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+      // 画像のプレビューを表示
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.getElementById("profile-icon");
+        img.src = e.target.result;
+
+        // フォームを自動送信
+        event.target.form.submit();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // ページ読み込み時に保存された画像を復元
+  document.addEventListener("DOMContentLoaded", function () {
+    const savedIcon = localStorage.getItem("selectedIcon");
+    if (savedIcon) {
+      const img = document.getElementById("profile-icon");
+      img.src = savedIcon;
+    }
+  });
+</script>
 {{ end }}

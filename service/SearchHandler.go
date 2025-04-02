@@ -137,7 +137,7 @@ func GetUserData(userID string) (*repository.User, error) {
 		ID:       userData["id"].(string),
 		Name:     userData["name"].(string),
 		Email:    userData["email"].(string),
-		Icon:     userData["icon"].(string),
+		IconURL:     userData["icon"].(string),
 		IsOnline: userData["isOnline"].(bool),
 	}, nil
 }
