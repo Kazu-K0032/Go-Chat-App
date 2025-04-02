@@ -390,7 +390,7 @@ func getChatHistory(user *repository.User) ([]Chat, error) {
 			Contact: Contact{
 				ID:       targetUser.ID,
 				Username: targetUser.Name,
-				Icon:     targetUser.Icon,
+				Icon:     targetUser.IconURL,
 				LastSeen: time.Now(), // 仮の値として現在時刻を設定
 			},
 			Messages:  messages,

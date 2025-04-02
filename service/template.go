@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"math/rand"
@@ -21,6 +22,8 @@ type TemplateData struct {
 	ResetForm        ResetForm
 	User             *repository.User
 	Tweets           []Tweet
+	Replies          []Tweet
+	Likes            []Tweet
 }
 
 // デフォルトアイコンのパス
@@ -92,7 +95,6 @@ func GenerateHTML(writer http.ResponseWriter, data interface{}, filenames ...str
 		files = append(files, path)
 	}
 
-	// テンプレートパース時のエラーハンドリング
 	templates, err := template.New("layout").Funcs(templateFuncs).ParseFiles(files...)
 	if err != nil {
 		http.Error(writer, "テンプレートの読み込みに失敗しました", http.StatusInternalServerError)
@@ -100,11 +102,15 @@ func GenerateHTML(writer http.ResponseWriter, data interface{}, filenames ...str
 		return
 	}
 
-	// テンプレート実行時のエラーハンドリング
-	err = templates.ExecuteTemplate(writer, "layout", data)
+	// テンプレートをバッファに出力
+	var buf bytes.Buffer
+	err = templates.ExecuteTemplate(&buf, "layout", data)
 	if err != nil {
 		http.Error(writer, "テンプレートの実行に失敗しました", http.StatusInternalServerError)
-		// fmt.Println("テンプレート実行エラー:", err)
-		// fmt.Printf("渡されたデータ: %#v\n", data)
+		fmt.Println("テンプレート実行エラー:", err)
+		return
 	}
+
+	// 成功したらまとめて出力
+	buf.WriteTo(writer)
 }
