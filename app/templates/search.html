@@ -1,0 +1,110 @@
+{{ define "content" }}
+<div class="l-search">
+  <!-- 検索フォーム -->
+  <div class="l-search__header">
+    <form class="p-searchForm" method="GET" action="/search">
+      <div class="p-searchForm__inputWrap">
+        <input
+          type="text"
+          name="username"
+          class="p-searchForm__input"
+          placeholder="ユーザー名で検索"
+          value="{{ .Query }}"
+        />
+        <button type="submit" class="p-searchForm__btn c-btn">
+          <span class="p-searchForm__btnText">検索</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 検索結果 -->
+  <div class="l-search__content">
+    {{ if .Query }} {{ if .Users }}
+    <ul class="p-userList">
+      {{ range .Users }} {{ $name := .name }} {{ $icon := .icon }} {{ $isOnline
+      := .isOnline }} {{ $id := .id }}
+      <li class="p-userList__item">
+        <div class="p-userList__imgWrap c-icon__wrap">
+          {{ if $icon }}
+          <img
+            src="{{ $icon }}"
+            alt="{{ $name }}のアイコン"
+            class="p-userList__icon c-icon__img"
+            onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
+          />
+          {{ else }}
+          <img
+            src="{{ getRandomDefaultIcon }}"
+            alt="{{ $name }}のデフォルトアイコン"
+            class="p-userList__icon c-icon__img"
+          />
+          {{ end }}
+        </div>
+        <div class="p-userList__info">
+          <p class="p-userList__name">{{ $name }}</p>
+          <p class="p-userList__status">
+            {{ if $isOnline }}オンライン{{ else }}オフライン{{ end }}
+          </p>
+        </div>
+        <div class="p-userList__action">
+          <form method="POST" action="/chat/{{ $id }}">
+            <button type="submit" class="p-userList__btn c-btn">
+              チャットを開始
+            </button>
+          </form>
+        </div>
+      </li>
+      {{ end }}
+    </ul>
+    {{ else }}
+    <div class="p-searchResult">
+      <p class="p-searchResult__text">検索結果が見つかりませんでした</p>
+    </div>
+    {{ end }} {{ else }}
+    <!-- 全ユーザー一覧 -->
+    {{ if .Users }}
+    <ul class="p-userList">
+      {{ range .Users }} {{ $name := .name }} {{ $icon := .icon }} {{ $isOnline
+      := .isOnline }} {{ $id := .id }}
+      <li class="p-userList__item">
+        <div class="p-userList__imgWrap c-icon__wrap">
+          {{ if $icon }}
+          <img
+            src="{{ $icon }}"
+            alt="{{ $name }}のアイコン"
+            class="p-userList__icon c-icon__img"
+            onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
+          />
+          {{ else }}
+          <img
+            src="{{ getRandomDefaultIcon }}"
+            alt="{{ $name }}のデフォルトアイコン"
+            class="p-userList__icon c-icon__img"
+          />
+          {{ end }}
+        </div>
+        <div class="p-userList__info">
+          <p class="p-userList__name">{{ $name }}</p>
+          <p class="p-userList__status">
+            {{ if $isOnline }}オンライン{{ else }}オフライン{{ end }}
+          </p>
+        </div>
+        <div class="p-userList__action">
+          <form method="POST" action="/chat/{{ $id }}">
+            <button type="submit" class="p-userList__btn c-btn">
+              チャットを開始
+            </button>
+          </form>
+        </div>
+      </li>
+      {{ end }}
+    </ul>
+    {{ else }}
+    <div class="p-searchGuide">
+      <p class="p-searchGuide__text">ユーザーが見つかりませんでした</p>
+    </div>
+    {{ end }} {{ end }}
+  </div>
+</div>
+{{ end }}

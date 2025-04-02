@@ -1,0 +1,82 @@
+{{ define "content" }}
+<!-- ラッパとしてのレイアウトコンテナ -->
+<div class="l-container">
+  <!-- プロフィール部分 -->
+  <section class="p-profile">
+    <div class="p-profile__icon-wrap c-icon__wrap">
+      <!-- アイコン画像 -->
+      <img
+        src="../assets/default/user_icon/default_icon_monkey.png"
+        alt="アイコン"
+        class="c-icon__img"
+      />
+    </div>
+
+    <h1 class="p-profile__name">{{.User.Name}}</h1>
+    <p class="p-profile__email">{{.User.Email}}</p>
+    <p class="p-profile__created-date">
+      アカウント作成日: {{.User.CreatedAt.Format "2006-01-02"}}
+    </p>
+
+    <!-- フォロー情報など -->
+    <ul class="p-profile-stats">
+      <li class="p-profile-stats__item">
+        最終更新: {{.User.UpdatedAt.Format "2006-01-02 15:04:05"}}
+      </li>
+      <li class="p-profile-stats__item">
+        アカウント作成: {{.User.CreatedAt.Format "2006-01-02"}}
+      </li>
+    </ul>
+  </section>
+
+  <!-- タブナビゲーション -->
+  <nav class="p-tabs">
+    <ul class="p-tabs__list">
+      <li class="p-tabs__item">
+        <a href="#posts" class="p-tabs__link is-active" data-tab="posts"
+          >投稿</a
+        >
+      </li>
+      <li class="p-tabs__item">
+        <a href="#replies" class="p-tabs__link" data-tab="replies">返信</a>
+      </li>
+      <li class="p-tabs__item">
+        <a href="#likes" class="p-tabs__link" data-tab="likes">いいね</a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- タブコンテンツ -->
+  <div class="p-tab-contents">
+    <!-- 投稿タブ -->
+    <section id="posts" class="p-post-list is-active">
+      {{range .Tweets}}
+      <article class="p-post-list__item">
+        <p class="p-post-list__content">{{.Content}}</p>
+        <time class="p-post-list__date">{{.Date}}</time>
+      </article>
+      {{end}}
+    </section>
+
+    <!-- 返信タブ -->
+    <section id="replies" class="p-post-list">
+      {{range .Replies}}
+      <article class="p-post-list__item">
+        <p class="p-post-list__content">{{.Content}}</p>
+        <time class="p-post-list__date">{{.Date}}</time>
+      </article>
+      {{end}}
+    </section>
+
+    <!-- いいねタブ -->
+    <section id="likes" class="p-post-list">
+      {{range .Likes}}
+      <article class="p-post-list__item">
+        <p class="p-post-list__content">{{.Content}}</p>
+        <time class="p-post-list__date">{{.Date}}</time>
+      </article>
+      {{end}}
+    </section>
+  </div>
+</div>
+{{ end }}

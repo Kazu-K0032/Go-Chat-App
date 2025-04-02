@@ -5,33 +5,61 @@ import (
 	"html/template"
 	"net/http"
 
-	"security_chat_app/config"
 	"security_chat_app/service"
 )
 
+// contextKey コンテキストのキーとして使用するカスタム型
+type contextKey string
+
+const templateDataKey contextKey = "templateData"
+
 // layout.htmlをベースとしたHTMLを生成し、レスポンスに書きだす
-func generateHTML(writer http.ResponseWriter, data interface{}, filenames ...string) {
+func GenerateHTML(writer http.ResponseWriter, data interface{}, filenames ...string) {
 	var files []string
 	for _, file := range filenames {
-		files = append(files, fmt.Sprintf("app/templates/%s.html", file))
+		path := fmt.Sprintf("app/templates/%s.html", file)
+		files = append(files, path)
 	}
-	templates := template.Must(template.ParseFiles(files...))
-	templates.ExecuteTemplate(writer, "layout", data)
+	templates, err := template.ParseFiles(files...)
+	if err != nil {
+		http.Error(writer, "テンプレートの読み込みに失敗しました", http.StatusInternalServerError)
+		fmt.Println("テンプレート読み込みエラー:", err)
+		return
+	}
+
+	err = templates.ExecuteTemplate(writer, "layout", data)
+	if err != nil {
+		http.Error(writer, "テンプレートの実行に失敗しました", http.StatusInternalServerError)
+		fmt.Println("テンプレート実行エラー:", err)
+	}
 }
 
-// HTTPサーバーを起動 + '/'へのアクセスでtopが実行されるようにする
+// SetupRouter ルーティングの設定
+func SetupRouter(chatUsecase service.ChatUsecase) *http.ServeMux {
+	mux := http.NewServeMux()
+	// 静的ファイル (CSS/JS)
+	mux.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("app/css"))))
+	mux.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("app/js"))))
+	// 静的ファイルの提供
+	fs := http.FileServer(http.Dir("app/static"))
+	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+	// ルーティングの設定
+	mux.HandleFunc("/", top)
+	mux.HandleFunc("/login", service.LoginHandler)
+	mux.HandleFunc("/logout", service.LogoutHandler)
+	mux.HandleFunc("/signup", service.SignupHandler)
+	mux.HandleFunc("/signup/confirm", service.SignupConfirmHandler)
+	mux.HandleFunc("/reset-password", service.ResetPasswordHandler)
+	mux.HandleFunc("/profile", service.ProfileHandler)
+	mux.HandleFunc("/chat/", service.StartChatHandler)
+	mux.HandleFunc("/chat", service.ChatHandler)
+	mux.HandleFunc("/search", service.SearchHandler)
+	mux.HandleFunc("/settings", service.SettingsHandler)
+
+	return mux
+}
+
 func StartMainServer(chatUsecase service.ChatUsecase) error {
-	// CSSファイル用
-	cssFs := http.FileServer(http.Dir("app/css"))
-	http.Handle("/css/", http.StripPrefix("/css/", cssFs))
-
-	// JSファイル用
-	jsFs := http.FileServer(http.Dir("app/js"))
-	http.Handle("/js/", http.StripPrefix("/js/", jsFs))
-
-	// チャット画面用
-	http.HandleFunc("/", top)
-
-	chatUsecase.CreateChat("test", "test")
-	return http.ListenAndServe(":"+config.Config.Port, nil)
+	mux := SetupRouter(chatUsecase)
+	return http.ListenAndServe(":8080", mux)
 }

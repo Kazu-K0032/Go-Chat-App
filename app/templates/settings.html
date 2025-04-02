@@ -1,0 +1,81 @@
+{{ define "content" }}
+<div class="l-settings">
+  <div class="l-settings__header">
+    <h1 class="l-settings__title c-lgTtl">設定</h1>
+  </div>
+
+  <div class="l-settings__content">
+    <div class="l-sectionWrap">
+      <!-- アカウント設定 -->
+      <section class="l-section">
+        <h2 class="c-midTtl">アカウント設定</h2>
+        <div class="l-settings__content">
+          <a href="/settings/password" class="l-settings__item">
+            <div class="l-settings__icon">
+              <i class="fas fa-key"></i>
+            </div>
+            <div class="l-settings__textWrap">
+              <span class="c-label">パスワードの変更</span>
+              <span class="p-txt">パスワードを再設定します</span>
+            </div>
+            <div class="l-settings__arrow">
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- アプリ設定 -->
+      <section class="l-section">
+        <h2 class="c-midTtl">アプリ設定</h2>
+        <div class="l-settings__content">
+          <div class="l-settings__item">
+            <div class="l-settings__icon">
+              <i class="fas fa-moon"></i>
+            </div>
+            <div class="l-settings__textWrap">
+              <span class="c-label">ダークモード</span>
+              <span class="p-txt">テーマを切り替えます</span>
+            </div>
+            <div class="l-settings__toggle">
+              <label class="c-toggle">
+                <input type="checkbox" id="theme-toggle" />
+                <span class="c-toggle__slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- その他 -->
+      <section class="l-section">
+        <h2 class="c-midTtl">その他</h2>
+        <div class="l-settings__content">
+          <a href="/terms" class="l-settings__item">
+            <div class="l-settings__icon">
+              <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="l-settings__textWrap">
+              <span class="c-label">利用規約</span>
+              <span class="p-txt">利用規約を確認します</span>
+            </div>
+            <div class="l-settings__arrow">
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <!-- ログアウト -->
+    <div class="l-settings__footer">
+      <form method="POST" action="/logout" class="l-settings__logoutForm">
+        <button type="submit" class="l-settings__logoutBtn c-btn c-btn--danger">
+          <i class="fas fa-sign-out-alt"></i>
+          ログアウト
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{{ end }}
