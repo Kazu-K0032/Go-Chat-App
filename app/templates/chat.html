@@ -11,9 +11,9 @@
       >
         <a href="/chat?chat_id={{ .ID }}" class="p-chatCard__link">
           <div class="l-chat__imgWrap p-chatCard__iconWrap c-icon__wrap">
-            {{ if .Contact.Icon }}
+            {{ if .Contact.IconURL }}
             <img
-              src="{{ .Contact.Icon }}"
+              src="{{ .Contact.IconURL }}"
               alt="{{ .Contact.Username }}のアイコン"
               class="p-chatCard__icon c-icon__img"
               onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
@@ -67,9 +67,9 @@
       {{ if ne .SenderID $.User.ID }}
       <div class="l-chatMain__message p-message --received">
         <div class="l-chatMain__imgWrap p-message__iconWrap c-icon__wrap">
-          {{ if $.CurrentChat.Contact.Icon }}
+          {{ if $.CurrentChat.Contact.IconURL }}
           <img
-            src="{{ $.CurrentChat.Contact.Icon }}"
+            src="{{ $.CurrentChat.Contact.IconURL }}"
             alt="{{ $.CurrentChat.Contact.Username }}のアイコン"
             class="p-message__icon c-icon__img"
             onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
