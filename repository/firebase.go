@@ -16,6 +16,16 @@ import (
 	"google.golang.org/api/option"
 )
 
+// Post 投稿情報を持つ構造体
+type Post struct {
+	ID        string    `json:"id" firestore:"id"`
+	Content   string    `json:"content" firestore:"content"`
+	UserID    string    `json:"user_id" firestore:"user_id"`
+	ReplyTo   string    `json:"reply_to,omitempty" firestore:"reply_to,omitempty"`
+	LikedBy   []string  `json:"liked_by" firestore:"liked_by"`
+	CreatedAt time.Time `json:"created_at" firestore:"created_at"`
+}
+
 func InitFirebase() (*firestore.Client, error) {
 	opt := option.WithCredentialsFile("config/serviceAccountKey.json")
 
@@ -407,4 +417,99 @@ func GetDefaultIconURL(objectPath string) (string, error) {
 	fmt.Printf("デフォルトアイコンのURLを取得しました: %s\n", url)
 
 	return url, nil
+}
+
+// GetUserPosts ユーザーの投稿を取得する
+func GetUserPosts(userID string) ([]Post, error) {
+	client, err := InitFirebase()
+	if err != nil {
+		return nil, err
+	}
+	defer client.Close()
+
+	ctx := context.Background()
+	query := client.Collection("posts").
+		Where("user_id", "==", userID).
+		Where("reply_to", "==", "").
+		OrderBy("created_at", firestore.Desc)
+
+	docs, err := query.Documents(ctx).GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var posts []Post
+	for _, doc := range docs {
+		var post Post
+		if err := doc.DataTo(&post); err != nil {
+			continue
+		}
+		post.ID = doc.Ref.ID
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}
+
+// GetUserReplies ユーザーの返信を取得する
+func GetUserReplies(userID string) ([]Post, error) {
+	client, err := InitFirebase()
+	if err != nil {
+		return nil, err
+	}
+	defer client.Close()
+
+	ctx := context.Background()
+	query := client.Collection("posts").
+		Where("user_id", "==", userID).
+		Where("reply_to", "!=", "").
+		OrderBy("created_at", firestore.Desc)
+
+	docs, err := query.Documents(ctx).GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var replies []Post
+	for _, doc := range docs {
+		var reply Post
+		if err := doc.DataTo(&reply); err != nil {
+			continue
+		}
+		reply.ID = doc.Ref.ID
+		replies = append(replies, reply)
+	}
+
+	return replies, nil
+}
+
+// GetUserLikedPosts ユーザーがいいねした投稿を取得する
+func GetUserLikedPosts(userID string) ([]Post, error) {
+	client, err := InitFirebase()
+	if err != nil {
+		return nil, err
+	}
+	defer client.Close()
+
+	ctx := context.Background()
+	query := client.Collection("posts").
+		Where("liked_by", "array-contains", userID).
+		OrderBy("created_at", firestore.Desc)
+
+	docs, err := query.Documents(ctx).GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var likes []Post
+	for _, doc := range docs {
+		var post Post
+		if err := doc.DataTo(&post); err != nil {
+			continue
+		}
+		post.ID = doc.Ref.ID
+		likes = append(likes, post)
+	}
+
+	return likes, nil
 }

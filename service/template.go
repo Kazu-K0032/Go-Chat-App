@@ -21,9 +21,9 @@ type TemplateData struct {
 	ValidationErrors []string
 	ResetForm        ResetForm
 	User             *repository.User
-	Tweets           []Tweet
-	Replies          []Tweet
-	Likes            []Tweet
+	Tweets           []repository.Post
+	Replies          []repository.Post
+	Likes            []repository.Post
 }
 
 // デフォルトアイコンのパス
