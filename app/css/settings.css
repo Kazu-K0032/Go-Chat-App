@@ -1,6 +1,6 @@
 @charset "UTF-8";
 /**
- * トップページのスタイルを管理するファイル
+ * 設定ページのスタイルを管理するファイル
 */
 *,
 ::before,
@@ -1120,5 +1120,202 @@ body {
   .p-message__time {
     bottom: -1.6rem;
     font-size: 1rem;
+  }
+}
+.l-settings {
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+.l-settings__header {
+  margin-bottom: 2rem;
+}
+.l-settings__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+.l-settings__items {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.l-settings__item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1.5rem;
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+  background: none;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  cursor: pointer;
+}
+.l-settings__item:last-child {
+  border-bottom: none;
+}
+.l-settings__item:hover {
+  background-color: #f8f9fa;
+}
+.l-settings__icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  margin-right: 2rem;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: #007bff;
+  font-size: 1.6rem;
+}
+.l-settings__textWrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  row-gap: 1rem;
+}
+.l-settings__arrow {
+  color: #666;
+  font-size: 1.4rem;
+}
+.l-settings__footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+}
+.l-settings__logoutForm {
+  width: 100%;
+  max-width: 300px;
+}
+.l-settings__btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  padding: 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #ff4757;
+  transition: background-color 0.3s ease;
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+.l-settings__btn:hover {
+  background-color: #ff6b81;
+}
+.l-settings__passwordForm {
+  display: none;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+}
+.l-settings__passwordForm.is-active {
+  display: flex;
+}
+.l-settings__errors {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.l-settings__formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.l-settings__formActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.l-settings__formActions .c-btn {
+  flex: 1;
+}
+
+@media screen and (width <= 1024px) {
+  .l-settings {
+    padding: 1.5rem;
+  }
+  .l-settings__content {
+    padding: 1.5rem;
+  }
+  .l-settings__item {
+    padding: 1.2rem;
+  }
+  .l-settings__icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 1.2rem;
+    font-size: 1.4rem;
+  }
+  .l-settings__btn {
+    padding: 1rem;
+    font-size: 1.4rem;
+  }
+  .l-settings__passwordForm {
+    gap: 1.2rem;
+    padding: 1.2rem;
+  }
+}
+@media screen and (width <= 649px) {
+  .l-settings {
+    padding: 1rem;
+  }
+  .l-settings__header {
+    margin-bottom: 1.5rem;
+  }
+  .l-settings__content {
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+  .l-settings__item {
+    padding: 1rem;
+  }
+  .l-settings__icon {
+    width: 36px;
+    height: 36px;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+  }
+  .l-settings__textWrap {
+    gap: 0.2rem;
+  }
+  .l-settings__arrow {
+    font-size: 1.2rem;
+  }
+  .l-settings__footer {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+  .l-settings__btn {
+    padding: 0.8rem;
+    font-size: 1.3rem;
+  }
+  .l-settings__passwordForm {
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .l-settings__formActions {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .l-sectionWrap {
+    gap: 1.5rem;
+  }
+  .l-section {
+    gap: 1rem;
   }
 }

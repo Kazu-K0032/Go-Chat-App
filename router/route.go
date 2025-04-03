@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
 
 	"security_chat_app/repository"
@@ -25,20 +24,16 @@ type SignupForm struct {
 // '/'へのアクセス
 func top(w http.ResponseWriter, r *http.Request) {
 	// セッションの検証
-	session, err := service.ValidateSession(w, r)
+	_, err := service.ValidateSession(w, r)
 	if err != nil {
-		fmt.Println("セッションが無効です")
+		// 未ログインの場合はログイン画面を表示
 		data := TemplateData{
 			IsLoggedIn: false,
 		}
-		service.GenerateHTML(w, data, "layout", "header", "top", "footer")
+		service.GenerateHTML(w, data, "layout", "header", "login", "footer")
 		return
 	}
 
-	// セッションが有効な場合
-	data := TemplateData{
-		IsLoggedIn: true,
-		User:       session.User,
-	}
-	service.GenerateHTML(w, data, "layout", "header", "top", "footer")
+	// ログイン済みの場合はチャット画面にリダイレクト
+	http.Redirect(w, r, "/search", http.StatusSeeOther)
 }
