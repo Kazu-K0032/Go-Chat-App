@@ -1,3 +1,5 @@
+// プロフィールページで使用する関数などを定義するファイルです
+
 package service
 
 import (
@@ -12,17 +14,13 @@ import (
 	"security_chat_app/repository"
 )
 
-// Tweet ツイート情報を持つ構造体
-type Tweet struct {
-	Content string
-	Date    string
-}
-
 // ProfileData プロフィールページのデータ構造体
 type ProfileData struct {
 	IsLoggedIn bool
 	User       *repository.User
-	Tweets     []Tweet
+	Posts      []repository.Post
+	Replies    []repository.Post
+	Likes      []repository.Post
 }
 
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
@@ -70,6 +68,25 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("デフォルトアイコンを設定しました: %s\n", iconURL)
 	}
 
+	// 投稿、返信、いいねを取得
+	posts, err := repository.GetUserPosts(user.ID)
+	if err != nil {
+		fmt.Printf("投稿の取得に失敗: %v\n", err)
+		posts = []repository.Post{}
+	}
+
+	replies, err := repository.GetUserReplies(user.ID)
+	if err != nil {
+		fmt.Printf("返信の取得に失敗: %v\n", err)
+		replies = []repository.Post{}
+	}
+
+	likes, err := repository.GetUserLikedPosts(user.ID)
+	if err != nil {
+		fmt.Printf("いいねの取得に失敗: %v\n", err)
+		likes = []repository.Post{}
+	}
+
 	// 最終更新日時を現在時刻に更新
 	user.UpdatedAt = time.Now()
 	err = repository.UpdateField("users", user.ID, "updated_at", user.UpdatedAt)
@@ -79,17 +96,12 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// プロフィールデータの作成
-	data := TemplateData{
+	data := ProfileData{
 		IsLoggedIn: true,
 		User:       user,
-		Tweets: []Tweet{
-			{
-				Content: "VBAの資格範囲終わった...。\n最初の章がデバッグに関する内容だったけど、最初にやるべきだったな。\nこれ知ってるだけで無駄な手間省けた。データ型を調べたりステップ実行で\nエラー特定したりと初期段階からやれてたらなあ",
-				Date:    "2月24日",
-			},
-		},
-		Replies: []Tweet{}, // 空のスライスで初期化
-		Likes:   []Tweet{}, // 空のスライスで初期化
+		Posts:      posts,
+		Replies:    replies,
+		Likes:      likes,
 	}
 
 	// テンプレートを描画

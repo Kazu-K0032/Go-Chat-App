@@ -7,62 +7,92 @@
   <div class="l-settings__content">
     <div class="l-sectionWrap">
       <!-- アカウント設定 -->
-      <section class="l-section">
+      <section class="l-section --settings">
         <h2 class="c-midTtl">アカウント設定</h2>
-        <div class="l-settings__content">
-          <a href="/settings/password" class="l-settings__item">
+        <div class="l-settings__items">
+          <button
+            type="button"
+            class="l-settings__item"
+            onclick="togglePasswordForm()"
+          >
             <div class="l-settings__icon">
               <i class="fas fa-key"></i>
             </div>
             <div class="l-settings__textWrap">
-              <span class="c-label">パスワードの変更</span>
-              <span class="p-txt">パスワードを再設定します</span>
+              <span class="c-txt --settings">パスワードの変更</span>
+              <span class="c-txt --settings">パスワードを再設定します</span>
             </div>
             <div class="l-settings__arrow">
               <i class="fas fa-chevron-right"></i>
             </div>
-          </a>
-        </div>
-      </section>
+          </button>
 
-      <!-- アプリ設定 -->
-      <section class="l-section">
-        <h2 class="c-midTtl">アプリ設定</h2>
-        <div class="l-settings__content">
-          <div class="l-settings__item">
-            <div class="l-settings__icon">
-              <i class="fas fa-moon"></i>
+          <form
+            method="POST"
+            action="/settings"
+            class="l-settings__passwordForm {{ if .ShowPasswordForm }}is-active{{ end }}"
+          >
+            {{ if .ValidationErrors }}
+            <div class="l-settings__errors">
+              {{ range .ValidationErrors }}
+              <p class="c-validation__text">{{ . }}</p>
+              {{ end }}
             </div>
-            <div class="l-settings__textWrap">
-              <span class="c-label">ダークモード</span>
-              <span class="p-txt">テーマを切り替えます</span>
-            </div>
-            <div class="l-settings__toggle">
-              <label class="c-toggle">
-                <input type="checkbox" id="theme-toggle" />
-                <span class="c-toggle__slider"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-      </section>
+            {{ end }}
 
-      <!-- その他 -->
-      <section class="l-section">
-        <h2 class="c-midTtl">その他</h2>
-        <div class="l-settings__content">
-          <a href="/terms" class="l-settings__item">
-            <div class="l-settings__icon">
-              <i class="fas fa-file-alt"></i>
+            <div class="l-settings__formGroup">
+              <label for="current_password" class="c-label"
+                >現在のパスワード</label
+              >
+              <input
+                type="password"
+                id="current_password"
+                name="current_password"
+                class="c-input"
+                value="{{ .PasswordForm.CurrentPassword }}"
+                required
+              />
             </div>
-            <div class="l-settings__textWrap">
-              <span class="c-label">利用規約</span>
-              <span class="p-txt">利用規約を確認します</span>
+
+            <div class="l-settings__formGroup">
+              <label for="new_password" class="c-label">新しいパスワード</label>
+              <input
+                type="password"
+                id="new_password"
+                name="new_password"
+                class="c-input"
+                value="{{ .PasswordForm.NewPassword }}"
+                required
+              />
             </div>
-            <div class="l-settings__arrow">
-              <i class="fas fa-chevron-right"></i>
+
+            <div class="l-settings__formGroup">
+              <label for="new_password_confirm" class="c-label"
+                >新しいパスワード（確認）</label
+              >
+              <input
+                type="password"
+                id="new_password_confirm"
+                name="new_password_confirm"
+                class="c-input"
+                value="{{ .PasswordForm.NewPasswordConfirm }}"
+                required
+              />
             </div>
-          </a>
+
+            <div class="l-settings__formActions">
+              <button type="submit" class="l-settings__submitBtn c-btn">
+                パスワードを更新
+              </button>
+              <button
+                type="button"
+                class="l-settings__cancelBtn c-btn c-btn--secondary"
+                onclick="togglePasswordForm()"
+              >
+                キャンセル
+              </button>
+            </div>
+          </form>
         </div>
       </section>
     </div>
@@ -70,7 +100,7 @@
     <!-- ログアウト -->
     <div class="l-settings__footer">
       <form method="POST" action="/logout" class="l-settings__logoutForm">
-        <button type="submit" class="l-settings__logoutBtn c-btn c-btn--danger">
+        <button type="submit" class="l-settings__btn c-btn">
           <i class="fas fa-sign-out-alt"></i>
           ログアウト
         </button>
@@ -78,4 +108,6 @@
     </div>
   </div>
 </div>
+
+<script src="/js/settings.js"></script>
 {{ end }}

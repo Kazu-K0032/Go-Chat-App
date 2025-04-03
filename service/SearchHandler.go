@@ -90,6 +90,12 @@ func getSearchPageData(user *repository.User, r *http.Request) (SearchPageData, 
 		userID := u["id"].(string)
 		fmt.Printf("ユーザーID: %s\n", userID)
 		if userID != user.ID && !chattedUsers[userID] {
+			// アイコンURLを取得（存在しない場合は空文字列）
+			iconURL := ""
+			if icon, ok := u["iconURL"].(string); ok {
+				iconURL = icon
+			}
+			u["icon"] = iconURL
 			filteredUsers = append(filteredUsers, u)
 		}
 	}
