@@ -99,7 +99,7 @@
     border-radius: 4px;
     background-color: #007bff;
     transition: background-color 0.2s;
-    color: white;
+    color: #fff;
     text-decoration: none;
 
     &:hover {
@@ -322,5 +322,5 @@
 // ==============================================
 // SMALL
 // ==============================================
-@media screen and (width <= 649px) {
-}
+// @media screen and (width <= 649px) {
+// }

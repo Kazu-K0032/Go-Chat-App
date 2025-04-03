@@ -3,6 +3,7 @@
  * 全htmlファイルにて`c-`が接頭辞につくものが対象
 */
 
+@use "sass:color";
 @use "../foundation/_reset";
 @use "../foundation/_base";
 @use "../foundation/_variables" as *;
@@ -38,7 +39,7 @@
     text-align: center;
 
     &:hover {
-      color: darken($color-text-gray, 15%);
+      color: color.adjust($color-text-gray, $lightness: -15%);
     }
   }
 }
@@ -48,7 +49,7 @@
   justify-content: center;
 
   &__text {
-    color: red;
+    color: #f00;
     font-size: 1.4rem;
   }
 }

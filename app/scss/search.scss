@@ -19,7 +19,8 @@
 }
 
 .l-searchForm {
-  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
   max-width: 800px;
   margin: 0 auto;
 
@@ -31,8 +32,6 @@
   }
 
   &__input {
-    display: grid;
-    grid-template-columns: 1fr 200px;
     width: 100%;
     min-width: 0;
     border: 1px solid #e0e0e0;
@@ -92,8 +91,9 @@
   text-align: center;
 
   &__text {
-    color: #666;
-    font-size: 1rem;
+    color: $color-secondary;
+    font-size: 2rem;
+    font-weight: $font-weight-medium;
   }
 }
 
