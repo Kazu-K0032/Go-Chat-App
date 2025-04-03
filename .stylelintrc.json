@@ -1,5 +1,8 @@
 {
-  "extends": ["stylelint-config-standard-scss"],
+  "extends": [
+    "stylelint-config-standard-scss",
+    "stylelint-config-recess-order"
+  ],
   "plugins": ["stylelint-order"],
   "rules": {
     "scss/load-no-partial-leading-underscore": null,
@@ -70,6 +73,9 @@
       "justify-content",
       "align-items",
       "align-content",
+      "gap",
+      "row-gap",
+      "column-gap",
       "order",
       "visibility",
       "overflow",
@@ -234,6 +240,9 @@
       "page",
       "orphans",
       "widows"
-    ]
+    ],
+    "keyframes-name-pattern": null,
+    "property-no-vendor-prefix": null,
+    "value-no-vendor-prefix": null
   }
 }
