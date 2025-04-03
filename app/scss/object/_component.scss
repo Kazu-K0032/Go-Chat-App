@@ -30,6 +30,12 @@
   }
 }
 
+.c-logo {
+  font-weight: bold;
+  font-size: 2rem;
+  color: $color-bg-dark;
+}
+
 .c-input {
   width: 100%;
   padding: 1.2rem;
@@ -82,8 +88,17 @@
   text-decoration: none;
   font-size: 1.8rem;
 
+  &.--footer {
+    // フッターのリンク
+    color: $color-text-gray;
+  }
+
   &:hover {
     text-decoration: underline;
+    &.--footer {
+      // フッターのリンク
+      text-decoration: none;
+    }
   }
 }
 
@@ -100,6 +115,16 @@
   }
 }
 
+.c-txt {
+  color: #000;
+  font-size: 1rem;
+
+  &.--copyright {
+    // コピーライト
+    color: $color-text-gray;
+  }
+}
+
 .c-time {
   font-size: 12px;
   color: #999;
@@ -109,10 +134,22 @@
 // MEDIUM
 // ==============================================
 @media screen and (width <= 1024px) {
+  .c-logo {
+    font-size: 1.8rem;
+  }
 }
 
 // ==============================================
 // SMALL
 // ==============================================
 @media screen and (width <= 649px) {
+  .c-logo {
+    font-size: 1.5rem;
+  }
+  .c-link {
+    &.--footer {
+      // フッターのリンク
+      margin-top: 0;
+    }
+  }
 }
