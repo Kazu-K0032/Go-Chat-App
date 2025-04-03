@@ -1,0 +1,219 @@
+/**
+ * プロフィールページのスタイルを管理するファイル
+*/
+@use "_index" as *;
+
+// コンテナ
+.l-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+// プロフィールセクション
+.l-profile {
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+
+  &__iconWrap {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #e1e8ed;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+
+    &:hover {
+      border-color: $color-btn-hover;
+    }
+  }
+
+  &__name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  &__email {
+    font-size: 1rem;
+    color: #657786;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  &__created-date {
+    font-size: 0.875rem;
+    color: #657786;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__subTtlContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 1.5rem 0;
+  }
+}
+
+// プロフィール統計
+.l-profile-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid #e1e8ed;
+  padding-top: 1.5rem;
+
+  &__item {
+    font-size: 0.875rem;
+    color: #657786;
+  }
+}
+
+// タブナビゲーション
+.l-tabs {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e1e8ed;
+
+  &__list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 2rem;
+  }
+
+  &__item {
+    flex: 1;
+    max-width: 120px;
+  }
+
+  &__link {
+    display: block;
+    padding: 1rem 0;
+    color: #657786;
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.2s ease;
+    text-align: center;
+
+    &:hover {
+      color: #1a1a1a;
+    }
+
+    &.is-active {
+      color: #1a1a1a;
+      font-weight: 700;
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: #1a1a1a;
+      }
+    }
+  }
+}
+
+// タブコンテンツ
+.l-tab-contents {
+  margin-bottom: 2rem;
+}
+
+// セクション
+.l-section {
+  width: 100%;
+}
+
+// 投稿リスト
+.p-post {
+  display: none;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+// ==============================================
+// MEDIUM
+// ==============================================
+@media screen and (width <= 1024px) {
+  .l-container {
+    max-width: 90%;
+  }
+
+  .l-profile {
+    padding: 1.5rem;
+  }
+
+  .l-profile-stats {
+    gap: 1.5rem;
+  }
+
+  .l-tabs {
+    &__list {
+      gap: 1.5rem;
+    }
+  }
+}
+
+// ==============================================
+// SMALL
+// ==============================================
+@media screen and (width <= 649px) {
+  .l-container {
+    max-width: 100%;
+    padding: 1rem;
+  }
+
+  .l-profile {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+
+    &__iconWrap {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .l-profile-stats {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1rem;
+  }
+
+  .l-tabs {
+    margin-bottom: 1.5rem;
+
+    &__list {
+      gap: 1rem;
+    }
+
+    &__item {
+      max-width: none;
+    }
+
+    &__link {
+      padding: 0.8rem 0;
+      font-size: 0.9rem;
+    }
+  }
+}

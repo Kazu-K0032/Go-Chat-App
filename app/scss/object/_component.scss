@@ -12,12 +12,33 @@
   font-size: 2.4rem;
   margin: 40px 0;
   color: #333;
+  &.--profile {
+    // プロフィールページ
+    font-size: 2rem;
+    margin: 40px 0;
+    color: #333;
+  }
 }
 
 .c-midTtl {
   font-size: 18px;
   font-weight: 500;
   color: #333;
+
+  &.--profile {
+    // プロフィールページ
+    font-size: 1.4rem;
+    font-weight: $font-weight-regular;
+    color: $color-text-gray;
+    line-height: 1.5;
+    text-align: center;
+    margin: 0;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: darken($color-text-gray, 15%);
+    }
+  }
 }
 
 .c-validation {
@@ -55,10 +76,75 @@
   }
 }
 
+.c-label {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+
+  &.--profile {
+    // プロフィールページ
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &::after {
+      content: "画像を変更";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      text-shadow: $text-shadow;
+    }
+
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+
+  &__img {
+    max-width: 100%;
+    height: auto;
+
+    &.--profile {
+      // プロフィールページ
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: filter 0.3s ease;
+    }
+  }
+
+  &__input {
+    &.--profile {
+      // プロフィールページ
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+  }
+}
+
 .c-btn {
   width: 100%;
   padding: 0.5rem 1rem;
-  background-color: #007bff;
+  background-color: $color-primary;
   color: #fff;
   border-radius: 4px;
   font-size: 1.8rem;
@@ -69,13 +155,13 @@
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: $color-primary;
   }
 
   &.--secondary {
-    background-color: #6c757d;
+    background-color: $color-secondary;
     &:hover {
-      background-color: #545b62;
+      background-color: $color-secondary-hover;
     }
   }
 }
@@ -137,6 +223,19 @@
   .c-logo {
     font-size: 1.8rem;
   }
+  .c-midTtl {
+    &.--profile {
+      font-size: 1.3rem;
+    }
+  }
+  .c-label {
+    &.--profile {
+      // プロフィールページ
+      &::after {
+        font-size: 1.4rem;
+      }
+    }
+  }
 }
 
 // ==============================================
@@ -150,6 +249,19 @@
     &.--footer {
       // フッターのリンク
       margin-top: 0;
+    }
+  }
+  .c-midTtl {
+    &.--profile {
+      font-size: 1.2rem;
+    }
+  }
+  .c-label {
+    &.--profile {
+      // プロフィールページ
+      &::after {
+        font-size: 1rem;
+      }
     }
   }
 }
