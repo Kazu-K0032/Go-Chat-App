@@ -21,35 +21,35 @@
   <!-- 検索結果 -->
   <div class="l-search__content">
     {{ if .Query }} {{ if .Users }}
-    <ul class="l-userList">
+    <ul class="p-userList">
       {{ range .Users }} {{ $name := .name }} {{ $icon := .icon }} {{ $isOnline
       := .isOnline }} {{ $id := .id }}
-      <li class="l-userList__item p-userCard">
-        <div class="l-userList__imgWrap p-userCard__wrap c-icon__wrap">
+      <li class="p-userList__item">
+        <div class="p-userList__imgWrap c-icon__wrap">
           {{ if $icon }}
           <img
             src="{{ $icon }}"
             alt="{{ $name }}のアイコン"
-            class="l-userList__icon p-userCard__icon c-icon__img"
+            class="p-userList__icon c-icon__img"
             onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
           />
           {{ else }}
           <img
             src="{{ getRandomDefaultIcon }}"
             alt="{{ $name }}のデフォルトアイコン"
-            class="l-userList__icon p-userCard__icon c-icon__img"
+            class="p-userList__icon c-icon__img"
           />
           {{ end }}
         </div>
-        <div class="l-userList__info p-userCard__info">
-          <p class="l-userList__name p-userCard__name">{{ $name }}</p>
-          <p class="l-userList__status p-userCard__status">
+        <div class="p-userList__info">
+          <p class="p-userList__name">{{ $name }}</p>
+          <p class="p-userList__status">
             {{ if $isOnline }}オンライン{{ else }}オフライン{{ end }}
           </p>
         </div>
-        <div class="l-userList__action p-userCard__action">
+        <div class="p-userList__action">
           <form method="POST" action="/chat/{{ $id }}">
-            <button type="submit" class="l-userList__btn p-userCard__btn c-btn">
+            <button type="submit" class="p-userList__btn c-btn">
               チャットを開始
             </button>
           </form>
@@ -64,35 +64,35 @@
     {{ end }} {{ else }}
     <!-- 全ユーザー一覧 -->
     {{ if .Users }}
-    <ul class="l-userList p-userList">
+    <ul class="p-userList">
       {{ range .Users }} {{ $name := .name }} {{ $icon := .icon }} {{ $isOnline
       := .isOnline }} {{ $id := .id }}
-      <li class="l-userList__item p-userList__item">
-        <div class="l-userList__imgWrap p-userList__imgWrap c-icon__wrap">
+      <li class="p-userList__item">
+        <div class="p-userList__imgWrap c-icon__wrap">
           {{ if $icon }}
           <img
             src="{{ $icon }}"
             alt="{{ $name }}のアイコン"
-            class="l-userList__icon p-userList__icon c-icon__img"
+            class="p-userList__icon c-icon__img"
             onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
           />
           {{ else }}
           <img
             src="{{ getRandomDefaultIcon }}"
             alt="{{ $name }}のデフォルトアイコン"
-            class="l-userList__icon p-userList__icon c-icon__img"
+            class="p-userList__icon c-icon__img"
           />
           {{ end }}
         </div>
-        <div class="l-userList__info p-userList__info">
-          <p class="l-userList__name p-userList__name">{{ $name }}</p>
-          <p class="l-userList__status p-userList__status">
+        <div class="p-userList__info">
+          <p class="p-userList__name">{{ $name }}</p>
+          <p class="p-userList__status">
             {{ if $isOnline }}オンライン{{ else }}オフライン{{ end }}
           </p>
         </div>
-        <div class="l-userList__action p-userList__action">
+        <div class="p-userList__action">
           <form method="POST" action="/chat/{{ $id }}">
-            <button type="submit" class="l-userList__btn p-userList__btn c-btn">
+            <button type="submit" class="p-userList__btn c-btn">
               チャットを開始
             </button>
           </form>
@@ -101,8 +101,8 @@
       {{ end }}
     </ul>
     {{ else }}
-    <div class="p-searchResult">
-      <p class="p-searchResult__text">ユーザーが見つかりませんでした</p>
+    <div class="l-searchResult">
+      <p class="l-searchResult__text">ユーザーが見つかりませんでした</p>
     </div>
     {{ end }} {{ end }}
   </div>
