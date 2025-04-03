@@ -318,62 +318,7 @@
   }
 }
 
-.p-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
-  background: #fff;
-
-  &__btnWrap {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    width: 80%;
-  }
-}
-
-.p-messageBoard {
-  &__input {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-  }
-
-  &__textarea {
-    flex: 1;
-    height: 60px;
-    padding: 10px;
-  }
-
-  &__list {
-    min-height: 300px;
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-  }
-
-  &__item {
-    margin: 5px 0;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #f0f0f0;
-  }
-}
-
-.p-socialLink {
-  transition: color 0.3s ease;
-  color: #666;
-
-  &:hover {
-    color: #007bff;
-  }
-}
-
+// 登録内容確認フォーム
 .p-confirm {
   display: flex;
   flex-direction: column;
