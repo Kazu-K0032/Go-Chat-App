@@ -24,15 +24,14 @@
 
 .c-midTtl {
   color: #333;
-  font-size: 18px;
+  font-size: 1.8rem;
   font-weight: 500;
 
   &.--profile {
+    // プロフィールページ
     margin: 0;
     transition: color 0.3s ease;
     color: $color-text-gray;
-
-    // プロフィールページ
     font-size: 1.4rem;
     font-weight: $font-weight-regular;
     line-height: 1.5;
@@ -41,6 +40,16 @@
     &:hover {
       color: color.adjust($color-text-gray, $lightness: -15%);
     }
+  }
+}
+
+.c-smTtl {
+  color: $color-text-pale-gray;
+  font-size: 1.4rem;
+  font-weight: $font-weight-regular;
+
+  &.--tab {
+    font-weight: $font-weight-bold;
   }
 }
 
@@ -55,7 +64,7 @@
 }
 
 .c-logo {
-  color: $color-bg-dark;
+  color: $bg-dark;
   font-size: 2rem;
   font-weight: bold;
 }
@@ -213,6 +222,10 @@
   &.--copyright {
     // コピーライト
     color: $color-text-gray;
+  }
+  &.--settings {
+    font-size: 1.4rem;
+    font-weight: $font-weight-medium;
   }
 }
 

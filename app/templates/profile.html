@@ -36,10 +36,10 @@
 
     <!-- フォロー情報など -->
     <ul class="l-profile-stats">
-      <li class="l-profile-stats__item">
+      <li class="l-profile-stats__item c-smTtl --profile">
         最終更新: {{.User.UpdatedAt.Format "2006-01-02 15:04:05"}}
       </li>
-      <li class="l-profile-stats__item">
+      <li class="l-profile-stats__item c-smTtl --profile">
         アカウント作成: {{.User.CreatedAt.Format "2006-01-02"}}
       </li>
     </ul>
@@ -49,15 +49,22 @@
   <nav class="l-tabs">
     <ul class="l-tabs__list">
       <li class="l-tabs__item">
-        <a href="#posts" class="l-tabs__link is-active" data-tab="posts"
+        <a
+          href="#posts"
+          class="l-tabs__link is-active c-smTtl --tab"
+          data-tab="posts"
           >投稿</a
         >
       </li>
       <li class="l-tabs__item">
-        <a href="#replies" class="l-tabs__link" data-tab="replies">返信</a>
+        <a href="#replies" class="l-tabs__link c-smTtl --tab" data-tab="replies"
+          >返信</a
+        >
       </li>
       <li class="l-tabs__item">
-        <a href="#likes" class="l-tabs__link" data-tab="likes">いいね</a>
+        <a href="#likes" class="l-tabs__link c-smTtl --tab" data-tab="likes"
+          >いいね</a
+        >
       </li>
     </ul>
   </nav>
