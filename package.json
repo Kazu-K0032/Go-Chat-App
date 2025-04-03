@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "scss": "sass --no-source-map --watch app/views/scss:app/views/css"
+    "scss": "sass --no-source-map --watch app/views/scss:app/views/css",
+    "lint": "npm run lint:css",
+    "lint:css": "stylelint \"**/*.{css,scss,sass}\"",
+    "lint:css:fix": "stylelint --fix \"**/*.{css,scss,sass}\""
   },
   "repository": {
     "type": "git",
@@ -22,6 +25,9 @@
     "browser-sync": "^3.0.3",
     "gulp": "^5.0.0",
     "gulp-sass": "^6.0.1",
-    "sass": "^1.86.0"
+    "sass": "^1.86.0",
+    "stylelint": "^16.17.0",
+    "stylelint-config-recess-order": "^6.0.0",
+    "stylelint-config-standard-scss": "^14.0.0"
   }
 }

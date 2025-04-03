@@ -282,12 +282,12 @@ body {
  * header.htmlにて`l-`が接頭辞につくものが対象
 */
 .l-header {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
   height: 60px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 }
 
 @media screen and (width <= 649px) {
@@ -300,10 +300,10 @@ body {
  * footer.htmlにて`l-`が接頭辞につくものが対象
 */
 .l-footer {
-  background-color: #fff;
-  padding: 2rem 0;
-  margin-top: auto;
   height: auto;
+  margin-top: auto;
+  padding: 2rem 0;
+  background-color: #fff;
 }
 .l-footer__container {
   max-width: 1000px;
@@ -322,10 +322,10 @@ body {
   margin-top: 16px;
 }
 .l-footer__bottom {
-  text-align: center;
+  margin-top: 2rem;
   padding-top: 1rem;
   border-top: 1px solid #eee;
-  margin-top: 2rem;
+  text-align: center;
 }
 
 @media screen and (width <= 1024px) {
@@ -371,17 +371,17 @@ body {
  * <main>タグにて`l-`が接頭辞につくものが対象
 */
 .l-app {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
 }
 
 .l-main {
   flex: 1;
-  padding: 2rem;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  width: 100%;
+  padding: 2rem;
 }
 
 .l-message {
@@ -395,21 +395,21 @@ body {
   background-color: #f5f5f5;
 }
 .l-chat__sidebar {
-  width: 300px;
-  background-color: #fff;
-  border-right: 1px solid #e0e0e0;
   overflow-y: auto;
+  width: 300px;
+  border-right: 1px solid #e0e0e0;
+  background-color: #fff;
 }
 .l-chat__list {
-  padding: 0;
-  margin: 0;
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 .l-chat__item {
   padding: 15px;
   border-bottom: 1px solid #e0e0e0;
-  cursor: pointer;
   transition: background-color 0.2s;
+  cursor: pointer;
 }
 .l-chat__item:hover {
   background-color: #f8f8f8;
@@ -418,24 +418,24 @@ body {
   background-color: #e3f2fd;
 }
 .l-chat__imgWrap {
+  overflow: hidden;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  overflow: hidden;
 }
 .l-chat__info {
   flex: 1;
   margin-left: 12px;
 }
 .l-chat__time {
-  font-size: 12px;
   color: #666;
+  font-size: 12px;
 }
 .l-chat__empty {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   height: 100%;
   padding: 2rem;
   text-align: center;
@@ -447,19 +447,19 @@ body {
 }
 .l-chat__searchBtn {
   padding: 0.75rem 1.5rem;
-  background-color: #007bff;
-  color: white;
   border-radius: 4px;
-  text-decoration: none;
+  background-color: #007bff;
   transition: background-color 0.2s;
+  color: white;
+  text-decoration: none;
 }
 .l-chat__searchBtn:hover {
   background-color: #0056b3;
 }
 .l-chatMain {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  flex: 1;
   background-color: #fff;
 }
 .l-chatMain__header {
@@ -468,178 +468,84 @@ body {
 }
 .l-chatMain__title {
   margin: 0;
-  font-size: 18px;
   color: #333;
+  font-size: 18px;
 }
 .l-chatMain__messages {
   flex: 1;
-  padding: 20px;
   overflow-y: auto;
+  padding: 20px;
 }
 .l-chatMain__message {
   display: flex;
-  margin-bottom: 20px;
   align-items: flex-start;
+  margin-bottom: 20px;
 }
 .l-chatMain__message.--received .l-chatMain__content {
+  border-radius: 0 12px 12px;
   background-color: #f5f5f5;
-  border-radius: 0 12px 12px 12px;
 }
 .l-chatMain__message.--sent {
   flex-direction: row-reverse;
 }
 .l-chatMain__message.--sent .l-chatMain__content {
-  background-color: #e3f2fd;
   border-radius: 12px 0 12px 12px;
+  background-color: #e3f2fd;
 }
 .l-chatMain__imgWrap {
+  overflow: hidden;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
-  overflow: hidden;
   margin: 0 8px;
+  border-radius: 50%;
 }
 .l-chatMain__content {
   max-width: 70%;
   padding: 12px 16px;
 }
 .l-chatMain__input {
-  padding: 15px 20px;
-  border-top: 1px solid #e0e0e0;
   display: grid;
   grid-template-columns: 1fr 100px;
   -moz-column-gap: 10px;
        column-gap: 10px;
+  padding: 15px 20px;
+  border-top: 1px solid #e0e0e0;
 }
 .l-chatMain__textarea {
+  height: 60px;
   padding: 12px;
   border: 1px solid #000;
   border-radius: 4px;
-  resize: none;
-  height: 60px;
   font-size: 1.6rem;
+  outline: 1px solid #000;
+  resize: none;
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
-  outline: 1px solid #000;
-}
-
-.l-search {
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-}
-.l-search__header {
-  margin-bottom: 2rem;
-}
-.l-search__content {
-  background: #fff;
-  background: var(--color-white);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-}
-
-.p-searchForm__inputWrap {
-  display: flex;
-  gap: 1rem;
-}
-.p-searchForm__input {
-  flex: 1;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  font-size: 1rem;
-}
-.p-searchForm__input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-}
-.p-searchForm__btn {
-  padding: 0.75rem 2rem;
-}
-
-.p-userList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.p-userList__item {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  border-bottom: 1px solid var(--color-border);
-}
-.p-userList__item:last-child {
-  border-bottom: none;
-}
-.p-userList__imgWrap {
-  width: 48px;
-  height: 48px;
-  margin-right: 1rem;
-}
-.p-userList__icon {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
-}
-.p-userList__info {
-  flex: 1;
-}
-.p-userList__name {
-  font-weight: 600;
-  margin: 0 0 0.25rem;
-}
-.p-userList__status {
-  font-size: 0.875rem;
-  color: var(--color-text-light);
-  margin: 0;
-}
-.p-userList__action {
-  margin-left: 1rem;
-}
-.p-userList__btn {
-  padding: 0.5rem 1rem;
-}
-
-.p-searchResult {
-  text-align: center;
-  padding: 2rem;
-}
-.p-searchResult__text {
-  color: #666;
-  font-size: 1rem;
-}
-
-.p-searchGuide {
-  text-align: center;
-  padding: 2rem;
 }
 
 .l-settings {
-  padding: 2rem;
   max-width: 800px;
   margin: 0 auto;
+  padding: 2rem;
 }
 .l-settings__header {
   margin-bottom: 2rem;
 }
 .l-settings__content {
-  background: var(--color-white);
+  padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  background: var(--color-white);
 }
 .l-settings__item {
   display: flex;
   align-items: center;
   padding: 1rem;
   border-bottom: 1px solid var(--color-border);
-  text-decoration: none;
-  color: inherit;
   transition: background-color 0.2s;
+  color: inherit;
+  text-decoration: none;
 }
 .l-settings__item:last-child {
   border-bottom: none;
@@ -648,14 +554,14 @@ body {
   background-color: var(--color-hover);
 }
 .l-settings__icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 40px;
   height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-bg);
-  border-radius: 50%;
   margin-right: 1rem;
+  border-radius: 50%;
+  background: var(--color-bg);
   color: var(--color-primary);
 }
 .l-settings__textWrap {
@@ -697,8 +603,8 @@ body {
 
 @media (prefers-color-scheme: dark) {
   .l-settings__content {
-    background: var(--color-bg-dark);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background: var(--color-bg-dark);
   }
   .l-settings__item {
     border-bottom-color: var(--color-border-dark);
@@ -726,30 +632,30 @@ body {
  * 全htmlファイルにて`c-`が接頭辞につくものが対象
 */
 .c-lgTtl {
-  text-align: center;
-  font-size: 2.4rem;
   margin: 40px 0;
   color: #333;
+  font-size: 2.4rem;
+  text-align: center;
 }
 .c-lgTtl.--profile {
-  font-size: 2rem;
   margin: 40px 0;
   color: #333;
+  font-size: 2rem;
 }
 
 .c-midTtl {
+  color: #333;
   font-size: 18px;
   font-weight: 500;
-  color: #333;
 }
 .c-midTtl.--profile {
-  font-size: 1.4rem;
-  font-weight: 400;
-  color: #666;
-  line-height: 1.5;
-  text-align: center;
   margin: 0;
   transition: color 0.3s ease;
+  color: #666;
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
 }
 .c-midTtl.--profile:hover {
   color: #404040;
@@ -765,23 +671,23 @@ body {
 }
 
 .c-logo {
-  font-weight: bold;
-  font-size: 2rem;
   color: #1a1a1a;
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 .c-input {
   width: 100%;
-  padding: 1.2rem;
   margin-bottom: 1.6rem;
+  padding: 1.2rem;
   border: 1px solid #000;
   border-radius: 4px;
-  font-size: 1.6rem;
   transition: border-color 0.3s ease;
+  font-size: 1.6rem;
 }
 .c-input:focus {
-  outline: none;
   border-color: #4a90e2;
+  outline: none;
 }
 .c-input::-moz-placeholder {
   color: #999;
@@ -796,28 +702,28 @@ body {
   cursor: pointer;
 }
 .c-label.--profile {
-  width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: 100%;
   transition: opacity 0.3s ease;
 }
 .c-label.--profile:hover {
   opacity: 0.8;
 }
 .c-label.--profile::after {
-  content: "画像を変更";
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease;
+  opacity: 0;
   color: #fff;
   font-size: 0.9rem;
   font-weight: 500;
-  opacity: 0;
-  transition: opacity 0.3s ease;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  content: "画像を変更";
 }
 .c-label.--profile:hover::after {
   opacity: 1;
@@ -834,28 +740,28 @@ body {
   transition: filter 0.3s ease;
 }
 .c-label__input.--profile {
+  overflow: hidden;
   position: absolute;
   width: 1px;
   height: 1px;
-  padding: 0;
   margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  padding: 0;
   border: 0;
+  clip: rect(0, 0, 0, 0);
 }
 
 .c-btn {
-  width: 100%;
-  padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: #fff;
-  border-radius: 4px;
-  font-size: 1.8rem;
-  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background-color: #007bff;
   transition: background-color 0.3s ease;
+  color: #fff;
+  font-size: 1.8rem;
+  cursor: pointer;
 }
 .c-btn:hover {
   background-color: #007bff;
@@ -869,11 +775,11 @@ body {
 
 .c-link {
   display: block;
-  text-align: center;
   margin-top: 16px;
   color: #4a90e2;
-  text-decoration: none;
   font-size: 1.8rem;
+  text-decoration: none;
+  text-align: center;
 }
 .c-link.--footer {
   color: #666;
@@ -886,8 +792,8 @@ body {
 }
 
 .c-icon__wrap {
-  border-radius: 50%;
   overflow: hidden;
+  border-radius: 50%;
 }
 .c-icon__img {
   width: 100%;
@@ -905,8 +811,8 @@ body {
 }
 
 .c-time {
-  font-size: 12px;
   color: #999;
+  font-size: 12px;
 }
 
 @media screen and (width <= 1024px) {
@@ -940,9 +846,9 @@ body {
 */
 .p-nav {
   width: 100%;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   height: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 }
 .p-nav.--footer {
   width: 50%;
@@ -950,13 +856,13 @@ body {
   box-shadow: none;
 }
 .p-nav__container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 1000px;
   height: 100%;
+  margin: 0 auto;
+  padding: 1rem;
   font-size: 1.5rem;
 }
 .p-nav__list {
@@ -966,14 +872,14 @@ body {
 .p-nav__list.--footer {
   justify-content: space-between;
   align-items: center;
-  width: 100%;
   gap: 1rem;
+  width: 100%;
 }
 .p-nav__item {
-  text-decoration: none;
+  transition: color 0.3s ease;
   color: #666;
   font-weight: 500;
-  transition: color 0.3s ease;
+  text-decoration: none;
 }
 .p-nav__item.--footer {
   flex: 1;
@@ -981,22 +887,22 @@ body {
 }
 .p-nav__item.--footer a {
   display: inline-block;
+  position: relative;
   width: 100%;
   padding: 0.5rem;
-  white-space: nowrap;
-  position: relative;
   transition: color 0.3s ease;
+  white-space: nowrap;
 }
 .p-nav__item.--footer a::after {
-  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
   width: 0;
   height: 1px;
   background-color: #007bff;
-  transition: all 0.3s ease;
   transform: translateX(-50%);
+  transition: all 0.3s ease;
+  content: "";
 }
 .p-nav__item.--footer a:hover::after {
   width: 100%;
@@ -1005,21 +911,66 @@ body {
   color: #007bff;
 }
 
+.p-userList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.p-userList__item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.p-userList__item:last-child {
+  border-bottom: none;
+}
+.p-userList__imgWrap {
+  width: 48px;
+  height: 48px;
+  margin-right: 1rem;
+}
+.p-userList__icon {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.p-userList__info {
+  flex: 1;
+}
+.p-userList__name {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+}
+.p-userList__status {
+  margin: 0;
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+}
+.p-userList__action {
+  margin-left: 1rem;
+}
+.p-userList__btn {
+  padding: 0.5rem 1rem;
+}
+
 .p-form {
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #fff;
 }
 .p-form__btnWrap {
   display: flex;
-  gap: 10px;
   justify-content: center;
+  gap: 10px;
   width: 80%;
 }
 
@@ -1030,20 +981,20 @@ body {
 }
 .p-messageBoard__textarea {
   flex: 1;
-  padding: 10px;
   height: 60px;
+  padding: 10px;
 }
 .p-messageBoard__list {
   min-height: 300px;
-  border: 1px solid #ccc;
-  padding: 10px;
   margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
 }
 .p-messageBoard__item {
-  padding: 10px;
   margin: 5px 0;
-  background-color: #f0f0f0;
+  padding: 10px;
   border-radius: 5px;
+  background-color: #f0f0f0;
 }
 
 .p-chatCard {
@@ -1066,20 +1017,20 @@ body {
 }
 .p-chatCard__name {
   margin: 0 0 4px;
-  font-weight: 500;
   color: #333;
+  font-weight: 500;
 }
 .p-chatCard__preview {
-  margin: 0;
-  font-size: 14px;
-  color: #666;
-  white-space: nowrap;
   overflow: hidden;
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
 .p-chatCard__time {
-  font-size: 12px;
   color: #999;
+  font-size: 12px;
 }
 
 .p-message__iconWrap {
@@ -1097,53 +1048,53 @@ body {
 }
 .p-message__text {
   margin: 0;
-  line-height: 1.5;
   color: #333;
+  line-height: 1.5;
 }
 .p-message__time {
   position: absolute;
   bottom: -18px;
-  font-size: 12px;
   color: #999;
+  font-size: 12px;
 }
 .--sent .p-message__time {
   right: 0;
 }
 
 .p-socialLink {
-  color: #666;
   transition: color 0.3s ease;
+  color: #666;
 }
 .p-socialLink:hover {
   color: #007bff;
 }
 
 .p-confirm {
-  border-radius: 4px;
-  margin-bottom: 20px;
-  width: 100%;
   display: flex;
   flex-direction: column;
   row-gap: 10px;
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 4px;
 }
 .p-confirm__item {
-  background: #f5f5f5;
-  padding: 1.6rem;
   margin-bottom: 15px;
+  padding: 1.6rem;
+  background: #f5f5f5;
 }
 .p-confirm__item:last-child {
   margin-bottom: 0;
 }
 .p-confirm__label {
   display: block;
-  font-size: 14px;
-  color: #666;
   margin-bottom: 5px;
+  color: #666;
+  font-size: 14px;
 }
 .p-confirm__txt {
-  font-size: 16px;
-  color: #333;
   margin: 0;
+  color: #333;
+  font-size: 16px;
 }
 
 @media screen and (width <= 1024px) {
@@ -1159,16 +1110,16 @@ body {
     gap: 1.2rem;
   }
   .p-nav__item.--footer a {
-    font-size: 1.4rem;
     padding: 0.5rem 0;
+    font-size: 1.4rem;
   }
   .p-profile {
     padding: 1.5rem;
   }
   .p-profile-stats {
     flex-direction: column;
-    gap: 1rem;
     align-items: center;
+    gap: 1rem;
   }
   .p-tabs__list {
     gap: 1rem;
@@ -1185,17 +1136,17 @@ body {
   }
   .p-nav__container {
     flex-direction: column;
-    padding: 0.5rem;
     gap: 0.5rem;
+    padding: 0.5rem;
   }
   .p-nav__logo {
     font-size: 1.5rem;
   }
   .p-nav__list {
-    width: 100%;
-    justify-content: center;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 1.5rem;
+    width: 100%;
   }
   .p-nav__list.--footer {
     display: flex;
@@ -1210,10 +1161,10 @@ body {
     flex: 0 0 auto;
   }
   .p-nav__item.--footer a {
-    font-size: 1rem;
     padding: 0.5rem;
-    opacity: 0.8;
     transition: opacity 0.3s ease;
+    opacity: 0.8;
+    font-size: 1rem;
   }
   .p-nav__item.--footer a::after {
     bottom: -2px;
@@ -1222,7 +1173,3 @@ body {
     opacity: 1;
   }
 }
-/**
- * FLOCSSにおけるUtilityスタイルを管理するファイル
- * 全htmlファイルにて`u-`が接頭辞につくものが対象
-*/

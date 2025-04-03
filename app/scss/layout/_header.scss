@@ -8,19 +8,18 @@
 @use "../foundation/_variables" as *;
 
 .l-header {
-  background-color: #fff;
-  box-shadow: $box-shadow-lg;
   position: sticky;
   top: 0;
   z-index: 100;
   height: 60px;
+  box-shadow: $box-shadow-lg;
+  background-color: #fff;
 }
 
 // ==============================================
 // MEDIUM
 // ==============================================
 @media screen and (width <= 1024px) {
-
 }
 
 // ==============================================

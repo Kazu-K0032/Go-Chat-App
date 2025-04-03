@@ -8,32 +8,34 @@
 @use "../foundation/_variables" as *;
 
 .c-lgTtl {
-  text-align: center;
-  font-size: 2.4rem;
   margin: 40px 0;
   color: #333;
+  font-size: 2.4rem;
+  text-align: center;
   &.--profile {
-    // プロフィールページ
-    font-size: 2rem;
     margin: 40px 0;
     color: #333;
+
+    // プロフィールページ
+    font-size: 2rem;
   }
 }
 
 .c-midTtl {
+  color: #333;
   font-size: 18px;
   font-weight: 500;
-  color: #333;
 
   &.--profile {
+    margin: 0;
+    transition: color 0.3s ease;
+    color: $color-text-gray;
+
     // プロフィールページ
     font-size: 1.4rem;
     font-weight: $font-weight-regular;
-    color: $color-text-gray;
     line-height: 1.5;
     text-align: center;
-    margin: 0;
-    transition: color 0.3s ease;
 
     &:hover {
       color: darken($color-text-gray, 15%);
@@ -52,23 +54,23 @@
 }
 
 .c-logo {
-  font-weight: bold;
-  font-size: 2rem;
   color: $color-bg-dark;
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 .c-input {
   width: 100%;
-  padding: 1.2rem;
   margin-bottom: 1.6rem;
+  padding: 1.2rem;
   border: 1px solid #000;
   border-radius: 4px;
-  font-size: 1.6rem;
   transition: border-color 0.3s ease;
+  font-size: 1.6rem;
 
   &:focus {
-    outline: none;
     border-color: #4a90e2;
+    outline: none;
   }
 
   &::placeholder {
@@ -82,12 +84,13 @@
   cursor: pointer;
 
   &.--profile {
-    // プロフィールページ
-    width: 100%;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    // プロフィールページ
+    width: 100%;
+    height: 100%;
     transition: opacity 0.3s ease;
 
     &:hover {
@@ -95,17 +98,17 @@
     }
 
     &::after {
-      content: "画像を変更";
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      transition: opacity 0.3s ease;
+      opacity: 0;
       color: #fff;
       font-size: 0.9rem;
       font-weight: 500;
-      opacity: 0;
-      transition: opacity 0.3s ease;
       text-shadow: $text-shadow;
+      content: "画像を変更";
     }
 
     &:hover::after {
@@ -128,31 +131,32 @@
 
   &__input {
     &.--profile {
+      overflow: hidden;
+
       // プロフィールページ
       position: absolute;
       width: 1px;
       height: 1px;
-      padding: 0;
       margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
+      padding: 0;
       border: 0;
+      clip: rect(0, 0, 0, 0);
     }
   }
 }
 
 .c-btn {
-  width: 100%;
-  padding: 0.5rem 1rem;
-  background-color: $color-primary;
-  color: #fff;
-  border-radius: 4px;
-  font-size: 1.8rem;
-  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background-color: $color-primary;
   transition: background-color 0.3s ease;
+  color: #fff;
+  font-size: 1.8rem;
+  cursor: pointer;
 
   &:hover {
     background-color: $color-primary;
@@ -168,11 +172,11 @@
 
 .c-link {
   display: block;
-  text-align: center;
   margin-top: 16px;
   color: #4a90e2;
-  text-decoration: none;
   font-size: 1.8rem;
+  text-decoration: none;
+  text-align: center;
 
   &.--footer {
     // フッターのリンク
@@ -190,8 +194,8 @@
 
 .c-icon {
   &__wrap {
-    border-radius: 50%;
     overflow: hidden;
+    border-radius: 50%;
   }
 
   &__img {
@@ -212,8 +216,8 @@
 }
 
 .c-time {
-  font-size: 12px;
   color: #999;
+  font-size: 12px;
 }
 
 // ==============================================
