@@ -27,10 +27,13 @@ function handleTabClick(event) {
   event.target.classList.add("is-active");
 
   // コンテンツの表示を切り替え
-  document.querySelectorAll(".p-post").forEach((content) => {
-    content.style.display = "none";
+  document.querySelectorAll(".l-section").forEach((content) => {
+    content.classList.remove("is-active");
   });
-  document.getElementById(targetId).style.display = "block";
+  document.getElementById(targetId).classList.add("is-active");
+
+  // URLのハッシュを更新
+  window.location.hash = targetId;
 }
 
 // ページ読み込み時の処理
@@ -47,10 +50,13 @@ document.addEventListener("DOMContentLoaded", function () {
     tab.addEventListener("click", handleTabClick);
   });
 
-  // 初期表示のタブを設定
-  const initialTab = document.querySelector(".l-tabs__link.is-active");
+  // URLのハッシュから初期タブを設定
+  const hash = window.location.hash.slice(1) || "posts";
+  const initialTab = document.querySelector(
+    `.l-tabs__link[data-tab="${hash}"]`
+  );
   if (initialTab) {
-    const targetId = initialTab.getAttribute("data-tab");
-    document.getElementById(targetId).style.display = "block";
+    initialTab.classList.add("is-active");
+    document.getElementById(hash).classList.add("is-active");
   }
 });

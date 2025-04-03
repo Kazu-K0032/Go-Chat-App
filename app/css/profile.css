@@ -377,11 +377,18 @@ body {
 }
 
 .l-main {
-  flex: 1;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+.l-section {
+  display: none;
+  width: 100%;
+}
+.l-section.is-active {
+  display: block;
 }
 
 .l-message {
@@ -916,6 +923,24 @@ body {
   font-size: 16px;
 }
 
+.p-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+.p-form__btnWrap {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 80%;
+}
+
 @media screen and (width <= 1024px) {
   .p-nav.--footer {
     width: 70%;
@@ -1207,19 +1232,11 @@ body {
   margin-bottom: 2rem;
 }
 
-.l-section {
-  width: 100%;
-}
-
 .p-post {
-  display: none;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background: #fff;
-}
-.p-post.is-active {
-  display: block;
 }
 .p-post__list {
   padding: 1.5rem;
