@@ -144,10 +144,71 @@
 // 投稿リスト
 .p-post {
   display: none;
-  padding: 1rem;
+  padding: 2rem;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &.is-active {
+    display: block;
+  }
+
+  &__list {
+    padding: 1.5rem;
+    background: $bg-primary;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &__content {
+    font-size: 1.4rem;
+    line-height: 1.6;
+    color: $color-text-gray;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-bottom: 1rem;
+  }
+
+  &__date {
+    display: block;
+    font-size: 1.2rem;
+    color: lighten($color-text-gray, 20%);
+    text-align: right;
+  }
+
+  // 返信用のスタイル
+  &.--reply &__list {
+    border-left: 4px solid $color-primary;
+  }
+
+  // いいね用のスタイル
+  &.--like &__list {
+    border-left: 4px solid #ff4757;
+
+    &::before {
+      content: "♥";
+      color: #ff4757;
+      margin-right: 0.5rem;
+      font-size: 1.4rem;
+    }
+  }
+
+  &__empty {
+    text-align: center;
+    padding: 3rem 0;
+    color: lighten($color-text-gray, 15%);
+    font-size: 1.4rem;
+  }
 }
 
 // ==============================================
@@ -169,6 +230,27 @@
   .l-tabs {
     &__list {
       gap: 1.5rem;
+    }
+  }
+
+  .p-post {
+    padding: 1.5rem;
+
+    &__list {
+      padding: 1.2rem;
+    }
+
+    &__content {
+      font-size: 1.3rem;
+    }
+
+    &__date {
+      font-size: 1.1rem;
+    }
+
+    &__empty {
+      padding: 2.5rem 0;
+      font-size: 1.3rem;
     }
   }
 }
@@ -214,6 +296,28 @@
     &__link {
       padding: 0.8rem 0;
       font-size: 0.9rem;
+    }
+  }
+
+  .p-post {
+    padding: 1rem;
+
+    &__list {
+      padding: 1rem;
+    }
+
+    &__content {
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+    }
+
+    &__date {
+      font-size: 1rem;
+    }
+
+    &__empty {
+      padding: 2rem 0;
+      font-size: 1.2rem;
     }
   }
 }
