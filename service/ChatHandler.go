@@ -15,7 +15,7 @@ import (
 type Contact struct {
 	ID       string
 	Username string
-	Icon     string
+	IconURL  string
 	LastSeen time.Time
 }
 
@@ -300,7 +300,7 @@ func getContacts(user *repository.User) ([]Contact, error) {
 		contact := Contact{
 			ID:       data["contactID"].(string),
 			Username: data["username"].(string),
-			Icon:     data["icon"].(string),
+			IconURL:  data["iconURL"].(string),
 			LastSeen: data["lastSeen"].(time.Time),
 		}
 		contacts = append(contacts, contact)
@@ -390,7 +390,7 @@ func getChatHistory(user *repository.User) ([]Chat, error) {
 			Contact: Contact{
 				ID:       targetUser.ID,
 				Username: targetUser.Name,
-				Icon:     targetUser.Icon,
+				IconURL:  targetUser.IconURL,
 				LastSeen: time.Now(), // 仮の値として現在時刻を設定
 			},
 			Messages:  messages,
