@@ -1,27 +1,30 @@
 {{define "footer"}}
 <footer class="l-footer">
-    <div class="l-footer__container">
-        <div class="l-footer__content">
-            <div class="l-footer__logo">
-                <a href="/" class="p-footerLogo">Footer</a>
-            </div>
-            <div class="l-footer__nav">
-                <div class="l-footer__links">
-                    <a href="/" class="p-footerLink">ホーム</a>
-                    <a href="/chat" class="p-footerLink">チャット</a>
-                    <a href="/profile" class="p-footerLink">プロフィール</a>
-                    <a href="/settings" class="p-footerLink">設定</a>
-                </div>
-            </div>
-            <div class="l-footer__social">
-                <a href="#" class="p-socialLink">Twitter</a>
-                <a href="#" class="p-socialLink">Facebook</a>
-                <a href="#" class="p-socialLink">Instagram</a>
-            </div>
-        </div>
-        <div class="l-footer__bottom">
-            <p class="p-copyright">&copy; 2025 ChatApp. All rights reserved.</p>
-        </div>
+  <div class="l-footer__container">
+    <div class="l-footer__content">
+      <div class="l-footer__logoWrap">
+        <a href="/" class="l-footer__logo c-logo">Footer</a>
+      </div>
+      <nav class="p-nav --footer">
+        <ul class="p-nav__list --footer">
+          <li class="p-nav__item --footer">
+            <a href="/" class="c-link --footer">検索</a>
+          </li>
+          <li class="p-nav__item --footer">
+            <a href="/chat" class="c-link --footer">チャット</a>
+          </li>
+          <li class="p-nav__item --footer">
+            <a href="/profile" class="c-link --footer">プロフィール</a>
+          </li>
+          <li class="p-nav__item --footer">
+            <a href="/settings" class="c-link --footer">設定</a>
+          </li>
+        </ul>
+      </nav>
     </div>
+    <div class="l-footer__bottom">
+      <p class="c-txt --copyright">&copy; 2025 ChatApp. All rights reserved.</p>
+    </div>
+  </div>
 </footer>
 {{end}}

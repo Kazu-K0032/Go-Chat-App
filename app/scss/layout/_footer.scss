@@ -11,9 +11,10 @@
   background-color: #fff;
   padding: 2rem 0;
   margin-top: auto;
+  height: auto;
 
   &__container {
-    max-width: 1200px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 0 1rem;
   }
@@ -22,23 +23,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
   }
 
-  &__nav {
+  &__logoWrap {
     display: flex;
-    gap: 2rem;
   }
 
-  &__social {
-    display: flex;
-    gap: 1rem;
+  &__logo {
+    margin-top: 16px;
   }
 
   &__bottom {
     text-align: center;
     padding-top: 1rem;
     border-top: 1px solid #eee;
+    margin-top: 2rem;
   }
 }
 
@@ -46,10 +45,52 @@
 // MEDIUM
 // ==============================================
 @media screen and (width <= 1024px) {
+  .l-footer {
+    padding: 1.5rem 0;
+
+    &__container {
+      max-width: 90%;
+    }
+
+    &__logo {
+      margin-top: 12px;
+      font-size: 1.2rem;
+    }
+
+    &__bottom {
+      margin-top: 1.5rem;
+    }
+  }
 }
 
 // ==============================================
 // SMALL
 // ==============================================
 @media screen and (width <= 649px) {
+  .l-footer {
+    padding: 1rem 0;
+
+    &__container {
+      max-width: 100%;
+      padding: 0 1rem;
+    }
+
+    &__content {
+      flex-direction: column;
+    }
+
+    &__logoWrap {
+      justify-content: center;
+    }
+
+    &__logo {
+      margin-top: 0;
+      font-size: 1.1rem;
+    }
+
+    &__bottom {
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+    }
+  }
 }

@@ -8,22 +8,19 @@ $color-black: #000;
 $color-gray: #ccc;
 $color-primary: #007bff;
 
-// テキストカラー
-$color-text: #333;
-$color-text-light: #666;
+// フォントカラー
+$color-text-gray: #666;
+
+// フォントサイズ
+$font-weight-regular: 400;
+$font-weight-medium: 500;
 
 // 背景色
-$color-bg: #f8f9fa;
+$bg-primary: #f8f9fa;
 $color-bg-dark: #1a1a1a;
 
-// ボーダー
-$color-border: #ddd;
-$color-border-dark: #333;
-
-// ホバー
-$color-hover: #f5f5f5;
-$color-hover-dark: #2a2a2a;
-
 // シャドウ
-$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-$shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.2);
+$box-shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+// ボタン
+$color-btn-hover: #007bff;

@@ -13,7 +13,9 @@
 
 html {
   line-height: 1.15;
-  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+     -moz-text-size-adjust: 100%;
+          text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -89,7 +91,8 @@ a {
 }
 
 abbr[title] {
-  text-decoration: underline dotted;
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
 }
 
 b,
@@ -146,7 +149,9 @@ textarea {
   text-align: inherit;
   vertical-align: middle;
   text-transform: inherit;
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 button,
@@ -203,16 +208,20 @@ textarea {
 }
 
 [type=search]::-webkit-search-decoration {
-  appearance: none;
+  -webkit-appearance: none;
+          appearance: none;
 }
 
 ::-webkit-file-upload-button {
   font: inherit;
-  appearance: button;
+  -webkit-appearance: button;
+          appearance: button;
 }
 
 [type=number] {
-  appearance: textfield;
+  -webkit-appearance: textfield;
+     -moz-appearance: textfield;
+          appearance: textfield;
 }
 
 label[for] {
@@ -278,41 +287,14 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
+  height: 60px;
 }
 
-.l-nav {
-  width: 100%;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+@media screen and (width <= 649px) {
+  .l-header {
+    height: auto;
+  }
 }
-.l-nav__container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.l-nav__logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
-}
-.l-nav__list {
-  display: flex;
-  gap: 2rem;
-}
-
-.p-navLink {
-  text-decoration: none;
-  color: #666666;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-.p-navLink:hover {
-  color: #007bff;
-}
-
 /**
  * フッターのLayoutスタイルを管理するファイル
  * footer.htmlにて`l-`が接頭辞につくものが対象
@@ -321,9 +303,10 @@ body {
   background-color: #fff;
   padding: 2rem 0;
   margin-top: auto;
+  height: auto;
 }
 .l-footer__container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -331,22 +314,58 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
 }
-.l-footer__nav {
+.l-footer__logoWrap {
   display: flex;
-  gap: 2rem;
 }
-.l-footer__social {
-  display: flex;
-  gap: 1rem;
+.l-footer__logo {
+  margin-top: 16px;
 }
 .l-footer__bottom {
   text-align: center;
   padding-top: 1rem;
   border-top: 1px solid #eee;
+  margin-top: 2rem;
 }
 
+@media screen and (width <= 1024px) {
+  .l-footer {
+    padding: 1.5rem 0;
+  }
+  .l-footer__container {
+    max-width: 90%;
+  }
+  .l-footer__logo {
+    margin-top: 12px;
+    font-size: 1.2rem;
+  }
+  .l-footer__bottom {
+    margin-top: 1.5rem;
+  }
+}
+@media screen and (width <= 649px) {
+  .l-footer {
+    padding: 1rem 0;
+  }
+  .l-footer__container {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+  .l-footer__content {
+    flex-direction: column;
+  }
+  .l-footer__logoWrap {
+    justify-content: center;
+  }
+  .l-footer__logo {
+    margin-top: 0;
+    font-size: 1.1rem;
+  }
+  .l-footer__bottom {
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+  }
+}
 /**
  * メインコンテンツのLayoutスタイルを管理するファイル
  * <main>タグにて`l-`が接頭辞につくものが対象
@@ -489,7 +508,8 @@ body {
   border-top: 1px solid #e0e0e0;
   display: grid;
   grid-template-columns: 1fr 100px;
-  column-gap: 10px;
+  -moz-column-gap: 10px;
+       column-gap: 10px;
 }
 .l-chatMain__textarea {
   padding: 12px;
@@ -498,7 +518,9 @@ body {
   resize: none;
   height: 60px;
   font-size: 1.6rem;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   outline: 1px solid #000;
 }
 
@@ -560,7 +582,8 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .p-userList__info {
   flex: 1;
@@ -724,6 +747,12 @@ body {
   font-size: 1.4rem;
 }
 
+.c-logo {
+  font-weight: bold;
+  font-size: 2rem;
+  color: #1a1a1a;
+}
+
 .c-input {
   width: 100%;
   padding: 1.2rem;
@@ -736,6 +765,9 @@ body {
 .c-input:focus {
   outline: none;
   border-color: #4a90e2;
+}
+.c-input::-moz-placeholder {
+  color: #999;
 }
 .c-input::placeholder {
   color: #999;
@@ -772,8 +804,14 @@ body {
   text-decoration: none;
   font-size: 1.8rem;
 }
+.c-link.--footer {
+  color: #666;
+}
 .c-link:hover {
   text-decoration: underline;
+}
+.c-link:hover.--footer {
+  text-decoration: none;
 }
 
 .c-icon__wrap {
@@ -783,7 +821,16 @@ body {
 .c-icon__img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.c-txt {
+  color: #000;
+  font-size: 1rem;
+}
+.c-txt.--copyright {
+  color: #666;
 }
 
 .c-time {
@@ -791,10 +838,90 @@ body {
   color: #999;
 }
 
+@media screen and (width <= 1024px) {
+  .c-logo {
+    font-size: 1.8rem;
+  }
+}
+@media screen and (width <= 649px) {
+  .c-logo {
+    font-size: 1.5rem;
+  }
+  .c-link.--footer {
+    margin-top: 0;
+  }
+}
 /**
  * FLOCSSにおけるProjectスタイルを管理するファイル
  * 全htmlファイルにて`p-`が接頭辞につくものが対象
 */
+.p-nav {
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+.p-nav.--footer {
+  width: 50%;
+  margin-left: auto;
+  box-shadow: none;
+}
+.p-nav__container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  font-size: 1.5rem;
+}
+.p-nav__list {
+  display: flex;
+  gap: 2rem;
+}
+.p-nav__list.--footer {
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+}
+.p-nav__item {
+  text-decoration: none;
+  color: #666;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+.p-nav__item.--footer {
+  flex: 1;
+  text-align: center;
+}
+.p-nav__item.--footer a {
+  display: inline-block;
+  width: 100%;
+  padding: 0.5rem;
+  white-space: nowrap;
+  position: relative;
+  transition: color 0.3s ease;
+}
+.p-nav__item.--footer a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background-color: #007bff;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+.p-nav__item.--footer a:hover::after {
+  width: 100%;
+}
+.p-nav__item:hover {
+  color: #007bff;
+}
+
 .p-form {
   max-width: 400px;
   margin: 40px auto;
@@ -836,15 +963,6 @@ body {
   border-radius: 5px;
 }
 
-.p-navLink {
-  color: #666;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-.p-navLink:hover {
-  color: #007bff;
-}
-
 .p-footerLink {
   color: #666;
   transition: color 0.3s ease;
@@ -864,7 +982,8 @@ body {
 .p-chatCard__icon {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .p-chatCard__info {
   flex: 1;
@@ -895,7 +1014,8 @@ body {
 .p-message__icon {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .p-message__content {
   position: relative;
@@ -927,11 +1047,6 @@ body {
   font-size: 1.5rem;
   font-weight: bold;
   color: #333;
-}
-
-.p-copyright {
-  color: #666;
-  font-size: 0.875rem;
 }
 
 .p-confirm {
@@ -1079,6 +1194,21 @@ body {
 }
 
 @media screen and (width <= 1024px) {
+  .p-nav.--footer {
+    width: 70%;
+  }
+  .p-nav__container {
+    max-width: 90%;
+    padding: 0.8rem;
+    font-size: 1.2rem;
+  }
+  .p-nav__list.--footer {
+    gap: 1.2rem;
+  }
+  .p-nav__item.--footer a {
+    font-size: 1.4rem;
+    padding: 0.5rem 0;
+  }
   .p-profile {
     padding: 1.5rem;
   }
@@ -1093,6 +1223,50 @@ body {
   .p-tabs__link {
     padding: 0.75rem 0;
     font-size: 0.875rem;
+  }
+}
+@media screen and (width <= 649px) {
+  .p-nav.--footer {
+    width: 100%;
+    margin: 1.5rem 0 0;
+  }
+  .p-nav__container {
+    flex-direction: column;
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+  .p-nav__logo {
+    font-size: 1.5rem;
+  }
+  .p-nav__list {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .p-nav__list.--footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+  .p-nav__item {
+    font-size: 1rem;
+  }
+  .p-nav__item.--footer {
+    flex: 0 0 auto;
+  }
+  .p-nav__item.--footer a {
+    font-size: 1rem;
+    padding: 0.5rem;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+  }
+  .p-nav__item.--footer a::after {
+    bottom: -2px;
+  }
+  .p-nav__item.--footer a:hover {
+    opacity: 1;
   }
 }
 /**
