@@ -377,11 +377,18 @@ body {
 }
 
 .l-main {
-  flex: 1;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+.l-section {
+  display: none;
+  width: 100%;
+}
+.l-section.is-active {
+  display: block;
 }
 
 .l-message {
@@ -916,6 +923,24 @@ body {
   font-size: 16px;
 }
 
+.p-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+.p-form__btnWrap {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 80%;
+}
+
 @media screen and (width <= 1024px) {
   .p-nav.--footer {
     width: 70%;
@@ -1111,6 +1136,11 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
 }
+.l-settings__items {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 .l-settings__item {
   display: flex;
   align-items: center;
@@ -1181,13 +1211,16 @@ body {
   background-color: #ff6b81;
 }
 .l-settings__passwordForm {
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 1.5rem;
   margin-top: 1rem;
   padding: 1.5rem;
   border-radius: 8px;
   background-color: #f8f9fa;
+}
+.l-settings__passwordForm.is-active {
+  display: flex;
 }
 .l-settings__errors {
   display: flex;

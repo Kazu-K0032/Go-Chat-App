@@ -14,11 +14,21 @@
 }
 
 .l-main {
-  flex: 1;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+// セクション
+.l-section {
+  display: none;
+  width: 100%;
+
+  &.is-active {
+    // アクティブなセクションを表示
+    display: block;
+  }
 }
 
 .l-message {

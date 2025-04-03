@@ -9,7 +9,7 @@
       <!-- アカウント設定 -->
       <section class="l-section">
         <h2 class="c-midTtl">アカウント設定</h2>
-        <div class="l-settings__content">
+        <div class="l-settings__items">
           <button
             type="button"
             class="l-settings__item"
@@ -27,11 +27,10 @@
             </div>
           </button>
 
-          {{ if .ShowPasswordForm }}
           <form
             method="POST"
             action="/settings"
-            class="l-settings__passwordForm"
+            class="l-settings__passwordForm {{ if .ShowPasswordForm }}is-active{{ end }}"
           >
             {{ if .ValidationErrors }}
             <div class="l-settings__errors">
@@ -94,7 +93,6 @@
               </button>
             </div>
           </form>
-          {{ end }}
         </div>
       </section>
     </div>

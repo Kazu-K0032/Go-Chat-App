@@ -137,22 +137,12 @@
   margin-bottom: 2rem;
 }
 
-// セクション
-.l-section {
-  width: 100%;
-}
-
 // 投稿リスト
 .p-post {
-  display: none;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
   background: #fff;
-
-  &.is-active {
-    display: block;
-  }
 
   &__list {
     padding: 1.5rem;

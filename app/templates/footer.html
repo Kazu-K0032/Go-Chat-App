@@ -7,6 +7,7 @@
       </div>
       <nav class="p-nav --footer">
         <ul class="p-nav__list --footer">
+          {{if .IsLoggedIn}}
           <li class="p-nav__item --footer">
             <a href="/" class="c-link --footer">検索</a>
           </li>
@@ -19,6 +20,7 @@
           <li class="p-nav__item --footer">
             <a href="/settings" class="c-link --footer">設定</a>
           </li>
+          {{end}}
         </ul>
       </nav>
     </div>
