@@ -29,6 +29,13 @@
     // アクティブなセクションを表示
     display: block;
   }
+
+  &.--settings {
+    // 設定ページのセクション
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
 }
 
 .l-message {

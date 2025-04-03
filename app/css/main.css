@@ -390,6 +390,11 @@ body {
 .l-section.is-active {
   display: block;
 }
+.l-section.--settings {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
 .l-message {
   width: 80%;

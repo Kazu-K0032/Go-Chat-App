@@ -390,6 +390,11 @@ body {
 .l-section.is-active {
   display: block;
 }
+.l-section.--settings {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
 .l-message {
   width: 80%;
@@ -1186,7 +1191,6 @@ body {
   justify-content: center;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid #e0e0e0;
 }
 .l-settings__logoutForm {
   width: 100%;
@@ -1239,18 +1243,6 @@ body {
 }
 .l-settings__formActions .c-btn {
   flex: 1;
-}
-
-.l-sectionWrap {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.l-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
 }
 
 @media screen and (width <= 1024px) {
