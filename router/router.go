@@ -4,8 +4,9 @@ package router
 // 	mux := http.NewServeMux()
 
 // 	// 静的ファイルの提供
-// 	fs := http.FileServer(http.Dir("app"))
-// 	mux.Handle("/", fs)
+// 	mux.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("app/css"))))
+// 	mux.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("app/js"))))
+// 	mux.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("app/images"))))
 
 // 	// 認証関連
 // 	mux.HandleFunc("/signup", service.SignupHandler)
@@ -25,6 +26,9 @@ package router
 // 	mux.HandleFunc("/chat/messages/", func(w http.ResponseWriter, r *http.Request) {
 // 		service.ChatHandler(w, r)
 // 	})
+
+// 	// その他のリクエストはホームページにリダイレクト
+// 	mux.HandleFunc("/", service.HomeHandler)
 
 // 	return mux
 // }

@@ -40,6 +40,7 @@ func SetupRouter(chatUsecase service.ChatUsecase) *http.ServeMux {
 	// 静的ファイル (CSS/JS)
 	mux.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("app/css"))))
 	mux.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("app/js"))))
+	mux.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("app/images"))))
 	// 静的ファイルの提供
 	fs := http.FileServer(http.Dir("app/static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
