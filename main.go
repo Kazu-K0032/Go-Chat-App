@@ -3,8 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-
-	_ "security_chat_app/config"
+	"security_chat_app/config"
 	"security_chat_app/repository"
 	"security_chat_app/router"
 	"security_chat_app/service"
@@ -27,8 +26,8 @@ func main() {
 	handler := router.Middleware(mux)
 
 	// サーバーを起動
-	log.Println("サーバーを起動します...")
-	if err := http.ListenAndServe(":8080", handler); err != nil {
+	log.Printf("サーバーを起動します。ポート: %s", config.Config.Port)
+	if err := http.ListenAndServe(":"+config.Config.Port, handler); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -8,6 +8,7 @@ require gopkg.in/go-ini/ini.v1 v1.67.0
 
 require (
 	cloud.google.com/go/firestore v1.18.0
+	cloud.google.com/go/storage v1.49.0
 	firebase.google.com/go v3.13.0+incompatible
 	firebase.google.com/go/v4 v4.15.2
 	golang.org/x/crypto v0.36.0
@@ -23,7 +24,6 @@ require (
 	cloud.google.com/go/iam v1.2.2 // indirect
 	cloud.google.com/go/longrunning v0.6.2 // indirect
 	cloud.google.com/go/monitoring v1.21.2 // indirect
-	cloud.google.com/go/storage v1.49.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.25.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.48.1 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.48.1 // indirect
