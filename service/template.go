@@ -11,19 +11,15 @@ import (
 	"security_chat_app/repository"
 )
 
-// TemplateData テンプレートに渡すデータ構造体
+// TemplateData 共通のテンプレートデータ構造体
 type TemplateData struct {
 	IsLoggedIn       bool
+	User             *repository.User
 	SignupForm       SignupForm
 	LoginForm        LoginForm
-	Error            string
-	Success          string
-	ValidationErrors []string
 	ResetForm        ResetForm
-	User             *repository.User
-	Tweets           []repository.Post
-	Replies          []repository.Post
-	Likes            []repository.Post
+	ValidationErrors []string
+	Error            string
 }
 
 // デフォルトアイコンのパス

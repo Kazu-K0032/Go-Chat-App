@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"net/http"
 
 	"security_chat_app/repository"
@@ -73,6 +74,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// セッションの作成
 		session, err := CreateSession(user)
 		if err != nil {
+			fmt.Println("セッション作成エラー:", err)
 			data := TemplateData{
 				IsLoggedIn:       false,
 				LoginForm:        form,
@@ -82,11 +84,16 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		fmt.Println("セッション作成成功:", session)
+
 		// セッションクッキーの設定
 		SetSessionCookie(w, session)
+		fmt.Println("セッションクッキー設定完了")
 
-		// ログイン成功後、ホームページにリダイレクト
-		http.Redirect(w, r, "/?success=ログインしました", http.StatusSeeOther)
+		// ログイン成功後、プロフィールページにリダイレクト
+		fmt.Println("リダイレクト開始: /profile")
+		http.Redirect(w, r, "/profile", http.StatusSeeOther)
+		return
 	}
 }
 

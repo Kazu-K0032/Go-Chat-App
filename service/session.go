@@ -3,6 +3,7 @@ package service
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -51,23 +52,27 @@ func SetSessionCookie(w http.ResponseWriter, session *Session) {
 		Value:    session.ID,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteStrictMode,
-		MaxAge:   86400 * 30, // 30日
+		Secure:   false,                // 開発環境ではfalseに設定
+		SameSite: http.SameSiteLaxMode, // 開発環境ではLaxに設定
+		MaxAge:   86400 * 30,           // 30日
 	}
 	http.SetCookie(w, cookie)
 }
 
 // ValidateSession セッションを検証する
 func ValidateSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
+	fmt.Println("セッション検証開始")
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
+		fmt.Println("セッションクッキーなし:", err)
 		return nil, err
 	}
 
+	fmt.Println("セッションクッキー取得:", cookie.Value)
 	// Firestoreからセッションを取得
 	client, err := repository.InitFirebase()
 	if err != nil {
+		fmt.Println("Firebase初期化エラー:", err)
 		return nil, err
 	}
 	defer client.Close()
@@ -75,17 +80,20 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
 	ctx := r.Context()
 	doc, err := client.Collection("sessions").Doc(cookie.Value).Get(ctx)
 	if err != nil {
+		fmt.Println("セッション取得エラー:", err)
 		return nil, err
 	}
 
 	var session Session
 	if err := doc.DataTo(&session); err != nil {
+		fmt.Println("セッションデータ変換エラー:", err)
 		return nil, err
 	}
 
 	// ユーザー情報を取得
 	userData, err := repository.GetData("users", session.UserID)
 	if err != nil {
+		fmt.Println("ユーザー情報取得エラー:", err)
 		return nil, err
 	}
 
@@ -99,6 +107,7 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
 		UpdatedAt: userData["updated_at"].(time.Time),
 	}
 
+	fmt.Println("セッション検証成功")
 	return &session, nil
 }
 
