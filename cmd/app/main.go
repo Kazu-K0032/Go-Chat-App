@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"security_chat_app/config"
+	"security_chat_app/internal/config"
 	"security_chat_app/repository"
 	"security_chat_app/router"
 	"security_chat_app/service"

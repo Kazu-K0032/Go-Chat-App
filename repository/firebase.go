@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"security_chat_app/internal/config"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -27,7 +28,7 @@ type Post struct {
 }
 
 func InitFirebase() (*firestore.Client, error) {
-	opt := option.WithCredentialsFile("config/serviceAccountKey.json")
+	opt := option.WithCredentialsFile(config.Config.FirebaseServiceAccountKey)
 
 	// Firebase設定を明示的に指定
 	config := &firebase.Config{
