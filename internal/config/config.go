@@ -3,7 +3,7 @@ package config
 import (
 	"log"
 
-	"security_chat_app/utils"
+	"security_chat_app/internal/lib/log"
 
 	"gopkg.in/go-ini/ini.v1"
 )

@@ -36,24 +36,24 @@ internal/
 
 ## 各ディレクトリの役割
 
-### 🔹 config/
-- `.env` や `config.yaml` などから設定を読み込みます。
-- グローバル設定（Firebase認証キーなど）もここで管理。
+### config/
+- 初期設定を行うディレクトリ
+- グローバル設定（Firebase認証キーなど）もここで管理
 
-### 🔹 domain/
+### domain/
 - ドメインエンティティ（例: `User`, `Product`）を定義します。
 - ビジネスルールに直接関わる構造体とインターフェースのみを記述。
 
-### 🔹 usecase/
+### usecase/
 - 各ドメインに対応するユースケース（ビジネスロジック）を記述します。
 - データの取得・変換・検証など、アプリケーションの中心的な処理を担います。
 
-### 🔹 interface/
+### interface/
 - 外部とのやりとりに関する処理を記述します。
   - `handler/`: HTTP リクエストを処理するハンドラー。
   - `firebase/`: Firebase Auth や Firestore とのやりとりを抽象化。
 
-### 🔹 infrastructure/
+### infrastructure/
 - 具体的な外部技術（Firebase SDKやルーターなど）を実装します。
 - `interface/` から呼ばれることが多く、依存関係の末端になります。
 
