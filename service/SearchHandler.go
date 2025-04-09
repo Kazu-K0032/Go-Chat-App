@@ -104,8 +104,20 @@ func getSearchPageData(user *repository.User, r *http.Request) (SearchPageData, 
 
 	// 新規追加順にソート（created_atの降順）
 	sort.Slice(filteredUsers, func(i, j int) bool {
-		timeI := filteredUsers[i]["created_at"].(time.Time)
-		timeJ := filteredUsers[j]["created_at"].(time.Time)
+		timeI, okI := filteredUsers[i]["created_at"].(time.Time)
+		timeJ, okJ := filteredUsers[j]["created_at"].(time.Time)
+
+		// どちらもnilの場合は等しいとみなす
+		if !okI && !okJ {
+			return false
+		}
+		// nilの場合は最後に配置
+		if !okI {
+			return false
+		}
+		if !okJ {
+			return true
+		}
 		return timeI.After(timeJ)
 	})
 
