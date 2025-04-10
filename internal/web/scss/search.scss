@@ -44,7 +44,7 @@
 
     &:focus {
       border-color: #4a90e2;
-      box-shadow: 0 0 0 2px rgb(74 144 226 / 0.1);
+      box-shadow: 0 0 0 2px rgb(74 144 226 / 10%);
       outline: none;
     }
 
@@ -74,7 +74,7 @@
     appearance: none;
 
     &:hover {
-      box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+      box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
       background-color: #357abd;
       transform: translateY(-1px);
     }
