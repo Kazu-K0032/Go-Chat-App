@@ -239,7 +239,6 @@ func AddChatMessage(chatID string, message map[string]interface{}) error {
 		return err
 	}
 
-	log.Printf("メッセージを保存しました: chatID=%s, messageID=%s", chatID, messageID)
 	return nil
 }
 
