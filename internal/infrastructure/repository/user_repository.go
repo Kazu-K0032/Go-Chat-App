@@ -1,10 +1,15 @@
 package repository
 
-import "context"
+import (
+	"context"
+
+	"security_chat_app/internal/domain"
+	"security_chat_app/internal/infrastructure/firebase"
+)
 
 // GetUserByEmail メールアドレスでユーザーを検索する
-func GetUserByEmail(email string) (*User, error) {
-	client, err := InitFirebase()
+func GetUserByEmail(email string) (*domain.User, error) {
+	client, err := firebase.InitFirebase()
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +26,7 @@ func GetUserByEmail(email string) (*User, error) {
 		return nil, nil // ユーザーが見つからない
 	}
 
-	var user User
+	var user domain.User
 	if err := docs[0].DataTo(&user); err != nil {
 		return nil, err
 	}

@@ -8,14 +8,12 @@ import (
 	"sort"
 	"time"
 
-	"security_chat_app/internal/interface/presenter/html"
-	"security_chat_app/repository"
-	"security_chat_app/service"
+	"security_chat_app/internal/domain"
+	"security_chat_app/internal/infrastructure/firebase"
+	"security_chat_app/internal/interface/html"
+	"security_chat_app/internal/interface/middleware"
+	"security_chat_app/internal/usecase/chat"
 )
-
-type ChatController struct {
-	chatUsecase usecase.chat.ChatUsecase
-}
 
 // チャット開始ハンドラ
 func StartChatHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +23,7 @@ func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// セッションの検証
-	session, err := service.ValidateSession(w, r)
+	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -46,7 +44,7 @@ func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// チャットを開始
-	chatID, err := repository.StartChat(session.User.ID, targetUserID)
+	chatID, err := firebase.StartChat(session.User.ID, targetUserID)
 	if err != nil {
 		log.Printf("チャット開始エラー: %v", err)
 		http.Error(w, "チャットの開始に失敗しました", http.StatusInternalServerError)
@@ -65,7 +63,7 @@ func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 // チャットページのハンドラ
 func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// セッションの検証
-	session, err := service.ValidateSession(w, r)
+	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -92,7 +90,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// メッセージを保存
-		err = repository.AddChatMessage(chatID, message)
+		err = firebase.AddChatMessage(chatID, message)
 		if err != nil {
 			http.Error(w, "メッセージの送信に失敗しました", http.StatusInternalServerError)
 			return
@@ -108,7 +106,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// チャット一覧を取得
-	chats, err := service.GetChatHistory(session.User)
+	chats, err := chat.GetChatHistory(session.User)
 	if err != nil {
 		http.Error(w, "チャット一覧の取得に失敗しました", http.StatusInternalServerError)
 		return
@@ -128,7 +126,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// チャットの存在確認
-	exists, err := repository.CheckChatExists(chatID)
+	exists, err := firebase.CheckChatExists(chatID)
 	if err != nil {
 		http.Error(w, "チャットの確認に失敗しました", http.StatusInternalServerError)
 		return
@@ -139,7 +137,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// チャットの参加者を取得
-	participants, err := repository.GetChatParticipants(chatID)
+	participants, err := firebase.GetChatParticipants(chatID)
 	if err != nil {
 		http.Error(w, "チャットの参加者情報の取得に失敗しました", http.StatusInternalServerError)
 		return
@@ -169,16 +167,16 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// メッセージを取得
-	messagesData, err := repository.GetChatMessages(chatID)
+	messagesData, err := firebase.GetChatMessages(chatID)
 	if err != nil {
 		http.Error(w, "メッセージの取得に失敗しました", http.StatusInternalServerError)
 		return
 	}
 
 	// メッセージの型変換
-	var messages []service.Message
+	var messages []domain.Message
 	for _, msg := range messagesData {
-		message := service.Message{
+		message := domain.Message{
 			ID:         msg["id"].(string),
 			Content:    msg["content"].(string),
 			SenderID:   msg["sender_id"].(string),
@@ -190,7 +188,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 現在のチャットを特定
-	var currentChat *service.Chat
+	var currentChat *domain.Chat
 	for _, chat := range chats {
 		if chat.ID == chatID {
 			currentChat = &chat
@@ -202,9 +200,8 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	data := html.TemplateData{
 		IsLoggedIn:  true,
 		User:        session.User,
-		ChatID:      chatID,
-		TargetUser:  targetUser,
 		Messages:    messages,
+		Contacts:    []domain.Contact{{ID: targetUser.ID, Username: targetUser.Name, IconURL: targetUser.IconURL}},
 		Chats:       chats,
 		CurrentChat: currentChat,
 	}
@@ -214,14 +211,14 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // チャット履歴を取得
-func getChatHistory(user *repository.User) ([]service.Chat, error) {
+func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 	// チャット履歴を取得
-	chats, err := repository.GetAllData("chats")
+	chats, err := firebase.GetAllData("chats")
 	if err != nil {
 		return nil, fmt.Errorf("チャット履歴の取得に失敗しました: %v", err)
 	}
 
-	var chatHistory []service.Chat
+	var chatHistory []domain.Chat
 	seenChats := make(map[string]bool) // 重複チェック用のマップ
 
 	for _, chatData := range chats {
@@ -256,17 +253,17 @@ func getChatHistory(user *repository.User) ([]service.Chat, error) {
 		seenChats[chatID] = true
 
 		// メッセージの取得
-		messagesData, err := repository.GetChatMessages(chatID)
+		messagesData, err := firebase.GetChatMessages(chatID)
 		if err != nil {
 			continue
 		}
 
 		// メッセージの型変換
-		var messages []service.Message
+		var messages []domain.Message
 		var lastMessageTime time.Time
 		for _, msg := range messagesData {
 			messageTime := msg["created_at"].(time.Time)
-			message := service.Message{
+			message := domain.Message{
 				ID:         msg["id"].(string),
 				Content:    msg["content"].(string),
 				SenderID:   msg["sender_id"].(string),
@@ -289,9 +286,9 @@ func getChatHistory(user *repository.User) ([]service.Chat, error) {
 		}
 
 		// チャット履歴に追加
-		chatHistory = append(chatHistory, service.Chat{
+		chatHistory = append(chatHistory, domain.Chat{
 			ID: chatID,
-			Contact: service.Contact{
+			Contact: domain.Contact{
 				ID:       targetUser.ID,
 				Username: targetUser.Name,
 				IconURL:  targetUser.IconURL,
@@ -310,7 +307,7 @@ func getChatHistory(user *repository.User) ([]service.Chat, error) {
 	return chatHistory, nil
 }
 
-func NewChatController(chatUsecase ChatUsecase) *ChatController {
+func NewChatController(chatUsecase chat.ChatUsecase) *ChatController {
 	return &ChatController{
 		chatUsecase: chatUsecase,
 	}
@@ -342,7 +339,7 @@ func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// セッションの検証
-	session, err := ValidateSession(w, r)
+	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -367,7 +364,7 @@ func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// メッセージを保存
-	err = repository.AddChatMessage(chatID, message)
+	err = firebase.AddChatMessage(chatID, message)
 	if err != nil {
 		http.Error(w, "メッセージの送信に失敗しました", http.StatusInternalServerError)
 		return

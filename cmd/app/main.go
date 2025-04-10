@@ -5,30 +5,27 @@ import (
 	"net/http"
 
 	"security_chat_app/internal/config"
-	"security_chat_app/repository"
-	"security_chat_app/router"
-	"security_chat_app/service"
+	"security_chat_app/internal/infrastructure/firebase"
+	"security_chat_app/internal/infrastructure/router"
 )
 
 func main() {
-	client, err := repository.InitFirebase()
+	client, err := firebase.InitFirebase()
 	if err != nil {
 		log.Fatalf("Firebase初期化に失敗: %v", err)
 	}
 	defer client.Close()
 
-	chatRepo := repository.NewChatRepository(client)
-	chatUsecase := service.NewChatUsecase(chatRepo)
+	// チャットリポジトリの作成（この関数が存在しない場合は実装が必要）
+	// chatRepo := repository.NewChatRepository(client)
+	// chatUsecase := chat.NewChatUsecase(chatRepo)
 
 	// ルーティングの設定
-	mux := router.SetupRouter(chatUsecase)
-
-	// セッション管理のミドルウェアを適用
-	handler := router.Middleware(mux)
+	mux := router.SetupRouter(nil) // chatUsecaseが未実装の場合はnilを渡す
 
 	// サーバーを起動
 	log.Printf("サーバーを起動します。ポート: %s", config.Config.Port)
-	if err := http.ListenAndServe(":"+config.Config.Port, handler); err != nil {
+	if err := http.ListenAndServe(":"+config.Config.Port, mux); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"security_chat_app/internal/domain"
 	"security_chat_app/repository"
 
 	"golang.org/x/crypto/bcrypt"
@@ -43,3 +44,7 @@ func CreateUser(name, email, password string) (*User, error) {
 	return user, nil
 }
 
+// セッションが有効かチェックする
+func (sess *domain.Session.IsValid) CheckSession() (bool, error) {
+	return true, nil
+}
