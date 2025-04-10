@@ -1,4 +1,4 @@
-package html
+package chtml
 
 import (
 	"bytes"
@@ -8,19 +8,40 @@ import (
 	"net/http"
 	"time"
 
-	"security_chat_app/repository"
-	"security_chat_app/internal/interface/handler"
+	"security_chat_app/internal/domain"
 )
 
 // TemplateData 共通のテンプレートデータ構造体
 type TemplateData struct {
 	IsLoggedIn       bool
-	User             *repository.User
-	SignupForm       handler.SignupForm
-	LoginForm        handler.LoginForm
-	ResetForm        handler.ResetForm
+	User             *domain.User
+	Messages         []domain.Message
+	Contacts         []domain.Contact
+	Chats            []domain.Chat
+	CurrentChat      *domain.Chat
+	SignupForm       SignupForm
+	LoginForm        LoginForm
+	ResetForm        ResetForm
 	ValidationErrors []string
 	Error            string
+}
+
+// SignupForm サインアップフォームのデータ構造体
+type SignupForm struct {
+	Username string
+	Email    string
+	Password string
+}
+
+// LoginForm ログインフォームのデータ構造体
+type LoginForm struct {
+	Email    string
+	Password string
+}
+
+// ResetForm パスワードリセットフォームのデータ構造体
+type ResetForm struct {
+	Email string
 }
 
 // デフォルトアイコンのパス
@@ -50,11 +71,11 @@ var templateFuncs = template.FuncMap{
 	},
 	"len": func(slice interface{}) int {
 		switch v := slice.(type) {
-		case []service.Message:
+		case []domain.Message:
 			return len(v)
-		case []service.Contact:
+		case []domain.Contact:
 			return len(v)
-		case []handler.Chat:
+		case []domain.Chat:
 			return len(v)
 		default:
 			return 0

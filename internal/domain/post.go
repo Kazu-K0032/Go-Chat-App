@@ -11,3 +11,29 @@ type Post struct {
 	LikedBy   []string  `json:"liked_by" firestore:"liked_by"`
 	CreatedAt time.Time `json:"created_at" firestore:"created_at"`
 }
+
+type sPosts struct {
+	ID        string
+	Content   string
+	UserID    string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	ReplyToID string
+	LikedBy   []string
+}
+
+type sReplies struct {
+	ID        string
+	Content   string
+	PostID    string
+	UserID    string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type sLikes struct {
+	ID        string
+	PostID    string
+	UserID    string
+	CreatedAt time.Time
+}

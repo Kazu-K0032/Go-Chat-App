@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"security_chat_app/internal/interface/presenter/html"
-	"security_chat_app/repository"
-	"security_chat_app/service"
+	"security_chat_app/internal/interface/html"
+	"security_chat_app/internal/interface/middleware"
+	"security_chat_app/internal/infrastructure/repository"
 )
 
 // LoginForm ログインフォームのデータ構造体
@@ -44,7 +44,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		if len(validationErrors) > 0 {
 			data := html.TemplateData{
 				IsLoggedIn:       false,
-				LoginForm:        LoginForm{Email: form.Email, Password: form.Password},
+				LoginForm:        html.LoginForm{Email: form.Email, Password: form.Password},
 				ValidationErrors: validationErrors,
 			}
 			html.GenerateHTML(w, data, "layout", "header", "login", "footer")
@@ -56,7 +56,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			data := html.TemplateData{
 				IsLoggedIn:       false,
-				LoginForm:        LoginForm{Email: form.Email, Password: form.Password},
+				LoginForm:        html.LoginForm{Email: form.Email, Password: form.Password},
 				ValidationErrors: []string{"認証エラーが発生しました"},
 			}
 			html.GenerateHTML(w, data, "layout", "header", "login", "footer")
@@ -66,7 +66,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		if user == nil || user.Password != form.Password {
 			data := html.TemplateData{
 				IsLoggedIn:       false,
-				LoginForm:        LoginForm{Email: form.Email, Password: form.Password},
+				LoginForm:        html.LoginForm{Email: form.Email, Password: form.Password},
 				ValidationErrors: []string{"メールアドレスまたはパスワードが誤っています"},
 			}
 			html.GenerateHTML(w, data, "layout", "header", "login", "footer")
@@ -74,12 +74,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// セッションの作成
-		session, err := service.CreateSession(user)
+		session, err := middleware.CreateSession(user)
 		if err != nil {
 			fmt.Println("セッション作成エラー:", err)
 			data := html.TemplateData{
 				IsLoggedIn:       false,
-				LoginForm:        LoginForm{Email: form.Email, Password: form.Password},
+				LoginForm:        html.LoginForm{Email: form.Email, Password: form.Password},
 				ValidationErrors: []string{"セッション作成エラーが発生しました"},
 			}
 			html.GenerateHTML(w, data, "layout", "header", "login", "footer")
@@ -89,7 +89,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("セッション作成成功:", session)
 
 		// セッションクッキーの設定
-		service.SetSessionCookie(w, session)
+		middleware.SetSessionCookie(w, session)
 		fmt.Println("セッションクッキー設定完了")
 
 		// ログイン成功後、プロフィールページにリダイレクト

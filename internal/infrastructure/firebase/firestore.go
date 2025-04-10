@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"security_chat_app/domain"
+	"security_chat_app/internal/domain"
 
 	"cloud.google.com/go/firestore"
 )
@@ -304,7 +304,7 @@ func GetChatParticipants(chatID string) ([]string, error) {
 }
 
 // GetUserPosts ユーザーの投稿を取得する
-func GetUserPosts(userID string) ([]Post, error) {
+func GetUserPosts(userID string) ([]domain.Post, error) {
 	client, err := InitFirebase()
 	if err != nil {
 		return nil, err
@@ -322,9 +322,9 @@ func GetUserPosts(userID string) ([]Post, error) {
 		return nil, err
 	}
 
-	var posts []Post
+	var posts []domain.Post
 	for _, doc := range docs {
-		var post Post
+		var post domain.Post
 		if err := doc.DataTo(&post); err != nil {
 			continue
 		}
@@ -336,7 +336,7 @@ func GetUserPosts(userID string) ([]Post, error) {
 }
 
 // GetUserReplies ユーザーの返信を取得する
-func GetUserReplies(userID string) ([]Post, error) {
+func GetUserReplies(userID string) ([]domain.Post, error) {
 	client, err := InitFirebase()
 	if err != nil {
 		return nil, err
@@ -354,9 +354,9 @@ func GetUserReplies(userID string) ([]Post, error) {
 		return nil, err
 	}
 
-	var replies []Post
+	var replies []domain.Post
 	for _, doc := range docs {
-		var reply Post
+		var reply domain.Post
 		if err := doc.DataTo(&reply); err != nil {
 			continue
 		}
@@ -368,7 +368,7 @@ func GetUserReplies(userID string) ([]Post, error) {
 }
 
 // GetUserLikedPosts ユーザーがいいねした投稿を取得する
-func GetUserLikedPosts(userID string) ([]Post, error) {
+func GetUserLikedPosts(userID string) ([]domain.Post, error) {
 	client, err := InitFirebase()
 	if err != nil {
 		return nil, err

@@ -9,23 +9,24 @@ import (
 	"path/filepath"
 	"time"
 
-	"security_chat_app/internal/interface/presenter/html"
-	"security_chat_app/repository"
-	"security_chat_app/service"
+	"security_chat_app/internal/domain"
+	"security_chat_app/internal/infrastructure/repository"
+	"security_chat_app/internal/interface/chtml"
+	"security_chat_app/internal/interface/middleware"
 )
 
 // ProfileData プロフィールページのデータ構造体
 type ProfileData struct {
 	IsLoggedIn bool
-	User       *repository.User
-	Posts      []repository.Post
-	Replies    []repository.Post
-	Likes      []repository.Post
+	User       *domain.User
+	Posts      []domain.Post
+	Replies    []domain.Post
+	Likes      []domain.Post
 }
 
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	// セッションの検証
-	session, err := service.ValidateSession(w, r)
+	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -105,13 +106,13 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// テンプレートを描画
-	html.GenerateHTML(w, data, "layout", "header", "profile", "footer")
+	chtml.GenerateHTML(w, data, "layout", "header", "profile", "footer")
 }
 
 // アイコンアップロードハンドラ
 func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	// セッションの検証
-	session, err := service.ValidateSession(w, r)
+	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Error(w, "セッションが無効です", http.StatusUnauthorized)
 		return

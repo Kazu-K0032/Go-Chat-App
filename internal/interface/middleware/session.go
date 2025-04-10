@@ -7,20 +7,12 @@ import (
 	"net/http"
 	"time"
 
-	"security_chat_app/repository"
+	"security_chat_app/internal/domain"
+	"security_chat_app/internal/infrastructure/firebase"
 )
 
-// Session セッション情報
-type Session struct {
-	ID        string
-	UserID    string
-	Email     string
-	CreatedAt time.Time
-	User      *repository.User
-}
-
 // CreateSession セッションを作成する
-func CreateSession(user *repository.User) (*Session, error) {
+func CreateSession(user *domain.User) (*domain.Session, error) {
 	// セッションIDの生成
 	bytes := make([]byte, 32)
 	if _, err := rand.Read(bytes); err != nil {
@@ -28,16 +20,19 @@ func CreateSession(user *repository.User) (*Session, error) {
 	}
 	sessionID := base64.URLEncoding.EncodeToString(bytes)
 
-	session := &Session{
+	// セッションの作成
+	session := &domain.Session{
 		ID:        sessionID,
 		UserID:    user.ID,
-		Email:     user.Email,
+		Token:     sessionID,
 		CreatedAt: time.Now(),
-		User:      user,
+		UpdatedAt: time.Now(),
+		ExpiredAt: time.Now().Add(30 * 24 * time.Hour), // 30日間有効
+		IsValid:   true,
 	}
 
-	// Firestoreにセッションを保存（セッションIDをドキュメントIDとして使用）
-	err := repository.AddData("sessions", session, sessionID)
+	// Firestoreにセッションを保存
+	err := firebase.AddData("sessions", session, sessionID)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +41,7 @@ func CreateSession(user *repository.User) (*Session, error) {
 }
 
 // SetSessionCookie セッションクッキーを設定する
-func SetSessionCookie(w http.ResponseWriter, session *Session) {
+func SetSessionCookie(w http.ResponseWriter, session *domain.Session) {
 	cookie := &http.Cookie{
 		Name:     "session_id",
 		Value:    session.ID,
@@ -60,7 +55,7 @@ func SetSessionCookie(w http.ResponseWriter, session *Session) {
 }
 
 // ValidateSession セッションを検証する
-func ValidateSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
+func ValidateSession(w http.ResponseWriter, r *http.Request) (*domain.Session, error) {
 	fmt.Println("セッション検証開始")
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
@@ -70,7 +65,7 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
 
 	fmt.Println("セッションクッキー取得:", cookie.Value)
 	// Firestoreからセッションを取得
-	client, err := repository.InitFirebase()
+	client, err := firebase.InitFirebase()
 	if err != nil {
 		fmt.Println("Firebase初期化エラー:", err)
 		return nil, err
@@ -84,27 +79,16 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
 		return nil, err
 	}
 
-	var session Session
+	var session domain.Session
 	if err := doc.DataTo(&session); err != nil {
 		fmt.Println("セッションデータ変換エラー:", err)
 		return nil, err
 	}
 
-	// ユーザー情報を取得
-	userData, err := repository.GetData("users", session.UserID)
-	if err != nil {
-		fmt.Println("ユーザー情報取得エラー:", err)
-		return nil, err
-	}
-
-	// ユーザー情報をセッションに設定
-	session.User = &repository.User{
-		ID:        userData["id"].(string),
-		Name:      userData["name"].(string),
-		Email:     userData["email"].(string),
-		Password:  userData["password"].(string),
-		CreatedAt: userData["created_at"].(time.Time),
-		UpdatedAt: userData["updated_at"].(time.Time),
+	// セッションの有効性をチェック
+	if !session.CheckSession() {
+		fmt.Println("セッションが無効です")
+		return nil, fmt.Errorf("セッションが無効です")
 	}
 
 	fmt.Println("セッション検証成功")
@@ -119,7 +103,7 @@ func DeleteSession(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Firestoreからセッションを削除
-	client, err := repository.InitFirebase()
+	client, err := firebase.InitFirebase()
 	if err != nil {
 		return err
 	}
