@@ -15,7 +15,9 @@ import (
 	"google.golang.org/api/option"
 )
 
+// Firebaseの初期化
 func InitFirebase() (*firestore.Client, error) {
+	// Firebaseの認証情報の設定
 	opt := option.WithCredentialsFile(config.Config.FirebaseServiceAccountKey)
 
 	// Firebase設定を明示的に指定
@@ -23,6 +25,7 @@ func InitFirebase() (*firestore.Client, error) {
 		ProjectID: "go-chat-app-cf888",
 	}
 
+	// Firebaseサービスのインスタンスを作成
 	app, err := firebase.NewApp(context.Background(), config, opt)
 	if err != nil {
 		log.Printf("Firebaseアプリの初期化に失敗: %v", err)
@@ -33,6 +36,7 @@ func InitFirebase() (*firestore.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
+	// Firestoreクライアントを作成
 	client, err := app.Firestore(ctx)
 	if err != nil {
 		log.Printf("Firestoreクライアント作成に失敗: %v", err)

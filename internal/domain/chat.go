@@ -2,77 +2,50 @@ package domain
 
 import (
 	"time"
-
-	"security_chat_app/internal/usecase/chat"
 )
 
-// // 連絡先を交換したユーザーの構造体
-// type Contact struct {
-// 	ID       string
-// 	Username string
-// 	IconURL  string
-// 	LastSeen time.Time
-// }
+// メッセージの種類
+type MessageType string
 
-// // 対象ユーザーとのチャット履歴を管理する構造体
-// type Chat struct {
-// 	ID        string
-// 	Contact   Contact
-// 	Messages  []Message
-// 	UpdatedAt time.Time
-// }
-
-// // メッセージの構造体
-// type Message struct {
-// 	ID         string
-// 	Content    string
-// 	SenderID   string
-// 	SenderName string
-// 	Time       time.Time
-// 	IsRead     bool
-// }
-
-// // チャットページのデータ構造体
-// type ChatPageData struct {
-// 	IsLoggedIn  bool
-// 	User        *User
-// 	ChatID      string
-// 	TargetUser  *User
-// 	Messages    []Message
-// 	Chats       []Chat
-// 	CurrentChat *Chat
-// }
+const (
+	MessageTypeText  MessageType = "text"
+	MessageTypeImage MessageType = "image"
+	MessageTypeVideo MessageType = "video"
+	MessageTypeAudio MessageType = "audio"
+	MessageTypeFile  MessageType = "file"
+)
 
 // チャットの構造体
-type Chats struct {
-	ID        string
-	IsGroup   bool
-	CreatedAt time.Time
-	UpdatedAt time.Time
+type Chat struct {
+	ID        string    // チャットのID
+	IsGroup   bool      // グループチャットかどうか
+	Messages  []Message // メッセージのリスト
+	CreatedAt time.Time // チャットの作成日時
+	UpdatedAt time.Time // チャットの更新日時
 }
 
 // チャット参加者の構造体
-type ChatParticipants struct {
-	ID       string
-	ChatID   string
-	UserID   string
-	JoinedAt time.Time
+type ChatParticipant struct {
+	ID       string    // チャット参加者のID
+	ChatID   string    // チャットのID
+	UserID   string    // ユーザーのID
+	Role     string    // チャット参加者のロール
+	JoinedAt time.Time // チャット参加者の参加日時
 }
 
 // メッセージの構造体
-type Messages struct {
-	ID         string
-	ChatID     string
-	SenderID   string
-	SenderName string
-	Content    string
-	CreatedAt  time.Time
-	IsRead     bool
-}
-
-// チャット開始ハンドラ
-type ChatController struct {
-	chatUsecase ChatUsecase
+type Message struct {
+	ID         string      // メッセージのID
+	ChatID     string      // チャットのID
+	SenderID   string      // 送信者のID
+	SenderName string      // 送信者の名前
+	Type       MessageType // メッセージの種類
+	Content    string      // メッセージの内容
+	MediaURL   string      // メッセージのメディアのURL
+	CreatedAt  time.Time   // メッセージの作成日時
+	IsRead     bool        // メッセージが読まれたかどうか
+	ReadBy     []string    // メッセージを読んだユーザーのID
+	ReplyTo    string      // メッセージの返信先のID
 }
 
 // チャットのユースケース
@@ -80,17 +53,10 @@ type ChatUsecase interface {
 	CreateChat(user, message string) error
 }
 
-// チャットのユースケースの実装
-type chatUsecase struct {
-	repo interface {
-		AddChat(user, message string) error
-	}
-}
-
-// チャットのユースケースの実装のコンストラクタ
-func NewChatUsecase(repo interface {
-	AddChat(user, message string) error
-},
-) ChatUsecase {
-	return &chat.chatUsecase{repo: repo}
+// 連絡先を交換したユーザーの構造体
+type Contact struct {
+	ID       string    // 連絡先のID
+	Username string    // 連絡先のユーザー名
+	IconURL  string    // 連絡先のアイコンのURL
+	LastSeen time.Time // 連絡先の最終接続日時
 }

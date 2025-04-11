@@ -2,23 +2,18 @@ package domain
 
 import "time"
 
-// type Session struct {
-// 	Token string
-// 	// その他セッションに必要な情報（例：UserIDなど）
-// }
-
 // セッション情報を管理する構造体
 type Session struct {
-	ID        string
-	UserID    string
-	Token     string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	ExpiredAt time.Time
-	IsValid   bool
+	ID        string    // セッションのID
+	UserID    string    // ユーザーのID
+	Token     string    // セッションのトークン
+	CreatedAt time.Time // セッションの作成日時
+	UpdatedAt time.Time // セッションの更新日時
+	ExpiredAt time.Time // セッションの有効期限
+	IsValid   bool      // セッションが有効かどうか
 }
 
-// CheckSession セッションが有効かチェックする
+// Sessionの有効性をチェックする
 func (sess *Session) CheckSession() bool {
 	// セッションが存在しない場合
 	if sess == nil {
