@@ -13,9 +13,12 @@ func main() {
 	}
 	defer client.Close()
 
-	// チャットリポジトリの作成（この関数が存在しない場合は実装が必要）
-	// chatRepo := repository.NewChatRepository(client)
-	// chatUsecase := chat.NewChatUsecase(chatRepo)
+	// チャットリポジトリの作成
+	chatRepo := repository.NewChatRepository(client)
+	chatUsecase := chat.NewChatUsecase(chatRepo)
+	if chatUsecase == nil {
+		log.Fatal("chatUsecaseがnilです")
+	}
 
 	// ルーティングの設定
 	// mux := router.SetupRouter(nil) // chatUsecaseが未実装の場合はnilを渡す
