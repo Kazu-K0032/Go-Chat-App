@@ -2,27 +2,48 @@ package chat
 
 import (
 	"fmt"
-	"security_chat_app/internal/domain"
 	"sort"
 	"time"
+
+	"security_chat_app/internal/domain"
 )
 
-// チャット作成時のビジネスロジックを定義
-func (c *domain.chatUsecase) CreateChat(user, message string) error {
+// チャットのコントローラー
+type ChatController struct {
+	chatUsecase domain.ChatUsecase
+}
+
+// chatUsecaseImpl はチャットのユースケースの実装
+type chatUsecaseImpl struct {
+	repo interface {
+		AddChat(user, message string) error
+	}
+}
+
+// NewChatUsecase はチャットのユースケースの実装を生成する
+func NewChatUsecase(repo interface {
+	AddChat(user, message string) error
+},
+) domain.ChatUsecase {
+	return &chatUsecaseImpl{repo: repo}
+}
+
+// CreateChat はチャット作成時のビジネスロジックを定義
+func (c *chatUsecaseImpl) CreateChat(user, message string) error {
 	return c.repo.AddChat(user, message)
 }
 
 // 連絡先を交換したユーザーのデータを取得
-func getContacts(user *repository.User) ([]Contact, error) {
+func getContacts(user *repository.User) ([]domain.Contact, error) {
 	// 連絡先コレクションからデータを取得
 	contactsData, err := repository.GetDataByQuery("contacts", "userID", "==", user.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	var contacts []Contact
+	var contacts []domain.Contact
 	for _, data := range contactsData {
-		contact := Contact{
+		contact := domain.Contact{
 			ID:       data["contactID"].(string),
 			Username: data["username"].(string),
 			IconURL:  data["iconURL"].(string),
@@ -35,14 +56,14 @@ func getContacts(user *repository.User) ([]Contact, error) {
 }
 
 // チャット履歴を取得
-func GetChatHistory(user *repository.User) ([]Chat, error) {
+func GetChatHistory(user *repository.User) ([]domain.Chat, error) {
 	// チャット履歴を取得
 	chats, err := repository.GetAllData("chats")
 	if err != nil {
 		return nil, fmt.Errorf("チャット履歴の取得に失敗しました: %v", err)
 	}
 
-	var chatHistory []Chat
+	var chatHistory []domain.Chat
 	seenChats := make(map[string]bool) // 重複チェック用のマップ
 
 	for _, chatData := range chats {
@@ -83,11 +104,11 @@ func GetChatHistory(user *repository.User) ([]Chat, error) {
 		}
 
 		// メッセージの型変換
-		var messages []Message
+		var messages []domain.Message
 		var lastMessageTime time.Time
 		for _, msg := range messagesData {
 			messageTime := msg["created_at"].(time.Time)
-			message := Message{
+			message := domain.Message{
 				ID:         msg["id"].(string),
 				Content:    msg["content"].(string),
 				SenderID:   msg["sender_id"].(string),
@@ -110,9 +131,9 @@ func GetChatHistory(user *repository.User) ([]Chat, error) {
 		}
 
 		// チャット履歴に追加
-		chatHistory = append(chatHistory, Chat{
+		chatHistory = append(chatHistory, domain.Chat{
 			ID: chatID,
-			Contact: Contact{
+			Contact: domain.Contact{
 				ID:       targetUser.ID,
 				Username: targetUser.Name,
 				IconURL:  targetUser.IconURL,

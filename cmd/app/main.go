@@ -2,11 +2,8 @@ package main
 
 import (
 	"log"
-	"net/http"
 
-	"security_chat_app/internal/config"
 	"security_chat_app/internal/infrastructure/firebase"
-	"security_chat_app/internal/infrastructure/router"
 )
 
 func main() {
@@ -21,11 +18,11 @@ func main() {
 	// chatUsecase := chat.NewChatUsecase(chatRepo)
 
 	// ルーティングの設定
-	mux := router.SetupRouter(nil) // chatUsecaseが未実装の場合はnilを渡す
+	// mux := router.SetupRouter(nil) // chatUsecaseが未実装の場合はnilを渡す
 
 	// サーバーを起動
-	log.Printf("サーバーを起動します。ポート: %s", config.Config.Port)
-	if err := http.ListenAndServe(":"+config.Config.Port, mux); err != nil {
-		log.Fatal(err)
-	}
+	// log.Printf("サーバーを起動します。ポート: %s", config.Config.Port)
+	// if err := http.ListenAndServe(":"+config.Config.Port, mux); err != nil {
+	// 	log.Fatal(err)
+	// }
 }
