@@ -5,13 +5,14 @@ import (
 	"time"
 
 	"security_chat_app/internal/domain"
-	"security_chat_app/repository"
+	"security_chat_app/internal/infrastructure/firebase"
+	utils "security_chat_app/internal/utils/uuid"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 // ユーザー登録
-func CreateUser(name, email, password string) (*User, error) {
+func CreateUser(name, email, password string) (*domain.User, error) {
 	// パスワードをハッシュ化
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -19,8 +20,8 @@ func CreateUser(name, email, password string) (*User, error) {
 	}
 
 	// ユーザーを作成
-	user := &User{
-		ID:        generateUUID(), // UUIDを生成する関数は別途実装が必要
+	user := &domain.User{
+		ID:        utils.GenerateUUID(), // UUIDを生成する関数は別途実装が必要
 		Name:      name,
 		Email:     email,
 		Password:  string(hashedPassword),
@@ -29,7 +30,7 @@ func CreateUser(name, email, password string) (*User, error) {
 	}
 
 	// Firestoreにユーザーを保存
-	client, err := repository.InitFirebase()
+	client, err := firebase.InitFirebase()
 	if err != nil {
 		return nil, err
 	}
@@ -42,9 +43,4 @@ func CreateUser(name, email, password string) (*User, error) {
 	}
 
 	return user, nil
-}
-
-// セッションが有効かチェックする
-func (sess *domain.Session.IsValid) CheckSession() (bool, error) {
-	return true, nil
 }
