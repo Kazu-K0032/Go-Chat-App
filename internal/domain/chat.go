@@ -15,6 +15,14 @@ const (
 	MessageTypeFile  MessageType = "file"
 )
 
+// エラーコードの定数
+const (
+	ChatErrorCodeInvalidInput  = "INVALID_INPUT"
+	ChatErrorCodeNotFound      = "NOT_FOUND"
+	ChatErrorCodeUnauthorized  = "UNAUTHORIZED"
+	ChatErrorCodeInternalError = "INTERNAL_ERROR"
+)
+
 // チャットの構造体
 type Chat struct {
 	ID        string    // チャットのID
@@ -48,15 +56,42 @@ type Message struct {
 	ReplyTo    string      // メッセージの返信先のID
 }
 
-// チャットのユースケース
-type ChatUsecase interface {
-	CreateChat(user, message string) error
-}
-
 // 連絡先を交換したユーザーの構造体
 type Contact struct {
 	ID       string    // 連絡先のID
 	Username string    // 連絡先のユーザー名
 	IconURL  string    // 連絡先のアイコンのURL
 	LastSeen time.Time // 連絡先の最終接続日時
+}
+
+// ビジネスロジックの為のチャットのユースケース
+type ChatUsecase interface {
+	CreateChat(user, message string) error
+	GetChatHistory(user *User) ([]Chat, error)
+	GetContacts(user *User) ([]Contact, error)
+}
+
+// データアクセスを定義
+type ChatRepository interface {
+	AddChat(user, message string) error
+	GetChats(userID string) ([]Chat, error)
+	GetMessages(chatID string) ([]Message, error)
+}
+
+// チャットのコントローラー
+type ChatController interface {
+	HandleCreateChat(user, message string) error
+	HandleGetChatHistory(user *User) ([]Chat, error)
+	HandleGetContacts(user *User) ([]Contact, error)
+}
+
+// チャット関連のエラー
+type ChatError struct {
+	Code    string // エラーコード
+	Message string // エラーメッセージ
+}
+
+// エラーの文字列を返す
+func (e *ChatError) Error() string {
+	return e.Message
 }

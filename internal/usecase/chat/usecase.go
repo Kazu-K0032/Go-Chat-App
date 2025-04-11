@@ -1,11 +1,14 @@
 package chat
 
 import (
+	"context"
 	"fmt"
-	"sort"
 	"time"
 
 	"security_chat_app/internal/domain"
+
+	"cloud.google.com/go/firestore"
+	"google.golang.org/api/iterator"
 )
 
 // チャットのコントローラー
@@ -13,141 +16,129 @@ type ChatController struct {
 	chatUsecase domain.ChatUsecase
 }
 
-// chatUsecaseImpl はチャットのユースケースの実装
+// チャットのリポジトリの実装
+type chatRepository struct {
+	// *: メソッド内で構造体を変更する
+	client *firestore.Client
+}
+
+// チャットのユースケースの実装
 type chatUsecaseImpl struct {
-	repo interface {
-		AddChat(user, message string) error
-	}
+	repo domain.ChatRepository
 }
 
-// NewChatUsecase はチャットのユースケースの実装を生成する
-func NewChatUsecase(repo interface {
-	AddChat(user, message string) error
-},
-) domain.ChatUsecase {
-	return &chatUsecaseImpl{repo: repo}
-}
+// **************************************************
+// ChatUsecaseの定義 **************
+// **************************************************
 
-// CreateChat はチャット作成時のビジネスロジックを定義
+// チャット作成時のビジネスロジックを定義
 func (c *chatUsecaseImpl) CreateChat(user, message string) error {
 	return c.repo.AddChat(user, message)
 }
 
-// 連絡先を交換したユーザーのデータを取得
-func getContacts(user *repository.User) ([]domain.Contact, error) {
-	// 連絡先コレクションからデータを取得
-	contactsData, err := repository.GetDataByQuery("contacts", "userID", "==", user.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	var contacts []domain.Contact
-	for _, data := range contactsData {
-		contact := domain.Contact{
-			ID:       data["contactID"].(string),
-			Username: data["username"].(string),
-			IconURL:  data["iconURL"].(string),
-			LastSeen: data["lastSeen"].(time.Time),
-		}
-		contacts = append(contacts, contact)
-	}
-
-	return contacts, nil
+// GetChatHistoryメソッドの実装
+func (c *chatUsecaseImpl) GetChatHistory(user *domain.User) ([]domain.Chat, error) {
+	return c.repo.GetChats(user.ID)
 }
 
-// チャット履歴を取得
-func GetChatHistory(user *repository.User) ([]domain.Chat, error) {
-	// チャット履歴を取得
-	chats, err := repository.GetAllData("chats")
-	if err != nil {
-		return nil, fmt.Errorf("チャット履歴の取得に失敗しました: %v", err)
-	}
+// GetContactsメソッドの実装
+func (c *chatUsecaseImpl) GetContacts(user *domain.User) ([]domain.Contact, error) {
+	// TODO: 実装
+	return nil, fmt.Errorf("not implemented")
+}
 
-	var chatHistory []domain.Chat
-	seenChats := make(map[string]bool) // 重複チェック用のマップ
+// **************************************************
+// ChatRepositoryの定義 **************
+// **************************************************
 
-	for _, chatData := range chats {
-		// チャットIDの取得
-		chatID, ok := chatData["id"].(string)
-		if !ok {
-			continue
-		}
-
-		// 参加者の取得
-		participants, ok := chatData["participants"].([]interface{})
-		if !ok {
-			continue
-		}
-
-		// 現在のユーザーが参加者かチェック
-		isParticipant := false
-		var targetUserID string
-		for _, p := range participants {
-			if participantID, ok := p.(string); ok {
-				if participantID == user.ID {
-					isParticipant = true
-				} else {
-					targetUserID = participantID
-				}
-			}
-		}
-
-		if !isParticipant || seenChats[chatID] {
-			continue
-		}
-		seenChats[chatID] = true
-
-		// メッセージの取得
-		messagesData, err := repository.GetChatMessages(chatID)
-		if err != nil {
-			continue
-		}
-
-		// メッセージの型変換
-		var messages []domain.Message
-		var lastMessageTime time.Time
-		for _, msg := range messagesData {
-			messageTime := msg["created_at"].(time.Time)
-			message := domain.Message{
-				ID:         msg["id"].(string),
-				Content:    msg["content"].(string),
-				SenderID:   msg["sender_id"].(string),
-				SenderName: msg["sender_name"].(string),
-				Time:       messageTime,
-				IsRead:     msg["is_read"].(bool),
-			}
-			messages = append(messages, message)
-
-			// 最新のメッセージ時刻を更新
-			if messageTime.After(lastMessageTime) {
-				lastMessageTime = messageTime
-			}
-		}
-
-		// チャット相手の情報を取得
-		targetUser, err := GetUserData(targetUserID)
-		if err != nil {
-			continue
-		}
-
-		// チャット履歴に追加
-		chatHistory = append(chatHistory, domain.Chat{
-			ID: chatID,
-			Contact: domain.Contact{
-				ID:       targetUser.ID,
-				Username: targetUser.Name,
-				IconURL:  targetUser.IconURL,
-				LastSeen: time.Now(), // 仮の値として現在時刻を設定
-			},
-			Messages:  messages,
-			UpdatedAt: lastMessageTime,
-		})
-	}
-
-	// 更新時刻でソート（新しい順）
-	sort.Slice(chatHistory, func(i, j int) bool {
-		return chatHistory[i].UpdatedAt.After(chatHistory[j].UpdatedAt)
+// AddChatメソッドの実装
+func (r *chatRepository) AddChat(user, message string) error {
+	// Firestoreにチャットを追加する処理
+	_, _, err := r.client.Collection("chats").Add(context.Background(), map[string]interface{}{
+		"user":       user,
+		"message":    message,
+		"created_at": time.Now(),
 	})
+	return err
+}
 
-	return chatHistory, nil
+// GetChatsメソッドの実装
+func (r *chatRepository) GetChats(userID string) ([]domain.Chat, error) {
+	// Firestoreからチャットを取得する処理
+	chats := []domain.Chat{}
+	iter := r.client.Collection("chats").Where("user", "==", userID).Documents(context.Background())
+
+	// Firestoreから取得した生のデータを、アプリケーションで使用しやすい domain.Chat 構造体の形式に変換
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		var chat domain.Chat
+		// Firestoreのデータをドメインの構造体に変換
+		if err := doc.DataTo(&chat); err != nil {
+			return nil, err
+		}
+		chats = append(chats, chat)
+	}
+
+	return chats, nil
+}
+
+// GetMessagesメソッドの実装
+func (r *chatRepository) GetMessages(chatID string) ([]domain.Message, error) {
+	// Firestoreからメッセージを取得する処理
+	messages := []domain.Message{}
+	iter := r.client.Collection("chats").Doc(chatID).Collection("messages").Documents(context.Background())
+
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		var message domain.Message
+		if err := doc.DataTo(&message); err != nil {
+			return nil, err
+		}
+		messages = append(messages, message)
+	}
+
+	return messages, nil
+}
+
+// **************************************************
+// ChatControllerの定義 **************
+// **************************************************
+
+// HandleCreateChatメソッドの実装
+func (c *ChatController) HandleCreateChat(user, message string) error {
+	return c.chatUsecase.CreateChat(user, message)
+}
+
+// HandleGetChatHistoryメソッドの実装
+func (c *ChatController) HandleGetChatHistory(user *domain.User) ([]domain.Chat, error) {
+	return c.chatUsecase.GetChatHistory(user)
+}
+
+// HandleGetContactsメソッドの実装
+func (c *ChatController) HandleGetContacts(user *domain.User) ([]domain.Contact, error) {
+	return c.chatUsecase.GetContacts(user)
+}
+
+// チャットのユースケースの実装を生成する
+func NewChatUsecase(repo domain.ChatRepository) domain.ChatUsecase {
+	return &chatUsecaseImpl{repo: repo}
+}
+
+// チャットのリポジトリを生成する
+func NewChatRepository(client *firestore.Client) domain.ChatRepository {
+	return &chatRepository{client: client}
 }

@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"security_chat_app/internal/infrastructure/firebase"
+	"security_chat_app/internal/usecase/chat"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 	defer client.Close()
 
 	// チャットリポジトリの作成
-	chatRepo := repository.NewChatRepository(client)
+	chatRepo := chat.NewChatRepository(client)
 	chatUsecase := chat.NewChatUsecase(chatRepo)
 	if chatUsecase == nil {
 		log.Fatal("chatUsecaseがnilです")
