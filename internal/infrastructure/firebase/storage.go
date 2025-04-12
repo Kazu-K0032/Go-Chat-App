@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"security_chat_app/internal/config"
 
 	"cloud.google.com/go/storage"
 	firebase "firebase.google.com/go"
@@ -16,7 +17,7 @@ import (
 // アイコンをアップロードする
 func UploadIcon(userID string, filePath string) (string, error) {
 	// Firebase Storageクライアントを初期化
-	opt := option.WithCredentialsFile("config/serviceAccountKey.json")
+	opt := option.WithCredentialsFile(config.Config.FirebaseServiceAccountKey)
 	config := &firebase.Config{
 		ProjectID:     "go-chat-app-cf888",
 		StorageBucket: "go-chat-app-cf888.firebasestorage.app",
