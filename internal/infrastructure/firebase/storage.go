@@ -63,7 +63,7 @@ func UploadIcon(userID string, filePath string) (string, error) {
 		return "", fmt.Errorf("ファイルのアップロードに失敗しました: %v", err)
 	}
 
-	if err := wc.Close(); err != nil {
+	if err = wc.Close(); err != nil {
 		return "", fmt.Errorf("ライターのクローズに失敗しました: %v", err)
 	}
 
