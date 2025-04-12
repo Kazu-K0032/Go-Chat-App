@@ -3,8 +3,12 @@ package middleware
 import (
 	"context"
 	"net/http"
-
 )
+
+// contextKey コンテキストのキーとして使用するカスタム型
+type contextKey string
+
+const templateDataKey contextKey = "templateData"
 
 // Middleware セッション管理のミドルウェア
 func Middleware(next http.Handler) http.Handler {

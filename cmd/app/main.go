@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"security_chat_app/internal/infrastructure/firebase"
+	"security_chat_app/internal/infrastructure/router"
 	"security_chat_app/internal/usecase/chat"
 )
 
@@ -22,7 +23,10 @@ func main() {
 	}
 
 	// ルーティングの設定
-	// mux := router.SetupRouter(nil) // chatUsecaseが未実装の場合はnilを渡す
+	mux := router.SetupRouter(chatUsecase)
+	if mux == nil {
+		log.Fatal("muxがnilです")
+	}
 
 	// サーバーを起動
 	// log.Printf("サーバーを起動します。ポート: %s", config.Config.Port)

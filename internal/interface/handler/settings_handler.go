@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"security_chat_app/internal/interface/presenter/html"
+	"security_chat_app/internal/interface/markup"
 	"security_chat_app/repository"
 	"security_chat_app/service"
 )
@@ -25,7 +25,7 @@ type SettingsPageData struct {
 // 設定ページのハンドラ
 func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 	// セッションの検証
-		session, err := service.ValidateSession(w, r)
+	session, err := service.ValidateSession(w, r)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -66,7 +66,7 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 				},
 				ValidationErrors: validationErrors,
 			}
-			html.GenerateHTML(w, data, "layout", "header", "settings", "footer")
+			markup.GenerateHTML(w, data, "layout", "header", "settings", "footer")
 			return
 		}
 
@@ -89,7 +89,7 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 				},
 				ValidationErrors: validationErrors,
 			}
-			html.GenerateHTML(w, data, "layout", "header", "settings", "footer")
+			markup.GenerateHTML(w, data, "layout", "header", "settings", "footer")
 			return
 		}
 
@@ -106,7 +106,7 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// テンプレートのレンダリング
-	html.GenerateHTML(w, data, "layout", "header", "settings", "footer")
+	markup.GenerateHTML(w, data, "layout", "header", "settings", "footer")
 }
 
 // 設定ページのデータを取得

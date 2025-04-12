@@ -6,7 +6,7 @@ import (
 	"sort"
 	"time"
 
-	"security_chat_app/internal/interface/presenter/html"
+	"security_chat_app/internal/interface/markup"
 	"security_chat_app/repository"
 	"security_chat_app/service"
 )
@@ -36,7 +36,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// テンプレートのレンダリング
-	html.GenerateHTML(w, data, "layout", "header", "search", "footer")
+	markup.GenerateHTML(w, data, "layout", "header", "search", "footer")
 }
 
 // 検索ページのデータを取得
