@@ -13,6 +13,7 @@ type TemplateData struct {
 	ResetForm        ResetForm  // リセットフォーム
 	ValidationErrors []string   // バリデーションエラー
 	Error            string     // エラー
+	ChatID           string     // チャットID
 }
 
 // DefaultIcon デフォルトアイコンの情報
