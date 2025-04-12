@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"sort"
 	"time"
@@ -53,7 +54,7 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 
 	// 検索クエリがある場合は検索を実行、ない場合は全ユーザーを取得
 	if query != "" {
-		users, err = firebase.SearchUser(query)
+		users, err = SearchUsers(query)
 	} else {
 		users, err = firebase.GetAllData("users")
 	}
@@ -82,45 +83,41 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 		}
 	}
 
-	// デバッグ用のログ
-	fmt.Printf("取得した全ユーザー数: %d\n", len(users))
-	fmt.Printf("現在のユーザーID: %s\n", user.ID)
-	fmt.Printf("チャット履歴のあるユーザー数: %d\n", len(chattedUsers))
-
 	// 自分以外かつチャット履歴のないユーザーをフィルタリング
 	var filteredUsers []map[string]interface{}
 	for _, u := range users {
 		userID := u["id"].(string)
-		fmt.Printf("ユーザーID: %s\n", userID)
 		if userID != user.ID && !chattedUsers[userID] {
 			// アイコンURLを取得（存在しない場合は空文字列）
 			iconURL := ""
-			if icon, ok := u["iconURL"].(string); ok {
+			if icon, ok := u["Icon"].(string); ok {
 				iconURL = icon
 			}
-			u["icon"] = iconURL
-			filteredUsers = append(filteredUsers, u)
+			// テンプレートで使用するフィールド名に合わせてデータを整形
+			userData := map[string]interface{}{
+				"id":       u["ID"].(string),
+				"name":     u["Name"].(string),
+				"icon":     iconURL,
+				"isOnline": u["IsOnline"].(bool),
+			}
+			log.Printf("ユーザーデータ: %+v", userData)
+			filteredUsers = append(filteredUsers, userData)
 		}
 	}
 
-	fmt.Printf("フィルタリング後のユーザー数: %d\n", len(filteredUsers))
-
-	// 新規追加順にソート（created_atの降順）
+	// ユーザーをcreated_atで降順にソート
 	sort.Slice(filteredUsers, func(i, j int) bool {
 		timeI, okI := filteredUsers[i]["created_at"].(time.Time)
 		timeJ, okJ := filteredUsers[j]["created_at"].(time.Time)
 
-		// どちらもnilの場合は等しいとみなす
-		if !okI && !okJ {
-			return false
-		}
-		// nilの場合は最後に配置
+		// created_atがnilまたはtime.Timeでない場合は、最後に配置
 		if !okI {
 			return false
 		}
 		if !okJ {
 			return true
 		}
+
 		return timeI.After(timeJ)
 	})
 
@@ -154,17 +151,39 @@ func GetUserData(userID string) (*domain.User, error) {
 		return nil, fmt.Errorf("ユーザー情報の取得に失敗しました: %v", err)
 	}
 
+	// 必要なフィールドの存在確認と型アサーション
+	id, ok := userData["ID"].(string)
+	if !ok {
+		return nil, fmt.Errorf("ユーザーIDの取得に失敗しました")
+	}
+
+	name, ok := userData["Name"].(string)
+	if !ok {
+		return nil, fmt.Errorf("ユーザー名の取得に失敗しました")
+	}
+
+	email, ok := userData["Email"].(string)
+	if !ok {
+		return nil, fmt.Errorf("メールアドレスの取得に失敗しました")
+	}
+
 	// アイコンURLを取得（存在しない場合は空文字列）
 	iconURL := ""
-	if icon, ok := userData["iconURL"].(string); ok {
+	if icon, ok := userData["Icon"].(string); ok {
 		iconURL = icon
 	}
 
+	// オンラインステータスを取得（存在しない場合はfalse）
+	isOnline := false
+	if online, ok := userData["IsOnline"].(bool); ok {
+		isOnline = online
+	}
+
 	return &domain.User{
-		ID:       userData["id"].(string),
-		Name:     userData["name"].(string),
-		Email:    userData["email"].(string),
+		ID:       id,
+		Name:     name,
+		Email:    email,
 		Icon:     iconURL,
-		IsOnline: userData["isOnline"].(bool),
+		IsOnline: isOnline,
 	}, nil
 }
