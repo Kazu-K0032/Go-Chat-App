@@ -22,13 +22,13 @@ func CreateSession(user *domain.User) (*domain.Session, error) {
 
 	// セッションの作成
 	session := &domain.Session{
-		ID:        sessionID,
-		User:      user,
-		Token:     sessionID,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		ID:        sessionID,                           // セッションID
+		User:      user,                                // ユーザー
+		Token:     sessionID,                           // セッショントークン
+		CreatedAt: time.Now(),                          // セッションの作成日時
+		UpdatedAt: time.Now(),                          // セッションの更新日時
 		ExpiredAt: time.Now().Add(30 * 24 * time.Hour), // 30日間有効
-		IsValid:   true,
+		IsValid:   true,                                // セッションが有効かどうか
 	}
 
 	// Firestoreにセッションを保存
@@ -56,14 +56,12 @@ func SetSessionCookie(w http.ResponseWriter, session *domain.Session) {
 
 // ValidateSession セッションを検証する
 func ValidateSession(w http.ResponseWriter, r *http.Request) (*domain.Session, error) {
-	fmt.Println("セッション検証開始")
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		fmt.Println("セッションクッキーなし:", err)
 		return nil, err
 	}
 
-	fmt.Println("セッションクッキー取得:", cookie.Value)
 	// Firestoreからセッションを取得
 	client, err := firebase.InitFirebase()
 	if err != nil {
@@ -91,8 +89,22 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*domain.Session, e
 		return nil, fmt.Errorf("セッションが無効です")
 	}
 
-	fmt.Println("セッション検証成功")
+	fmt.Println("")
 	return &session, nil
+}
+
+// UpdateSession セッションを更新する
+func UpdateSession(w http.ResponseWriter, r *http.Request, session *domain.Session) error {
+	// Firestoreにセッションを保存（セッションIDをドキュメントIDとして使用）
+	err := firebase.AddData("sessions", session, session.ID)
+	if err != nil {
+		return err
+	}
+
+	// セッションクッキーを更新
+	SetSessionCookie(w, session)
+
+	return nil
 }
 
 // DeleteSession セッションを削除する

@@ -14,6 +14,7 @@ import (
 	"security_chat_app/internal/infrastructure/repository"
 	"security_chat_app/internal/interface/markup"
 	"security_chat_app/internal/interface/middleware"
+	"security_chat_app/internal/utils/icons"
 )
 
 // ProfileData プロフィールページのデータ構造体
@@ -25,6 +26,7 @@ type ProfileData struct {
 	Likes      []domain.Post
 }
 
+// プロフィールページの表示
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	// セッションの検証
 	session, err := middleware.ValidateSession(w, r)
@@ -32,8 +34,6 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
-
-	fmt.Println("セッションの検証に成功しました")
 
 	// ユーザー情報の取得
 	user, err := repository.GetUserByEmail(session.User.Email)
@@ -46,10 +46,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	if user.Icon == "" {
 		// デフォルトアイコンのパスを生成
 		randomNum := rand.Intn(7)
-		defaultIconNames := []string{"elephant", "fox", "hamster", "koala", "monkey", "owl", "puma"}
-		defaultIconPath := fmt.Sprintf("icons/default/default_icon_%s.png", defaultIconNames[randomNum])
-
-		fmt.Printf("デフォルトアイコンを設定中: %s\n", defaultIconPath)
+		defaultIconPath := fmt.Sprintf(icons.DefaultIconPath + "/default_icon_%s.png", icons.DefaultIconNames[randomNum])
 
 		// デフォルトアイコンのURLを取得
 		iconURL, er := firebase.GetDefaultIconURL(defaultIconPath)
@@ -61,13 +58,11 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 		// ユーザーのIconURLを更新
 		user.Icon = iconURL
-		err = firebase.UpdateField("users", user.ID, "icon", iconURL)
+		err = firebase.UpdateField("users", user.ID, "Icon", iconURL)
 		if err != nil {
 			http.Error(w, "アイコンURLの更新に失敗しました", http.StatusInternalServerError)
 			return
 		}
-
-		fmt.Printf("デフォルトアイコンを設定しました: %s\n", iconURL)
 	}
 
 	// 投稿、返信、いいねを取得
@@ -91,7 +86,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 最終更新日時を現在時刻に更新
 	user.UpdatedAt = time.Now()
-	err = firebase.UpdateField("users", user.ID, "updated_at", user.UpdatedAt)
+	err = firebase.UpdateField("users", user.ID, "UpdatedAt", user.UpdatedAt)
 	if err != nil {
 		http.Error(w, "最終更新日時の更新に失敗しました", http.StatusInternalServerError)
 		return
@@ -170,7 +165,7 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	os.Remove(tempFilePath)
 
 	// ユーザードキュメントを更新
-	err = firebase.UpdateField("users", session.User.ID, "icon", iconURL)
+	err = firebase.UpdateField("users", session.User.ID, "Icon", iconURL)
 	if err != nil {
 		http.Error(w, "ユーザー情報の更新に失敗しました", http.StatusInternalServerError)
 		return

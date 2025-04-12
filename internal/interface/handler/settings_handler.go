@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"security_chat_app/internal/domain"
@@ -12,15 +13,20 @@ import (
 
 // 設定ページのデータ構造体
 type SettingsPageData struct {
-	IsLoggedIn       bool
-	User             *domain.User
-	ShowPasswordForm bool
+	IsLoggedIn       bool         // ログイン状態
+	User             *domain.User // ユーザー情報
+	ShowPasswordForm bool         // パスワード変更フォームの表示状態
+	ShowUsernameForm bool         // ユーザー名変更フォームの表示状態
 	PasswordForm     struct {
-		CurrentPassword    string
-		NewPassword        string
-		NewPasswordConfirm string
+		CurrentPassword    string // 現在のパスワード
+		NewPassword        string // 新しいパスワード
+		NewPasswordConfirm string // 新しいパスワードの確認
 	}
-	ValidationErrors []string
+	UsernameForm struct {
+		NewUsername string // 新しいユーザー名
+	}
+	ValidationErrors         []string // バリデーションエラー
+	UsernameValidationErrors []string // ユーザー名のバリデーションエラー
 }
 
 // 設定ページのハンドラ
@@ -29,6 +35,71 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// ユーザー名変更の処理
+	if r.URL.Path == "/settings/username" && r.Method == http.MethodPost {
+		// フォームデータの解析
+		r.ParseForm()
+		newUsername := r.FormValue("new_username")
+
+		// バリデーション
+		var validationErrors []string
+		if newUsername == "" {
+			validationErrors = append(validationErrors, "新しいユーザー名を入力してください")
+		} else if len(newUsername) < 2 {
+			validationErrors = append(validationErrors, "ユーザー名は2文字以上で入力してください")
+		} else if len(newUsername) > 20 {
+			validationErrors = append(validationErrors, "ユーザー名は20文字以下で入力してください")
+		}
+
+		if len(validationErrors) > 0 {
+			data := SettingsPageData{
+				IsLoggedIn:       true,
+				User:             session.User,
+				ShowUsernameForm: true,
+				UsernameForm: struct {
+					NewUsername string
+				}{
+					NewUsername: newUsername,
+				},
+				UsernameValidationErrors: validationErrors,
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "settings", "footer")
+			return
+		}
+
+		// ユーザー名の更新
+		err = firebase.UpdateField("users", session.User.ID, "name", newUsername)
+		if err != nil {
+			log.Printf("ユーザー名更新エラー: %v, userID=%s, newUsername=%s", err, session.User.ID, newUsername)
+			validationErrors = append(validationErrors, "ユーザー名の更新に失敗しました")
+			data := SettingsPageData{
+				IsLoggedIn:       true,
+				User:             session.User,
+				ShowUsernameForm: true,
+				UsernameForm: struct {
+					NewUsername string
+				}{
+					NewUsername: newUsername,
+				},
+				UsernameValidationErrors: validationErrors,
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "settings", "footer")
+			return
+		}
+
+		// セッションのユーザー情報を更新
+		session.User.Name = newUsername
+		err = middleware.UpdateSession(w, r, session)
+		if err != nil {
+			http.Error(w, "セッションの更新に失敗しました", http.StatusInternalServerError)
+			return
+		}
+
+		// 成功時は設定ページにリダイレクト
+		http.Redirect(w, r, "/settings?success=ユーザー名を更新しました", http.StatusSeeOther)
 		return
 	}
 
@@ -57,9 +128,9 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 				User:             session.User,
 				ShowPasswordForm: true,
 				PasswordForm: struct {
-					CurrentPassword    string
-					NewPassword        string
-					NewPasswordConfirm string
+					CurrentPassword    string // 現在のパスワード
+					NewPassword        string // 新しいパスワード
+					NewPasswordConfirm string // 新しいパスワードの確認
 				}{
 					CurrentPassword:    currentPassword,
 					NewPassword:        newPassword,
@@ -74,15 +145,16 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 		// パスワード更新
 		err = firebase.UpdateField("users", session.User.ID, "password", newPassword)
 		if err != nil {
+			log.Printf("パスワード更新エラー: %v, userID=%s", err, session.User.ID)
 			validationErrors = append(validationErrors, "パスワードの更新に失敗しました")
 			data := SettingsPageData{
 				IsLoggedIn:       true,
 				User:             session.User,
 				ShowPasswordForm: true,
 				PasswordForm: struct {
-					CurrentPassword    string
-					NewPassword        string
-					NewPasswordConfirm string
+					CurrentPassword    string // 現在のパスワード
+					NewPassword        string // 新しいパスワード
+					NewPasswordConfirm string // 新しいパスワードの確認
 				}{
 					CurrentPassword:    currentPassword,
 					NewPassword:        newPassword,
@@ -118,10 +190,12 @@ func getSettingsPageData(user *domain.User, r *http.Request) (SettingsPageData, 
 
 	// クエリパラメータからフォームの表示状態を取得
 	showPasswordForm := r.URL.Query().Get("show_password_form") == "true"
+	showUsernameForm := r.URL.Query().Get("show_username_form") == "true"
 
 	return SettingsPageData{
 		IsLoggedIn:       true,
 		User:             user,
 		ShowPasswordForm: showPasswordForm,
+		ShowUsernameForm: showUsernameForm,
 	}, nil
 }

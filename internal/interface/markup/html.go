@@ -16,7 +16,7 @@ var templateFuncs = template.FuncMap{
 	"sub": func(a, b int) int {
 		return a - b
 	},
-	"len": func(slice interface{}) int {
+	"len": func(slice any) int {
 		switch v := slice.(type) {
 		case []domain.Message:
 			return len(v)
@@ -53,10 +53,10 @@ var templateFuncs = template.FuncMap{
 }
 
 // GenerateHTML layout.htmlをベースとしたHTMLを生成し、レスポンスに書きだす
-func GenerateHTML(writer http.ResponseWriter, data interface{}, filenames ...string) {
+func GenerateHTML(writer http.ResponseWriter, data any, filenames ...string) {
 	var files []string
 	for _, file := range filenames {
-		path := fmt.Sprintf("app/templates/%s.html", file)
+		path := fmt.Sprintf("internal/web/templates/%s.html", file)
 		files = append(files, path)
 	}
 

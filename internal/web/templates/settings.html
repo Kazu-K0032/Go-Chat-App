@@ -10,6 +10,65 @@
       <section class="l-section --settings">
         <h2 class="c-midTtl">アカウント設定</h2>
         <div class="l-settings__items">
+          <!-- ユーザー名変更 -->
+          <button
+            type="button"
+            class="l-settings__item"
+            onclick="toggleUsernameForm()"
+          >
+            <div class="l-settings__icon">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="l-settings__textWrap">
+              <span class="c-txt --settings">ユーザー名の変更</span>
+              <span class="c-txt --settings">ユーザー名を変更します</span>
+            </div>
+            <div class="l-settings__arrow">
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </button>
+
+          <form
+            method="POST"
+            action="/settings/username"
+            class="l-settings__usernameForm {{ if .ShowUsernameForm }}is-active{{ end }}"
+            style="display: none"
+          >
+            {{ if .UsernameValidationErrors }}
+            <div class="l-settings__errors">
+              {{ range .UsernameValidationErrors }}
+              <p class="c-validation__text">{{ . }}</p>
+              {{ end }}
+            </div>
+            {{ end }}
+
+            <div class="l-settings__formGroup">
+              <label for="new_username" class="c-label">新しいユーザー名</label>
+              <input
+                type="text"
+                id="new_username"
+                name="new_username"
+                class="c-input"
+                value="{{ .UsernameForm.NewUsername }}"
+                required
+              />
+            </div>
+
+            <div class="l-settings__formActions">
+              <button type="submit" class="l-settings__submitBtn c-btn">
+                ユーザー名を更新
+              </button>
+              <button
+                type="button"
+                class="l-settings__cancelBtn c-btn c-btn--secondary"
+                onclick="toggleUsernameForm()"
+              >
+                キャンセル
+              </button>
+            </div>
+          </form>
+
+          <!-- パスワード変更 -->
           <button
             type="button"
             class="l-settings__item"
@@ -31,6 +90,7 @@
             method="POST"
             action="/settings"
             class="l-settings__passwordForm {{ if .ShowPasswordForm }}is-active{{ end }}"
+            style="display: none"
           >
             {{ if .ValidationErrors }}
             <div class="l-settings__errors">

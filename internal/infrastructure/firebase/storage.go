@@ -78,11 +78,7 @@ func UploadIcon(userID string, filePath string) (string, error) {
 
 // デフォルトアイコンのURLを取得
 func GetDefaultIconURL(objectPath string) (string, error) {
-	fmt.Printf("デフォルトアイコンを取得中: %s\n", objectPath)
-
 	// 公開URLを生成
 	url := fmt.Sprintf("https://firebasestorage.googleapis.com/v0/b/go-chat-app-cf888.firebasestorage.app/o/%s?alt=media", url.PathEscape(objectPath))
-	fmt.Printf("デフォルトアイコンのURLを取得しました: %s\n", url)
-
 	return url, nil
 }
