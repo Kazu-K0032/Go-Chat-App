@@ -135,7 +135,7 @@ func GetAllData(collection string) ([]map[string]interface{}, error) {
 }
 
 // ユーザーを検索する
-func SearchUsers(searchQuery string) ([]map[string]interface{}, error) {
+func SearchUser(searchQuery string) ([]map[string]interface{}, error) {
 	client, err := InitFirebase()
 	if err != nil {
 		return nil, err

@@ -30,6 +30,7 @@ type Chat struct {
 	Messages  []Message // メッセージのリスト
 	CreatedAt time.Time // チャットの作成日時
 	UpdatedAt time.Time // チャットの更新日時
+	Contact   Contact   // チャットの相手
 }
 
 // チャット参加者の構造体
@@ -54,14 +55,6 @@ type Message struct {
 	IsRead     bool        // メッセージが読まれたかどうか
 	ReadBy     []string    // メッセージを読んだユーザーのID
 	ReplyTo    string      // メッセージの返信先のID
-}
-
-// 連絡先を交換したユーザーの構造体
-type Contact struct {
-	ID       string    // 連絡先のID
-	Username string    // 連絡先のユーザー名
-	IconURL  string    // 連絡先のアイコンのURL
-	LastSeen time.Time // 連絡先の最終接続日時
 }
 
 // ビジネスロジックの為のチャットのユースケース

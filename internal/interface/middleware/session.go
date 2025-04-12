@@ -23,7 +23,7 @@ func CreateSession(user *domain.User) (*domain.Session, error) {
 	// セッションの作成
 	session := &domain.Session{
 		ID:        sessionID,
-		UserID:    user.ID,
+		User:      user,
 		Token:     sessionID,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),

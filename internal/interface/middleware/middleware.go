@@ -3,11 +3,13 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"security_chat_app/internal/domain"
 )
 
 // contextKey コンテキストのキーとして使用するカスタム型
 type contextKey string
 
+// templateDataKey テンプレートデータのキー
 const templateDataKey contextKey = "templateData"
 
 // Middleware セッション管理のミドルウェア
@@ -17,11 +19,11 @@ func Middleware(next http.Handler) http.Handler {
 		session, err := ValidateSession(w, r)
 		if err != nil {
 			// セッションが無効な場合は、ログインしていない状態として処理
-			data := TemplateData{IsLoggedIn: false}
+			data := domain.TemplateData{IsLoggedIn: false}
 			r = r.WithContext(context.WithValue(r.Context(), templateDataKey, data))
 		} else {
 			// セッションが有効な場合は、ログインしている状態として処理
-			data := service.TemplateData{
+			data := domain.TemplateData{
 				IsLoggedIn: true,
 				User:       session.User,
 			}
