@@ -11,7 +11,6 @@ import (
 
 	"security_chat_app/internal/domain"
 	"security_chat_app/internal/infrastructure/repository"
-	"security_chat_app/internal/interface/chtml"
 	"security_chat_app/internal/interface/middleware"
 )
 
@@ -106,7 +105,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// テンプレートを描画
-	chtml.GenerateHTML(w, data, "layout", "header", "profile", "footer")
+	cmarkup.GenerateHTML(w, data, "layout", "header", "profile", "footer")
 }
 
 // アイコンアップロードハンドラ

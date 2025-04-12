@@ -1,4 +1,4 @@
-package chtml
+package markup
 
 import (
 	"bytes"

@@ -3,12 +3,12 @@ package router
 import (
 	"net/http"
 
+	"security_chat_app/internal/domain"
 	"security_chat_app/internal/interface/handler"
-	"security_chat_app/internal/usecase/chat"
 )
 
 // ルーティングの設定
-func SetupRouter(chatUsecase chat.ChatUsecase) *http.ServeMux {
+func SetupRouter(chatUsecase domain.ChatUsecase) *http.ServeMux {
 	mux := http.NewServeMux()
 	// 静的ファイル (CSS/JS)
 	mux.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("internal/web/css"))))

@@ -3,29 +3,35 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"sort"
 	"time"
 
 	"security_chat_app/internal/domain"
 	"security_chat_app/internal/infrastructure/firebase"
-	"security_chat_app/internal/interface/html"
+	"security_chat_app/internal/infrastructure/repository"
+	"security_chat_app/internal/interface/markup"
 	"security_chat_app/internal/interface/middleware"
-	"security_chat_app/internal/usecase/chat"
 )
 
 // チャット開始ハンドラ
 func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "メソッドが許可されていません", http.StatusMethodNotAllowed)
 		return
 	}
 
 	// セッションの検証
 	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		http.Error(w, "認証されていません", http.StatusUnauthorized)
+		return
+	}
+
+	// セッションからユーザー情報を取得
+	user, err := repository.GetUserByID(session.UserID)
+	if err != nil {
+		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
 		return
 	}
 
@@ -44,19 +50,14 @@ func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// チャットを開始
-	chatID, err := firebase.StartChat(session.User.ID, targetUserID)
+	chatID, err := firebase.StartChat(user.ID, targetUserID)
 	if err != nil {
-		log.Printf("チャット開始エラー: %v", err)
 		http.Error(w, "チャットの開始に失敗しました", http.StatusInternalServerError)
 		return
 	}
 
-	log.Printf("チャットを開始しました: chatID=%s, userID=%s, targetUserID=%s",
-		chatID, session.User.ID, targetUserID)
-
 	// チャットページにリダイレクト
 	redirectURL := fmt.Sprintf("/chat?chat_id=%s", chatID)
-	log.Printf("リダイレクト先: %s", redirectURL)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
@@ -66,6 +67,13 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// セッションからユーザー情報を取得
+	user, err := repository.GetUserByID(session.UserID)
+	if err != nil {
+		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
 		return
 	}
 
@@ -82,8 +90,8 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 		// メッセージを作成
 		message := map[string]interface{}{
-			"sender_id":   session.User.ID,
-			"sender_name": session.User.Name,
+			"sender_id":   user.ID,
+			"sender_name": user.Name,
 			"content":     content,
 			"created_at":  time.Now(),
 			"is_read":     false,
@@ -105,8 +113,8 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// チャット一覧を取得
-	chats, err := chat.GetChatHistory(session.User)
+	// チャット履歴を取得
+	chats, err := getChatHistory(user)
 	if err != nil {
 		http.Error(w, "チャット一覧の取得に失敗しました", http.StatusInternalServerError)
 		return
@@ -116,12 +124,12 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	chatID := r.URL.Query().Get("chat_id")
 	if chatID == "" {
 		// チャットIDがない場合は、チャット一覧を表示
-		data := html.TemplateData{
+		data := markup.TemplateData{
 			IsLoggedIn: true,
-			User:       session.User,
+			User:       user,
 			Chats:      chats,
 		}
-		html.GenerateHTML(w, data, "layout", "header", "chat", "footer")
+		markup.GenerateHTML(w, data, "layout", "header", "chat", "footer")
 		return
 	}
 
@@ -146,7 +154,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// 対象ユーザーを特定
 	var targetUserID string
 	for _, p := range participants {
-		if p != session.User.ID {
+		if p != user.ID {
 			targetUserID = p
 			break
 		}
@@ -181,7 +189,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			Content:    msg["content"].(string),
 			SenderID:   msg["sender_id"].(string),
 			SenderName: msg["sender_name"].(string),
-			Time:       msg["created_at"].(time.Time),
+			CreatedAt:  msg["created_at"].(time.Time),
 			IsRead:     msg["is_read"].(bool),
 		}
 		messages = append(messages, message)
@@ -197,9 +205,9 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// チャットページのデータを取得
-	data := html.TemplateData{
+	data := markup.TemplateData{
 		IsLoggedIn:  true,
-		User:        session.User,
+		User:        user,
 		Messages:    messages,
 		Contacts:    []domain.Contact{{ID: targetUser.ID, Username: targetUser.Name, IconURL: targetUser.IconURL}},
 		Chats:       chats,
@@ -207,7 +215,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// テンプレートのレンダリング
-	html.GenerateHTML(w, data, "layout", "header", "chat", "footer")
+	markup.GenerateHTML(w, data, "layout", "header", "chat", "footer")
 }
 
 // チャット履歴を取得
@@ -268,7 +276,7 @@ func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 				Content:    msg["content"].(string),
 				SenderID:   msg["sender_id"].(string),
 				SenderName: msg["sender_name"].(string),
-				Time:       messageTime,
+				CreatedAt:  messageTime,
 				IsRead:     msg["is_read"].(bool),
 			}
 			messages = append(messages, message)
@@ -287,13 +295,7 @@ func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 
 		// チャット履歴に追加
 		chatHistory = append(chatHistory, domain.Chat{
-			ID: chatID,
-			Contact: domain.Contact{
-				ID:       targetUser.ID,
-				Username: targetUser.Name,
-				IconURL:  targetUser.IconURL,
-				LastSeen: time.Now(), // 仮の値として現在時刻を設定
-			},
+			ID:        chatID,
 			Messages:  messages,
 			UpdatedAt: lastMessageTime,
 		})
@@ -307,14 +309,14 @@ func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 	return chatHistory, nil
 }
 
-func NewChatController(chatUsecase chat.ChatUsecase) *ChatController {
-	return &ChatController{
+func NewChatController(chatUsecase domain.ChatUsecase) *domain.ChatController {
+	return &domain.ChatController{
 		chatUsecase: chatUsecase,
 	}
 }
 
 // チャットの作成
-func (c *ChatController) Create(w http.ResponseWriter, r *http.Request) {
+func (c *domain.ChatController) Create(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -345,6 +347,13 @@ func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// セッションからユーザー情報を取得
+	user, err := repository.GetUserByID(session.UserID)
+	if err != nil {
+		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
+		return
+	}
+
 	// フォームデータから情報を取得
 	chatID := r.FormValue("chatID")
 	content := r.FormValue("content")
@@ -356,8 +365,8 @@ func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// メッセージを作成
 	message := map[string]interface{}{
-		"sender_id":   session.User.ID,
-		"sender_name": session.User.Name,
+		"sender_id":   user.ID,
+		"sender_name": user.Name,
 		"content":     content,
 		"created_at":  time.Now(),
 		"is_read":     false,

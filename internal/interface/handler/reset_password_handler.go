@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"security_chat_app/internal/interface/presenter/html"
+	"security_chat_app/internal/interface/markup"
 	"security_chat_app/repository"
 )
 
@@ -18,11 +18,11 @@ type ResetForm struct {
 // ResetPasswordHandler パスワード再設定処理を実行
 func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		data := html.TemplateData{
+		data := markup.TemplateData{
 			IsLoggedIn: false,
 			ResetForm:  ResetForm{},
 		}
-		html.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
+		markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
 		return
 	}
 
@@ -47,34 +47,34 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if len(validationErrors) > 0 {
-			data := html.TemplateData{
+			data := markup.TemplateData{
 				IsLoggedIn:       false,
 				ResetForm:        form,
 				ValidationErrors: validationErrors,
 			}
-			html.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
+			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
 			return
 		}
 
 		// ユーザー検索
 		user, err := repository.GetUserByEmail(form.Email)
 		if err != nil {
-			data := html.TemplateData{
+			data := markup.TemplateData{
 				IsLoggedIn:       false,
 				ResetForm:        form,
 				ValidationErrors: []string{"ユーザー検索エラーが発生しました"},
 			}
-			html.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
+			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
 			return
 		}
 
 		if user == nil {
-			data := html.TemplateData{
+			data := markup.TemplateData{
 				IsLoggedIn:       false,
 				ResetForm:        form,
 				ValidationErrors: []string{"該当するユーザーが見つかりません"},
 			}
-			html.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
+			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
 			return
 		}
 
@@ -84,12 +84,12 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		err = repository.UpdateField("users", user.ID, "password", form.Password)
 		if err != nil {
 			fmt.Println("Firestore Update エラー:", err)
-			data := html.TemplateData{
+			data := markup.TemplateData{
 				IsLoggedIn:       false,
 				ResetForm:        form,
 				ValidationErrors: []string{"パスワード更新エラーが発生しました"},
 			}
-			html.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
+			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
 			return
 		}
 

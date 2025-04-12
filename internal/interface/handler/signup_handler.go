@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"security_chat_app/internal/interface/presenter/html"
+	"security_chat_app/internal/interface/markup"
 	"security_chat_app/repository"
 )
 
@@ -18,10 +18,10 @@ type SignupForm struct {
 // SignupHandler 新規登録画面の表示と確認画面への遷移を処理
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		data := html.TemplateData{
+		data := markup.TemplateData{
 			IsLoggedIn: false,
 		}
-		html.GenerateHTML(w, data, "layout", "header", "register", "footer")
+		markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
 		return
 	}
 
@@ -40,12 +40,12 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if existingUser != nil {
-			data := html.TemplateData{
+			data := markup.TemplateData{
 				IsLoggedIn: false,
 				SignupForm: form,
 				Error:      "このメールアドレスは既に登録されています",
 			}
-			html.GenerateHTML(w, data, "layout", "header", "register", "footer")
+			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
 			return
 		}
 
@@ -55,11 +55,11 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("メール:", form.Email)
 		fmt.Println("パスワード:", form.Password)
 
-		data := html.TemplateData{
+		data := markup.TemplateData{
 			IsLoggedIn: false,
 			SignupForm: form,
 		}
-		html.GenerateHTML(w, data, "layout", "header", "register_confirm", "footer")
+		markup.GenerateHTML(w, data, "layout", "header", "register_confirm", "footer")
 	}
 }
 
