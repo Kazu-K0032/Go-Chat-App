@@ -5,7 +5,7 @@ import "time"
 // セッション情報を管理する構造体
 type Session struct {
 	ID        string    // セッションのID
-	UserID    string    // ユーザーのID
+	User      *User     // ユーザー
 	Token     string    // セッションのトークン
 	CreatedAt time.Time // セッションの作成日時
 	UpdatedAt time.Time // セッションの更新日時

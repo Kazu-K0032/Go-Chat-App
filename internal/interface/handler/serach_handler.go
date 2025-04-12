@@ -6,15 +6,16 @@ import (
 	"sort"
 	"time"
 
+	"security_chat_app/internal/domain"
+	"security_chat_app/internal/infrastructure/firebase"
 	"security_chat_app/internal/interface/markup"
-	"security_chat_app/repository"
-	"security_chat_app/service"
+	"security_chat_app/internal/interface/middleware"
 )
 
 // 検索ページのデータ構造体
 type SearchPageData struct {
 	IsLoggedIn bool
-	User       *repository.User
+	User       *domain.User
 	Query      string
 	Users      []map[string]interface{}
 }
@@ -22,7 +23,7 @@ type SearchPageData struct {
 // 検索ハンドラ
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	// セッションの検証
-	session, err := service.ValidateSession(w, r)
+	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -40,7 +41,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // 検索ページのデータを取得
-func getSearchPageData(user *repository.User, r *http.Request) (SearchPageData, error) {
+func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, error) {
 	if user == nil {
 		return SearchPageData{}, fmt.Errorf("ユーザー情報が無効です")
 	}
@@ -52,9 +53,9 @@ func getSearchPageData(user *repository.User, r *http.Request) (SearchPageData, 
 
 	// 検索クエリがある場合は検索を実行、ない場合は全ユーザーを取得
 	if query != "" {
-		users, err = repository.SearchUsers(query)
+		users, err = firebase.SearchUser(query)
 	} else {
-		users, err = repository.GetAllData("users")
+		users, err = firebase.GetAllData("users")
 	}
 
 	if err != nil {
@@ -62,7 +63,7 @@ func getSearchPageData(user *repository.User, r *http.Request) (SearchPageData, 
 	}
 
 	// チャット履歴を取得
-	chats, err := repository.GetAllData("chats")
+	chats, err := firebase.GetAllData("chats")
 	if err != nil {
 		return SearchPageData{}, fmt.Errorf("チャット履歴の取得に失敗しました: %v", err)
 	}
@@ -137,7 +138,7 @@ func getSearchPageData(user *repository.User, r *http.Request) (SearchPageData, 
 // ユーザーを検索
 func SearchUsers(query string) ([]map[string]interface{}, error) {
 	// ユーザーを検索
-	users, err := repository.SearchUsers(query)
+	users, err := firebase.SearchUser(query)
 	if err != nil {
 		return nil, fmt.Errorf("ユーザーの検索に失敗しました: %v", err)
 	}
@@ -146,9 +147,9 @@ func SearchUsers(query string) ([]map[string]interface{}, error) {
 }
 
 // ユーザー情報を取得
-func GetUserData(userID string) (*repository.User, error) {
+func GetUserData(userID string) (*domain.User, error) {
 	// ユーザー情報を取得
-	userData, err := repository.GetData("users", userID)
+	userData, err := firebase.GetData("users", userID)
 	if err != nil {
 		return nil, fmt.Errorf("ユーザー情報の取得に失敗しました: %v", err)
 	}
@@ -159,11 +160,11 @@ func GetUserData(userID string) (*repository.User, error) {
 		iconURL = icon
 	}
 
-	return &repository.User{
+	return &domain.User{
 		ID:       userData["id"].(string),
 		Name:     userData["name"].(string),
 		Email:    userData["email"].(string),
-		IconURL:  iconURL,
+		Icon:     iconURL,
 		IsOnline: userData["isOnline"].(bool),
 	}, nil
 }

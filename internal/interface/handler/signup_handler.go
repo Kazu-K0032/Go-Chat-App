@@ -5,8 +5,11 @@ import (
 	"net/http"
 	"time"
 
+	"security_chat_app/internal/domain"
+	"security_chat_app/internal/infrastructure/firebase"
+	"security_chat_app/internal/infrastructure/repository"
 	"security_chat_app/internal/interface/markup"
-	"security_chat_app/repository"
+	utils "security_chat_app/internal/utils/uuid"
 )
 
 type SignupForm struct {
@@ -18,7 +21,7 @@ type SignupForm struct {
 // SignupHandler 新規登録画面の表示と確認画面への遷移を処理
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		data := markup.TemplateData{
+		data := domain.TemplateData{
 			IsLoggedIn: false,
 		}
 		markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
@@ -40,10 +43,14 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if existingUser != nil {
-			data := markup.TemplateData{
+			data := domain.TemplateData{
 				IsLoggedIn: false,
-				SignupForm: form,
-				Error:      "このメールアドレスは既に登録されています",
+				SignupForm: domain.SignupForm{
+					Username: form.Name,
+					Email:    form.Email,
+					Password: form.Password,
+				},
+				Error: "このメールアドレスは既に登録されています",
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
 			return
@@ -55,9 +62,13 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("メール:", form.Email)
 		fmt.Println("パスワード:", form.Password)
 
-		data := markup.TemplateData{
+		data := domain.TemplateData{
 			IsLoggedIn: false,
-			SignupForm: form,
+			SignupForm: domain.SignupForm{
+				Username:     form.Name,
+				Email:    form.Email,
+				Password: form.Password,
+			},
 		}
 		markup.GenerateHTML(w, data, "layout", "header", "register_confirm", "footer")
 	}
@@ -75,8 +86,8 @@ func SignupConfirmHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// ユーザーデータの作成
-		user := &repository.User{
-			ID:        repository.GenerateUUID(),
+		user := &domain.User{
+			ID:        utils.GenerateUUID(),
 			Name:      form.Name,
 			Email:     form.Email,
 			Password:  form.Password, // 実際の実装ではハッシュ化が必要
@@ -85,7 +96,7 @@ func SignupConfirmHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Firestoreにユーザーを保存
-		err := repository.AddData("users", user, user.ID)
+		err := firebase.AddData("users", user, user.ID)
 		if err != nil {
 			http.Error(w, "ユーザー登録エラー", http.StatusInternalServerError)
 			return

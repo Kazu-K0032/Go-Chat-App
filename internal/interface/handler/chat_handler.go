@@ -29,7 +29,7 @@ func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// セッションからユーザー情報を取得
-	user, err := repository.GetUserByID(session.UserID)
+	user, err := repository.GetUserByID(session.User.ID)
 	if err != nil {
 		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
 		return
@@ -71,7 +71,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// セッションからユーザー情報を取得
-	user, err := repository.GetUserByID(session.UserID)
+	user, err := repository.GetUserByID(session.User.ID)
 	if err != nil {
 		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
 		return
@@ -124,7 +124,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	chatID := r.URL.Query().Get("chat_id")
 	if chatID == "" {
 		// チャットIDがない場合は、チャット一覧を表示
-		data := markup.TemplateData{
+		data := domain.TemplateData{
 			IsLoggedIn: true,
 			User:       user,
 			Chats:      chats,
@@ -205,11 +205,11 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// チャットページのデータを取得
-	data := markup.TemplateData{
+	data := domain.TemplateData{
 		IsLoggedIn:  true,
 		User:        user,
 		Messages:    messages,
-		Contacts:    []domain.Contact{{ID: targetUser.ID, Username: targetUser.Name, IconURL: targetUser.IconURL}},
+		Contacts:    []domain.Contact{{ID: targetUser.ID, Username: targetUser.Name, Icon: targetUser.Icon}},
 		Chats:       chats,
 		CurrentChat: currentChat,
 	}
@@ -295,7 +295,13 @@ func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 
 		// チャット履歴に追加
 		chatHistory = append(chatHistory, domain.Chat{
-			ID:        chatID,
+			ID: chatID,
+			Contact: domain.Contact{
+				ID:       targetUser.ID,
+				Username: targetUser.Name,
+				Icon:     targetUser.Icon,
+				LastSeen: time.Now(),
+			},
 			Messages:  messages,
 			UpdatedAt: lastMessageTime,
 		})
@@ -309,14 +315,20 @@ func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 	return chatHistory, nil
 }
 
-func NewChatController(chatUsecase domain.ChatUsecase) *domain.ChatController {
-	return &domain.ChatController{
+// ChatControllerImpl チャットコントローラーの実装
+type ChatControllerImpl struct {
+	chatUsecase domain.ChatUsecase
+}
+
+// NewChatController チャットコントローラーを作成する
+func NewChatController(chatUsecase domain.ChatUsecase) *ChatControllerImpl {
+	return &ChatControllerImpl{
 		chatUsecase: chatUsecase,
 	}
 }
 
-// チャットの作成
-func (c *domain.ChatController) Create(w http.ResponseWriter, r *http.Request) {
+// Create チャットを作成する
+func (c *ChatControllerImpl) Create(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -348,7 +360,7 @@ func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// セッションからユーザー情報を取得
-	user, err := repository.GetUserByID(session.UserID)
+	user, err := repository.GetUserByID(session.User.ID)
 	if err != nil {
 		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
 		return

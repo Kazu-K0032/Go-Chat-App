@@ -4,65 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
-	"math/rand"
 	"net/http"
-	"time"
 
 	"security_chat_app/internal/domain"
+	"security_chat_app/internal/utils/icons"
+	"security_chat_app/internal/utils/random"
 )
-
-// TemplateData 共通のテンプレートデータ構造体
-type TemplateData struct {
-	IsLoggedIn       bool
-	User             *domain.User
-	Messages         []domain.Message
-	Contacts         []domain.Contact
-	Chats            []domain.Chat
-	CurrentChat      *domain.Chat
-	SignupForm       SignupForm
-	LoginForm        LoginForm
-	ResetForm        ResetForm
-	ValidationErrors []string
-	Error            string
-}
-
-// SignupForm サインアップフォームのデータ構造体
-type SignupForm struct {
-	Username string
-	Email    string
-	Password string
-}
-
-// LoginForm ログインフォームのデータ構造体
-type LoginForm struct {
-	Email    string
-	Password string
-}
-
-// ResetForm パスワードリセットフォームのデータ構造体
-type ResetForm struct {
-	Email string
-}
-
-// デフォルトアイコンのパス
-const defaultIconPath = "icons/default"
-
-// デフォルトアイコンの数
-const defaultIconCount = 7
-
-// デフォルトアイコンの名前
-var defaultIconNames = []string{
-	"elephant",
-	"fox",
-	"hamster",
-	"koala",
-	"monkey",
-	"owl",
-	"puma",
-}
-
-// ローカル乱数生成器
-var localRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 // テンプレートで使用する関数
 var templateFuncs = template.FuncMap{
@@ -99,9 +46,9 @@ var templateFuncs = template.FuncMap{
 	},
 	"getRandomDefaultIcon": func() string {
 		// 0から6までのランダムな数字を生成
-		randomNum := localRand.Intn(defaultIconCount)
+		randomNum := random.LocalRand.Intn(icons.DefaultIconCount)
 		// デフォルトアイコンのパスを生成
-		return fmt.Sprintf("%s/%s.png", defaultIconPath, defaultIconNames[randomNum])
+		return fmt.Sprintf("%s/%s.png", icons.DefaultIconPath, icons.DefaultIconNames[randomNum])
 	},
 }
 

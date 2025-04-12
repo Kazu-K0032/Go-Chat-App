@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"security_chat_app/internal/domain"
 	"security_chat_app/internal/infrastructure/repository"
 	"security_chat_app/internal/interface/markup"
 	"security_chat_app/internal/interface/middleware"
@@ -17,7 +18,7 @@ type LoginForm struct {
 // LoginHandler ログイン処理を実行
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		data := markup.TemplateData{
+		data := domain.TemplateData{
 			IsLoggedIn: false,
 		}
 		markup.GenerateHTML(w, data, "layout", "header", "login", "footer")
@@ -41,9 +42,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if len(validationErrors) > 0 {
-			data := markup.TemplateData{
+			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				LoginForm:        markup.LoginForm{Email: form.Email, Password: form.Password},
+				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},
 				ValidationErrors: validationErrors,
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "login", "footer")
@@ -53,9 +54,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// ユーザー認証
 		user, err := repository.GetUserByEmail(form.Email)
 		if err != nil {
-			data := markup.TemplateData{
+			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				LoginForm:        markup.LoginForm{Email: form.Email, Password: form.Password},
+				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},
 				ValidationErrors: []string{"認証エラーが発生しました"},
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "login", "footer")
@@ -63,9 +64,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if user == nil || user.Password != form.Password {
-			data := markup.TemplateData{
+			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				LoginForm:        markup.LoginForm{Email: form.Email, Password: form.Password},
+				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},
 				ValidationErrors: []string{"メールアドレスまたはパスワードが誤っています"},
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "login", "footer")
@@ -75,9 +76,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// セッションの作成
 		session, err := middleware.CreateSession(user)
 		if err != nil {
-			data := markup.TemplateData{
+			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				LoginForm:        markup.LoginForm{Email: form.Email, Password: form.Password},
+				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},
 				ValidationErrors: []string{"セッション作成エラーが発生しました"},
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "login", "footer")

@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
+	"security_chat_app/internal/domain"
+	"security_chat_app/internal/infrastructure/firebase"
 	"security_chat_app/internal/interface/markup"
-	"security_chat_app/repository"
-	"security_chat_app/service"
+	"security_chat_app/internal/interface/middleware"
 )
 
 // 設定ページのデータ構造体
 type SettingsPageData struct {
 	IsLoggedIn       bool
-	User             *repository.User
+	User             *domain.User
 	ShowPasswordForm bool
 	PasswordForm     struct {
 		CurrentPassword    string
@@ -25,7 +26,7 @@ type SettingsPageData struct {
 // 設定ページのハンドラ
 func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 	// セッションの検証
-	session, err := service.ValidateSession(w, r)
+	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -71,7 +72,7 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// パスワード更新
-		err = repository.UpdateField("users", session.User.ID, "password", newPassword)
+		err = firebase.UpdateField("users", session.User.ID, "password", newPassword)
 		if err != nil {
 			validationErrors = append(validationErrors, "パスワードの更新に失敗しました")
 			data := SettingsPageData{
@@ -110,7 +111,7 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // 設定ページのデータを取得
-func getSettingsPageData(user *repository.User, r *http.Request) (SettingsPageData, error) {
+func getSettingsPageData(user *domain.User, r *http.Request) (SettingsPageData, error) {
 	if user == nil {
 		return SettingsPageData{}, fmt.Errorf("ユーザー情報が無効です")
 	}

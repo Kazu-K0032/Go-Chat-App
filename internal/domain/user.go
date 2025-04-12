@@ -16,6 +16,7 @@ type User struct {
 	IsOnline      bool      // ユーザーがオンラインかどうか
 	Icon          string    // ユーザーのアイコン
 	Gender        string    // ユーザーの性別
+	Contacts      []Contact // ユーザーの連絡先
 }
 
 // ユーザーの関係性の構造体
@@ -25,4 +26,12 @@ type Relationship struct {
 	FollowedID string    // フォローされたユーザーのID
 	CreatedAt  time.Time // 関係性の作成日時
 	UpdatedAt  time.Time // 関係性の更新日時
+}
+
+// 連絡先を交換したユーザーの構造体
+type Contact struct {
+	ID       string    // 連絡先のID
+	Username string    // 連絡先のユーザー名
+	Icon  string    // 連絡先のアイコンのURL
+	LastSeen time.Time // 連絡先の最終接続日時
 }

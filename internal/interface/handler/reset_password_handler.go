@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
+	"security_chat_app/internal/domain"
+	"security_chat_app/internal/infrastructure/firebase"
+	"security_chat_app/internal/infrastructure/repository"
 	"security_chat_app/internal/interface/markup"
-	"security_chat_app/repository"
 )
 
 // ResetForm パスワード再設定フォームのデータ構造体
@@ -18,9 +20,9 @@ type ResetForm struct {
 // ResetPasswordHandler パスワード再設定処理を実行
 func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		data := markup.TemplateData{
+		data := domain.TemplateData{
 			IsLoggedIn: false,
-			ResetForm:  ResetForm{},
+			ResetForm:  domain.ResetForm{},
 		}
 		markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
 		return
@@ -47,9 +49,9 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if len(validationErrors) > 0 {
-			data := markup.TemplateData{
+			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				ResetForm:        form,
+				ResetForm:        domain.ResetForm{Email: form.Email},
 				ValidationErrors: validationErrors,
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
@@ -59,9 +61,9 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		// ユーザー検索
 		user, err := repository.GetUserByEmail(form.Email)
 		if err != nil {
-			data := markup.TemplateData{
+			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				ResetForm:        form,
+				ResetForm:        domain.ResetForm{Email: form.Email},
 				ValidationErrors: []string{"ユーザー検索エラーが発生しました"},
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
@@ -69,9 +71,9 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if user == nil {
-			data := markup.TemplateData{
+			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				ResetForm:        form,
+				ResetForm:        domain.ResetForm{Email: form.Email},
 				ValidationErrors: []string{"該当するユーザーが見つかりません"},
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
@@ -81,12 +83,12 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		// パスワード更新
 		fmt.Println(user.ID)
 		fmt.Println(form.Password)
-		err = repository.UpdateField("users", user.ID, "password", form.Password)
+		err = firebase.UpdateField("users", user.ID, "password", form.Password)
 		if err != nil {
 			fmt.Println("Firestore Update エラー:", err)
-			data := markup.TemplateData{
+			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				ResetForm:        form,
+				ResetForm:        domain.ResetForm{Email: form.Email},
 				ValidationErrors: []string{"パスワード更新エラーが発生しました"},
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
