@@ -52,8 +52,8 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("デフォルトアイコンを設定中: %s\n", defaultIconPath)
 
 		// デフォルトアイコンのURLを取得
-		iconURL, err := firebase.GetDefaultIconURL(defaultIconPath)
-		if err != nil {
+		iconURL, er := firebase.GetDefaultIconURL(defaultIconPath)
+		if er != nil {
 			fmt.Printf("デフォルトアイコンの取得に失敗: %v\n", err)
 			http.Error(w, "デフォルトアイコンの取得に失敗しました", http.StatusInternalServerError)
 			return
