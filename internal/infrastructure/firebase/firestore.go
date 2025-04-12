@@ -153,21 +153,23 @@ func SearchUser(searchQuery string) ([]map[string]interface{}, error) {
 
 	ctx := context.Background()
 
-	// ユーザー名で部分一致検索
+	// ユーザー名で部分一致検索（大文字小文字を区別しない）
 	usersQuery := client.Collection("users").
-		Where("name", ">=", searchQuery).
-		Where("name", "<=", searchQuery+"\uf8ff").
+		Where("Name", ">=", searchQuery).
+		Where("Name", "<=", searchQuery+"\uf8ff").
 		Limit(20)
 
 	docs, err := usersQuery.Documents(ctx).GetAll()
 	if err != nil {
+		log.Printf("ユーザー検索エラー: %v", err)
 		return nil, err
 	}
 
 	var results []map[string]interface{}
 	for _, doc := range docs {
 		data := doc.Data()
-		data["id"] = doc.Ref.ID // ドキュメントIDをidフィールドとして追加
+		data["ID"] = doc.Ref.ID // ドキュメントIDをIDフィールドとして追加
+		log.Printf("検索結果のユーザーデータ: %+v", data)
 		results = append(results, data)
 	}
 

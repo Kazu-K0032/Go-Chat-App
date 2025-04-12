@@ -86,21 +86,21 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 	// 自分以外かつチャット履歴のないユーザーをフィルタリング
 	var filteredUsers []map[string]interface{}
 	for _, u := range users {
-		userID := u["id"].(string)
+		userID, ok := u["ID"].(string)
+		if !ok {
+			log.Printf("ユーザーIDの取得に失敗: %+v", u)
+			continue
+		}
+
 		if userID != user.ID && !chattedUsers[userID] {
-			// アイコンURLを取得（存在しない場合は空文字列）
-			iconURL := ""
-			if icon, ok := u["Icon"].(string); ok {
-				iconURL = icon
-			}
 			// テンプレートで使用するフィールド名に合わせてデータを整形
 			userData := map[string]interface{}{
-				"id":       u["ID"].(string),
-				"name":     u["Name"].(string),
-				"icon":     iconURL,
-				"isOnline": u["IsOnline"].(bool),
+				"id":       userID,
+				"name":     u["Name"],
+				"icon":     u["Icon"],
+				"isOnline": u["IsOnline"],
 			}
-			log.Printf("ユーザーデータ: %+v", userData)
+			log.Printf("フィルタリング後のユーザーデータ: %+v", userData)
 			filteredUsers = append(filteredUsers, userData)
 		}
 	}
@@ -140,6 +140,8 @@ func SearchUsers(query string) ([]map[string]interface{}, error) {
 		return nil, fmt.Errorf("ユーザーの検索に失敗しました: %v", err)
 	}
 
+	// 検索結果をログ出力
+	log.Printf("検索結果: %+v", users)
 	return users, nil
 }
 
