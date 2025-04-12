@@ -15,9 +15,9 @@ import (
 func AddData(collection string, data interface{}, docID string) error {
 	client, err := InitFirebase()
 	if err != nil {
+		log.Printf("Firebase初期化エラー: %v", err)
 		return err
 	}
-	defer client.Close()
 
 	ctx := context.Background()
 	if docID != "" {
@@ -28,8 +28,10 @@ func AddData(collection string, data interface{}, docID string) error {
 		_, _, err = client.Collection(collection).Add(ctx, data)
 	}
 	if err != nil {
+		log.Printf("データ追加エラー: %v", err)
 		return err
 	}
+	log.Printf("データを追加しました: collection=%s, docID=%s", collection, docID)
 	return nil
 }
 
@@ -37,9 +39,9 @@ func AddData(collection string, data interface{}, docID string) error {
 func UpdateField(collection string, documentID string, field string, value interface{}) error {
 	client, err := InitFirebase()
 	if err != nil {
+		log.Printf("Firebase初期化エラー: %v", err)
 		return err
 	}
-	defer client.Close()
 
 	ctx := context.Background()
 	_, err = client.Collection(collection).Doc(documentID).Update(ctx, []firestore.Update{
@@ -49,8 +51,10 @@ func UpdateField(collection string, documentID string, field string, value inter
 		},
 	})
 	if err != nil {
+		log.Printf("フィールド更新エラー: %v, collection=%s, documentID=%s, field=%s", err, collection, documentID, field)
 		return err
 	}
+	log.Printf("フィールドを更新しました: collection=%s, documentID=%s, field=%s", collection, documentID, field)
 	return nil
 }
 
@@ -58,13 +62,14 @@ func UpdateField(collection string, documentID string, field string, value inter
 func GetData(collection string, documentID string) (map[string]interface{}, error) {
 	client, err := InitFirebase()
 	if err != nil {
+		log.Printf("Firebase初期化エラー: %v", err)
 		return nil, err
 	}
-	defer client.Close()
 
 	ctx := context.Background()
 	doc, err := client.Collection(collection).Doc(documentID).Get(ctx)
 	if err != nil {
+		log.Printf("データ取得エラー: %v, collection=%s, documentID=%s", err, collection, documentID)
 		return nil, err
 	}
 

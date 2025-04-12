@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"security_chat_app/internal/domain"
@@ -9,14 +10,9 @@ import (
 	"security_chat_app/internal/interface/middleware"
 )
 
-// LoginForm ログインフォームのデータ構造体
-type LoginForm struct {
-	Email    string
-	Password string
-}
-
 // LoginHandler ログイン処理を実行
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	// ログイン画面の表示
 	if r.Method == http.MethodGet {
 		data := domain.TemplateData{
 			IsLoggedIn: false,
@@ -25,9 +21,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// ログイン処理
 	if r.Method == http.MethodPost {
 		r.ParseForm()
-		form := LoginForm{
+		form := domain.LoginForm{
 			Email:    r.FormValue("email"),
 			Password: r.FormValue("password"),
 		}
@@ -42,6 +39,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if len(validationErrors) > 0 {
+			log.Printf("バリデーションエラー: %v", validationErrors)
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
 				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},
@@ -54,6 +52,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// ユーザー認証
 		user, err := repository.GetUserByEmail(form.Email)
 		if err != nil {
+			log.Printf("ユーザー認証エラー: %v", err)
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
 				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},
@@ -64,6 +63,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if user == nil || user.Password != form.Password {
+			log.Printf("ユーザー認証エラー: %v", err)
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
 				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},
@@ -76,6 +76,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// セッションの作成
 		session, err := middleware.CreateSession(user)
 		if err != nil {
+			log.Printf("セッション作成エラー: %v", err)
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
 				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},

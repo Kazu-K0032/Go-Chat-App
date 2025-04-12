@@ -2,7 +2,9 @@ package main
 
 import (
 	"log"
+	"net/http"
 
+	"security_chat_app/internal/config"
 	"security_chat_app/internal/infrastructure/firebase"
 	"security_chat_app/internal/infrastructure/router"
 	"security_chat_app/internal/usecase/chat"
@@ -29,8 +31,8 @@ func main() {
 	}
 
 	// サーバーを起動
-	// log.Printf("サーバーを起動します。ポート: %s", config.Config.Port)
-	// if err := http.ListenAndServe(":"+config.Config.Port, mux); err != nil {
-	// 	log.Fatal(err)
-	// }
+	log.Printf("サーバーを起動します。ポート: %s", config.Config.Port)
+	if err := http.ListenAndServe(":"+config.Config.Port, mux); err != nil {
+		log.Fatal(err)
+	}
 }

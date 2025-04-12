@@ -15,18 +15,25 @@ import (
 	"google.golang.org/api/option"
 )
 
+var firestoreClient *firestore.Client
+
 // Firebaseの初期化
 func InitFirebase() (*firestore.Client, error) {
+	// すでに初期化済みの場合は再利用
+	if firestoreClient != nil {
+		return firestoreClient, nil
+	}
+
 	// Firebaseの認証情報の設定
 	opt := option.WithCredentialsFile(config.Config.FirebaseServiceAccountKey)
 
 	// Firebase設定を明示的に指定
-	config := &firebase.Config{
+	firebaseConfig := &firebase.Config{
 		ProjectID: "go-chat-app-cf888",
 	}
 
 	// Firebaseサービスのインスタンスを作成
-	app, err := firebase.NewApp(context.Background(), config, opt)
+	app, err := firebase.NewApp(context.Background(), firebaseConfig, opt)
 	if err != nil {
 		log.Printf("Firebaseアプリの初期化に失敗: %v", err)
 		return nil, err
@@ -43,6 +50,9 @@ func InitFirebase() (*firestore.Client, error) {
 		return nil, err
 	}
 
+	// グローバル変数に保存
+	firestoreClient = client
+	fmt.Println("Firestoreクライアントを初期化しました")
 	return client, nil
 }
 

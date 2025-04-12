@@ -24,14 +24,7 @@
       <!-- footer -->
       {{template "footer" .}}
     </div>
-    <script>
-      // URLパラメータからsuccessメッセージを取得
-      const urlParams = new URLSearchParams(window.location.search);
-      const successMessage = urlParams.get("success");
-      if (successMessage) {
-        alert(successMessage);
-      }
-    </script>
+    <script src="/js/layout.js"></script>
   </body>
 </html>
 {{end}}
