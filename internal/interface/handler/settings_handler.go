@@ -40,9 +40,11 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 
 	// ユーザー名変更の処理
 	if r.URL.Path == "/settings/username" && r.Method == http.MethodPost {
+		log.Printf("ユーザー名変更リクエストを受信: %s", r.URL.Path)
 		// フォームデータの解析
 		r.ParseForm()
 		newUsername := r.FormValue("new_username")
+		log.Printf("新しいユーザー名: %s", newUsername)
 
 		// バリデーション
 		var validationErrors []string
@@ -71,7 +73,8 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// ユーザー名の更新
-		err = firebase.UpdateField("users", session.User.ID, "name", newUsername)
+		log.Printf("ユーザー名更新開始: userID=%s, newUsername=%s", session.User.ID, newUsername)
+		err = firebase.UpdateField("users", session.User.ID, "Name", newUsername)
 		if err != nil {
 			log.Printf("ユーザー名更新エラー: %v, userID=%s, newUsername=%s", err, session.User.ID, newUsername)
 			validationErrors = append(validationErrors, "ユーザー名の更新に失敗しました")
@@ -143,7 +146,7 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// パスワード更新
-		err = firebase.UpdateField("users", session.User.ID, "password", newPassword)
+		err = firebase.UpdateField("users", session.User.ID, "Password", newPassword)
 		if err != nil {
 			log.Printf("パスワード更新エラー: %v, userID=%s", err, session.User.ID)
 			validationErrors = append(validationErrors, "パスワードの更新に失敗しました")

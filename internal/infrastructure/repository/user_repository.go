@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"log"
-	"time"
 
 	"security_chat_app/internal/domain"
 	"security_chat_app/internal/infrastructure/firebase"
@@ -11,19 +10,21 @@ import (
 
 // メールアドレスでユーザーを検索する
 func GetUserByEmail(email string) (*domain.User, error) {
+	log.Printf("ユーザー検索開始: email=%s", email)
+
 	client, err := firebase.InitFirebase()
 	if err != nil {
 		log.Printf("Firebase初期化エラー: %v", err)
 		return nil, err
 	}
+	defer client.Close()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	query := client.Collection("users").Where("email", "==", email)
+	ctx := context.Background()
+	log.Printf("Firestoreクエリ実行: collection=users, field=Email, value=%s", email)
+	query := client.Collection("users").Where("Email", "==", email)
 	docs, err := query.Documents(ctx).GetAll()
 	if err != nil {
-		log.Printf("ユーザー検索エラー: %v, email=%s", err, email)
+		log.Printf("Firestoreクエリエラー: %v", err)
 		return nil, err
 	}
 
@@ -33,6 +34,8 @@ func GetUserByEmail(email string) (*domain.User, error) {
 		return nil, nil
 	}
 
+	log.Printf("ユーザーが見つかりました: email=%s, docID=%s", email, docs[0].Ref.ID)
+
 	var user domain.User
 	if err := docs[0].DataTo(&user); err != nil {
 		log.Printf("ユーザーデータ変換エラー: %v", err)
@@ -41,7 +44,7 @@ func GetUserByEmail(email string) (*domain.User, error) {
 
 	// ドキュメントIDをユーザーIDとして設定
 	user.ID = docs[0].Ref.ID
-	log.Printf("ユーザーを取得しました: id=%s, email=%s", user.ID, user.Email)
+	log.Printf("ユーザー情報取得成功: ID=%s, Name=%s", user.ID, user.Name)
 	return &user, nil
 }
 
@@ -49,26 +52,21 @@ func GetUserByEmail(email string) (*domain.User, error) {
 func GetUserByID(userID string) (*domain.User, error) {
 	client, err := firebase.InitFirebase()
 	if err != nil {
-		log.Printf("Firebase初期化エラー: %v", err)
 		return nil, err
 	}
+	defer client.Close()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
+	ctx := context.Background()
 	doc, err := client.Collection("users").Doc(userID).Get(ctx)
 	if err != nil {
-		log.Printf("ユーザー取得エラー: %v, userID=%s", err, userID)
 		return nil, err
 	}
 
 	var user domain.User
 	if err := doc.DataTo(&user); err != nil {
-		log.Printf("ユーザーデータ変換エラー: %v", err)
 		return nil, err
 	}
 	user.ID = doc.Ref.ID
 
-	log.Printf("ユーザーを取得しました: id=%s, email=%s", user.ID, user.Email)
 	return &user, nil
 }

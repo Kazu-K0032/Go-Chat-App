@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"log"
+	"time"
+)
 
 // セッション情報を管理する構造体
 type Session struct {
@@ -13,23 +16,27 @@ type Session struct {
 	IsValid   bool      // セッションが有効かどうか
 }
 
-// Sessionの有効性をチェックする
-func (sess *Session) CheckSession() bool {
-	// セッションが存在しない場合
-	if sess == nil {
+// CheckSession セッションの有効性をチェックする
+func (s *Session) CheckSession() bool {
+	log.Printf("セッション有効性チェック開始: sessionID=%s", s.ID)
+
+	if s == nil {
+		log.Printf("セッションがnilです")
 		return false
 	}
 
-	// 有効期限のチェック
-	if time.Now().After(sess.ExpiredAt) {
+	// セッションの有効期限をチェック
+	if time.Now().After(s.ExpiredAt) {
+		log.Printf("セッションの有効期限が切れています: sessionID=%s, expiredAt=%v", s.ID, s.ExpiredAt)
 		return false
 	}
 
-	// トークンの検証
-	if sess.Token == "" {
+	// セッションが無効に設定されている場合
+	if !s.IsValid {
+		log.Printf("セッションが無効に設定されています: sessionID=%s", s.ID)
 		return false
 	}
 
-	// IsValidフラグのチェック
-	return sess.IsValid
+	log.Printf("セッション有効性チェック成功: sessionID=%s", s.ID)
+	return true
 }

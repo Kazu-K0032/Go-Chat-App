@@ -30,6 +30,7 @@ func SetupRouter(chatUsecase domain.ChatUsecase) *http.ServeMux {
 	mux.HandleFunc("/chat", handler.ChatHandler)
 	mux.HandleFunc("/search", handler.SearchHandler)
 	mux.HandleFunc("/settings", handler.SettingsHandler)
+	mux.HandleFunc("/settings/username", handler.SettingsHandler)
 
 	return mux
 }
