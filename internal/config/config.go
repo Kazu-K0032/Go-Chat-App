@@ -70,7 +70,7 @@ func loadConfigValues(cfg *ini.File, config *ConfigList) {
 	if static := cfg.Section("web").Key("static").String(); static != "" {
 		config.Static = static
 	}
-	if serviceAccountKey := cfg.Section("firebase").Key("serviceAccountKey").String(); serviceAccountKey != "" {
+	if serviceAccountKey := cfg.Section("firebase").Key("serviceKeyPath").String(); serviceAccountKey != "" {
 		config.ServiceKeyPath = serviceAccountKey
 	}
 	if projectId := cfg.Section("firebase").Key("projectId").String(); projectId != "" {

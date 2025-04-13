@@ -100,15 +100,14 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 				"icon":     u["Icon"],
 				"isOnline": u["IsOnline"],
 			}
-			log.Printf("フィルタリング後のユーザーデータ: %+v", userData)
 			filteredUsers = append(filteredUsers, userData)
 		}
 	}
 
 	// ユーザーをcreated_atで降順にソート
 	sort.Slice(filteredUsers, func(i, j int) bool {
-		timeI, okI := filteredUsers[i]["created_at"].(time.Time)
-		timeJ, okJ := filteredUsers[j]["created_at"].(time.Time)
+		timeI, okI := filteredUsers[i]["CreatedAt"].(time.Time)
+		timeJ, okJ := filteredUsers[j]["CreatedAt"].(time.Time)
 
 		// created_atがnilまたはtime.Timeでない場合は、最後に配置
 		if !okI {
@@ -141,7 +140,6 @@ func SearchUsers(query string) ([]map[string]interface{}, error) {
 	}
 
 	// 検索結果をログ出力
-	log.Printf("検索結果: %+v", users)
 	return users, nil
 }
 
