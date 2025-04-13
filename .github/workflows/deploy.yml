@@ -25,8 +25,8 @@ jobs:
     steps:
       - name: Check PR source branch
         run: |
-          if [ "${{ github.event.pull_request.head.ref }}" != "$DEPLOY_BRANCH" ]; then
-            echo "PR元のブランチが'$DEPLOY_BRANCH'ではありません。"
+          if [ "${{ github.event.pull_request.head.ref }}" != main ]; then
+            echo "PR元のブランチが main ではありません。"
             exit 1
           fi
 
