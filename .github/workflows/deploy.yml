@@ -4,8 +4,10 @@ on:
   pull_request:
     branches:
       - release
-    types:
-      - closed
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - release
 
 permissions:
   contents: read
