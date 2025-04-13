@@ -1,0 +1,43 @@
+name: Deploy
+
+on:
+  pull_request:
+    branches:
+      - release
+    types:
+      - closed
+
+permissions:
+  contents: read
+
+env:
+  COMMIT_HASH: bd83ba7e2b3b59ec4007ddc30c72ef12e5d2fff7
+
+jobs:
+  main_deploy:
+    name: release_deploy
+    if: github.event.pull_request.base.ref == 'release'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DEPLOY_DIR: /home/${{ secrets.VPS_USER }}/sample
+      DEPLOY_BRANCH: release
+    steps:
+      - name: Check PR source branch
+        run: |
+          if [ "${{ github.event.pull_request.head.ref }}" != "$DEPLOY_BRANCH" ]; then
+            echo "PR元のブランチが'$DEPLOY_BRANCH'ではありません。"
+            exit 1
+          fi
+
+      - name: main_deploy
+        uses: appleboy/ssh-action@${{ env.COMMIT_HASH }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          envs: DEPLOY_DIR,DEPLOY_BRANCH
+          script: |
+            set -e
+            cd "$DEPLOY_DIR"
+            git pull origin "$DEPLOY_BRANCH"
