@@ -10,8 +10,6 @@ import (
 
 // メールアドレスでユーザーを検索する
 func GetUserByEmail(email string) (*domain.User, error) {
-	log.Printf("ユーザー検索開始: email=%s", email)
-
 	client, err := firebase.InitFirebase()
 	if err != nil {
 		log.Printf("Firebase初期化エラー: %v", err)
@@ -20,7 +18,6 @@ func GetUserByEmail(email string) (*domain.User, error) {
 	defer client.Close()
 
 	ctx := context.Background()
-	log.Printf("Firestoreクエリ実行: collection=users, field=Email, value=%s", email)
 	query := client.Collection("users").Where("Email", "==", email)
 	docs, err := query.Documents(ctx).GetAll()
 	if err != nil {
@@ -34,8 +31,6 @@ func GetUserByEmail(email string) (*domain.User, error) {
 		return nil, nil
 	}
 
-	log.Printf("ユーザーが見つかりました: email=%s, docID=%s", email, docs[0].Ref.ID)
-
 	var user domain.User
 	if err := docs[0].DataTo(&user); err != nil {
 		log.Printf("ユーザーデータ変換エラー: %v", err)
@@ -44,7 +39,6 @@ func GetUserByEmail(email string) (*domain.User, error) {
 
 	// ドキュメントIDをユーザーIDとして設定
 	user.ID = docs[0].Ref.ID
-	log.Printf("ユーザー情報取得成功: ID=%s, Name=%s", user.ID, user.Name)
 	return &user, nil
 }
 

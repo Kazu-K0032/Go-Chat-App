@@ -43,8 +43,6 @@ func CreateSession(user *domain.User) (*domain.Session, error) {
 
 // SetSessionCookie セッションクッキーを設定する
 func SetSessionCookie(w http.ResponseWriter, session *domain.Session) {
-	log.Printf("セッションクッキー設定開始: sessionID=%s", session.ID)
-
 	cookie := &http.Cookie{
 		Name:     "session_id",
 		Value:    session.ID,
@@ -55,14 +53,10 @@ func SetSessionCookie(w http.ResponseWriter, session *domain.Session) {
 		MaxAge:   86400 * 30,           // 30日
 	}
 	http.SetCookie(w, cookie)
-
-	log.Printf("セッションクッキー設定成功: sessionID=%s", session.ID)
 }
 
 // ValidateSession セッションを検証する
 func ValidateSession(w http.ResponseWriter, r *http.Request) (*domain.Session, error) {
-	log.Printf("セッション検証開始")
-
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		log.Printf("セッションクッキー取得エラー: %v", err)
@@ -70,7 +64,6 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*domain.Session, e
 	}
 
 	sessionID := cookie.Value
-	log.Printf("セッションID取得: %s", sessionID)
 
 	// Firestoreからセッションを取得
 	client, err := firebase.InitFirebase()
@@ -81,7 +74,6 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*domain.Session, e
 	defer client.Close()
 
 	ctx := r.Context()
-	log.Printf("セッション取得開始: sessionID=%s", sessionID)
 	doc, err := client.Collection("sessions").Doc(sessionID).Get(ctx)
 	if err != nil {
 		log.Printf("セッション取得エラー: %v, sessionID=%s", err, sessionID)
@@ -99,8 +91,6 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*domain.Session, e
 		log.Printf("セッションが無効です: sessionID=%s", sessionID)
 		return nil, fmt.Errorf("セッションが無効です")
 	}
-
-	log.Printf("セッション検証成功: sessionID=%s, userID=%s", sessionID, session.User.ID)
 	return &session, nil
 }
 

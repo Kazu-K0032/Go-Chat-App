@@ -38,8 +38,6 @@ func AddData(collection string, data interface{}, docID string) error {
 
 // コレクションとドキュメントIDから特定フィールドを更新する
 func UpdateField(collection string, documentID string, field string, value interface{}) error {
-	log.Printf("フィールド更新開始: collection=%s, documentID=%s, field=%s", collection, documentID, field)
-
 	client, err := InitFirebase()
 	if err != nil {
 		log.Printf("Firebase初期化エラー: %v", err)
@@ -48,7 +46,6 @@ func UpdateField(collection string, documentID string, field string, value inter
 	defer client.Close()
 
 	ctx := context.Background()
-	log.Printf("Firestore更新実行: collection=%s, documentID=%s, field=%s", collection, documentID, field)
 	_, err = client.Collection(collection).Doc(documentID).Update(ctx, []firestore.Update{
 		{
 			Path:  field,
@@ -59,7 +56,6 @@ func UpdateField(collection string, documentID string, field string, value inter
 		log.Printf("フィールド更新エラー: %v, collection=%s, documentID=%s, field=%s", err, collection, documentID, field)
 		return err
 	}
-	log.Printf("フィールド更新成功: collection=%s, documentID=%s, field=%s", collection, documentID, field)
 	return nil
 }
 

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"sort"
+	"strings"
 	"time"
 
 	"security_chat_app/internal/domain"
@@ -99,7 +100,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		message := map[string]interface{}{
 			"SenderID":   user.ID,
 			"SenderName": user.Name,
-			"Content":     content,
+			"Content":    content,
 			"CreatedAt":  time.Now(),
 			"IsRead":     false,
 		}
@@ -192,13 +193,47 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// メッセージの型変換
 	var messages []domain.Message
 	for _, msg := range messagesData {
+		// 各フィールドを安全に取得する関数
+		getString := func(key string) string {
+			if val, exists := msg[key]; exists && val != nil {
+				if str, ok := val.(string); ok {
+					return str
+				}
+			}
+			// 大文字のキーも試す
+			if val, exists := msg[strings.ToUpper(key)]; exists && val != nil {
+				if str, ok := val.(string); ok {
+					return str
+				}
+			}
+			return ""
+		}
+
+		// 時刻の取得
+		var createdAt time.Time
+		if t, ok := msg["created_at"].(time.Time); ok {
+			createdAt = t
+		} else if t, ok := msg["CreatedAt"].(time.Time); ok {
+			createdAt = t
+		} else {
+			createdAt = time.Now() // デフォルト値
+		}
+
+		// 既読状態の取得
+		isRead := false
+		if r, ok := msg["is_read"].(bool); ok {
+			isRead = r
+		} else if r, ok := msg["IsRead"].(bool); ok {
+			isRead = r
+		}
+
 		message := domain.Message{
-			ID:         msg["ID"].(string),
-			Content:    msg["Content"].(string),
-			SenderID:   msg["SenderID"].(string),
-			SenderName: msg["SenderName"].(string),
-			CreatedAt:  msg["CreatedAt"].(time.Time),
-			IsRead:     msg["IsRead"].(bool),
+			ID:         getString("id"),
+			Content:    getString("content"),
+			SenderID:   getString("sender_id"),
+			SenderName: getString("sender_name"),
+			CreatedAt:  createdAt,
+			IsRead:     isRead,
 		}
 		messages = append(messages, message)
 	}
@@ -222,7 +257,6 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		CurrentChat: currentChat,
 		ChatID:      chatID,
 	}
-	log.Printf("テンプレートデータ: %+v", data)
 
 	// テンプレートのレンダリング
 	markup.GenerateHTML(w, data, "layout", "header", "chat", "footer")
@@ -280,20 +314,53 @@ func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 		var messages []domain.Message
 		var lastMessageTime time.Time
 		for _, msg := range messagesData {
-			messageTime := msg["created_at"].(time.Time)
+			// 各フィールドを安全に取得する関数
+			getString := func(key string) string {
+				if val, exists := msg[key]; exists && val != nil {
+					if str, ok := val.(string); ok {
+						return str
+					}
+				}
+				// 大文字のキーも試す
+				if val, exists := msg[strings.ToUpper(key)]; exists && val != nil {
+					if str, ok := val.(string); ok {
+						return str
+					}
+				}
+				return ""
+			}
+
+			// 時刻の取得
+			var createdAt time.Time
+			if t, ok := msg["created_at"].(time.Time); ok {
+				createdAt = t
+			} else if t, ok := msg["CreatedAt"].(time.Time); ok {
+				createdAt = t
+			} else {
+				createdAt = time.Now() // デフォルト値
+			}
+
+			// 既読状態の取得
+			isRead := false
+			if r, ok := msg["is_read"].(bool); ok {
+				isRead = r
+			} else if r, ok := msg["IsRead"].(bool); ok {
+				isRead = r
+			}
+
 			message := domain.Message{
-				ID:         msg["id"].(string),
-				Content:    msg["content"].(string),
-				SenderID:   msg["sender_id"].(string),
-				SenderName: msg["sender_name"].(string),
-				CreatedAt:  messageTime,
-				IsRead:     msg["is_read"].(bool),
+				ID:         getString("id"),
+				Content:    getString("content"),
+				SenderID:   getString("sender_id"),
+				SenderName: getString("sender_name"),
+				CreatedAt:  createdAt,
+				IsRead:     isRead,
 			}
 			messages = append(messages, message)
 
 			// 最新のメッセージ時刻を更新
-			if messageTime.After(lastMessageTime) {
-				lastMessageTime = messageTime
+			if createdAt.After(lastMessageTime) {
+				lastMessageTime = createdAt
 			}
 		}
 

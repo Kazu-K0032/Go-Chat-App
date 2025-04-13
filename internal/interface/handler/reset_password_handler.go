@@ -81,8 +81,6 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// パスワード更新
-		fmt.Println(user.ID)
-		fmt.Println(form.Password)
 		err = firebase.UpdateField("users", user.ID, "password", form.Password)
 		if err != nil {
 			fmt.Println("Firestore Update エラー:", err)
@@ -94,9 +92,6 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
 			return
 		}
-
-		fmt.Println("Firestore Update 成功")
-
 		// 成功時はホームページにリダイレクト
 		http.Redirect(w, r, "/?success=パスワードを再設定しました", http.StatusSeeOther)
 	}
