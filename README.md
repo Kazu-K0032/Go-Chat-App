@@ -35,18 +35,19 @@ https://tmp.kuji-server.com/search
 
     * [Firebase](https://console.firebase.google.com/u/1/?hl=ja)からプロジェクトを作成
     * 作成したプロジェクトにアクセスし、「プロジェクトの設定」⇒「サービスアカウント」⇒「新しい鍵を生成」
+      
       <img src="https://github.com/user-attachments/assets/c0820422-87d5-4490-80aa-cfe02c564456" width="400">
       <img src="https://github.com/user-attachments/assets/de34f37d-d44b-40a4-8e6f-44ec215f11c9" height="300">
     * ダウンロードしたファイル名を「serviceAccountKey.json」に変更し、クローンしたプロジェクトの`internal/config/`に配置してください
 
 3. **Firestoreの設定**
 
-    * Firebaseプロジェクト⇒「Firestore Database」から、データベースを作成
+    * 左サイドバー「構築」⇒「Firestore Database」から、「データベースを作成」
       
       <img src="https://github.com/user-attachments/assets/85cb2709-e414-4e69-84d1-abbeda4f10f7" height="300">
       <img src="https://github.com/user-attachments/assets/8bcdd85f-75ac-4771-88ca-8d73fa04e35a" height="300">
   
-    * Firestoreの「ルール」から以下のルールに変更
+    * 「Cloud Firestore」⇒「ルール」タブから、以下のルールであることを確認
       
       ```js
       rules_version = '2';
@@ -62,9 +63,35 @@ https://tmp.kuji-server.com/search
 
 4. **Storageの設定**
 
-    <img src="https://github.com/user-attachments/assets/6e107ac9-c117-45a3-8307-3c3b494b9b57" height="300">
+      * 左サイドバー「構築」⇒「Storage」を選択
+         * Storageを始める場合、請求先設定が必要になります。
+        
+         <img src="https://github.com/user-attachments/assets/6e107ac9-c117-45a3-8307-3c3b494b9b57" height="300">
+         <img src="https://github.com/user-attachments/assets/fde43faf-2f26-4693-bf28-5c8ca77ca917" height="300">
 
-5. **設定ファイルの修正（`config.ini`）**
+      * 「Storage」⇒「ルール」タブから、以下のルールに変更
+
+         ```js
+         rules_version = '2';
+         service firebase.storage {
+           match /b/{bucket}/o {
+             match /icons/default/{fileName} {
+               allow read: if true;
+               allow write: if false;
+             }
+             match /icons/{userId}/{fileName} {
+               allow read: if true;
+               allow write: if request.auth != null && request.auth.uid == userId;
+             }
+             match /{allPaths=**} {
+               allow read, write: if request.auth != null;
+             }
+           }
+         }
+         ```
+
+
+6. **設定ファイルの修正（`config.ini`）**
 
     * ポートの設定をしています。ご自身の環境に合わせて、随時修正してください。
 
@@ -77,7 +104,7 @@ https://tmp.kuji-server.com/search
     [firebase]
     serviceKeyPath = internal/config/serviceAccountKey.json // serviceAccountKey.jsonの相対パス
     projectId = // <プロジェクトの設定> -> <全般> -> <プロジェクトID> の値
-    storageBucket = // <Storage> -> <バケット>
+    storageBucket = // <Storage> -> <バケット ex: testa87e4.firebasestorage.app>
     ```
 
     ### 参考(projectId)
@@ -87,20 +114,28 @@ https://tmp.kuji-server.com/search
     <img src="https://github.com/user-attachments/assets/7918ecc4-1617-478d-82db-65b183fbbf33" height="300">
 
 
-6. **モジュール初期化および依存解決**
+7. **モジュール初期化および依存解決**
 
-    * 事前に、Go及びNode.jsをダウンロードしてください。
-    * バージョンは、Goは最低1.21以上, Node.jsはv16.0.0以上を目安に更新してください。
-    
-        ```:bash
-        cd security_chat_app/
-        # Go モジュールの初期化
-        go mod tidy
-        # Node.jsの依存解決
-        npm install
-        ```
+   * 事前に、Go及びNode.jsをダウンロードしてください。
+      * バージョンは、Goは最低1.21以上, Node.jsはv16.0.0以上を目安に更新してください。
+      
+      ```bash
+      go version
+      npm -v
+      ```
 
-7. **サーバーの起動**
+   * 以下を実行してください。
+      ```:bash
+      cd security_chat_app/
+      
+      # Go モジュールの初期化
+      go mod tidy
+      
+      # Node.jsの依存解決
+      npm install
+      ```
+
+8. **サーバーの起動**
 
      ```bash
      go run cmd/app/main.go
@@ -110,5 +145,11 @@ https://tmp.kuji-server.com/search
 
 9. **追加認証**
    
-    * `localhost:8050/profile`にアクセスしたとき、コマンドラインまたは `debug.log`にて「投稿」「返信」「いいね」に対する認証のリンクが表示されます。リンクにアクセスし、認証を行ってください。
+    * `localhost:8050/profile`にアクセスしたとき、コマンドラインにて「投稿」「返信」「いいね」に対する認証のリンクが表示されます。リンクにアクセスし、認証を行ってください。
+       * ビルドの完了には数分ほど時間がかかります。
+      ```bash
+      投稿の取得に失敗: rpc error: code = FailedPrecondition desc = The query requires an index. You can create it here: <リンク>
+      返信の取得に失敗: rpc error: code = FailedPrecondition desc = The query requires an index. You can create it here: <リンク>
+      いいねの取得に失敗: rpc error: code = FailedPrecondition desc = The query requires an index. You can create it here: <リンク>
+      ```
         <img src="https://github.com/user-attachments/assets/1454b620-f78e-4fe7-bb39-04b5810aa576" height="300">
