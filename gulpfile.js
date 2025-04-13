@@ -22,9 +22,9 @@ function bsInit(done) {
     open: false,
     injectChanges: true,
     files: [
-      "./app/templates/**/*.html",
-      "./app/css/**/*.css",
-      "./app/js/**/*.js",
+      "./internal/web/templates/**/*.html",
+      "./internal/web/css/**/*.css",
+      "./internal/web/js/**/*.js",
     ],
     port: 3000,
     ui: {
@@ -41,18 +41,18 @@ function bsReload(done) {
 }
 
 function compileSass() {
-  return src("./app/scss/**/*.scss")
+  return src("./internal/web/scss/**/*.scss")
     .pipe(sass().on("error", sass.logError))
-    .pipe(dest("./app/css"));
+    .pipe(dest("./internal/web/css"));
 }
 
 function watchTask(done) {
   // SCSSファイルの監視とコンパイル
-  watch("./app/scss/**/*.scss", series(compileSass, bsReload));
+  watch("./internal/web/scss/**/*.scss", series(compileSass, bsReload));
   // HTMLファイルの監視
-  watch("./app/templates/**/*.html", series(bsReload));
+  watch("./internal/web/templates/**/*.html", series(bsReload));
   // JSファイルの監視
-  watch("./app/js/**/*.js", series(bsReload));
+  watch("./internal/web/js/**/*.js", series(bsReload));
 }
 
 //----------------------------------------------------------------------
