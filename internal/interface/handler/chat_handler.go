@@ -97,11 +97,11 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 		// メッセージを作成
 		message := map[string]interface{}{
-			"sender_id":   user.ID,
-			"sender_name": user.Name,
-			"content":     content,
-			"created_at":  time.Now(),
-			"is_read":     false,
+			"SenderID":   user.ID,
+			"SenderName": user.Name,
+			"Content":     content,
+			"CreatedAt":  time.Now(),
+			"IsRead":     false,
 		}
 
 		// メッセージを保存
@@ -193,12 +193,12 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	var messages []domain.Message
 	for _, msg := range messagesData {
 		message := domain.Message{
-			ID:         msg["id"].(string),
-			Content:    msg["content"].(string),
-			SenderID:   msg["sender_id"].(string),
-			SenderName: msg["sender_name"].(string),
-			CreatedAt:  msg["created_at"].(time.Time),
-			IsRead:     msg["is_read"].(bool),
+			ID:         msg["ID"].(string),
+			Content:    msg["Content"].(string),
+			SenderID:   msg["SenderID"].(string),
+			SenderName: msg["SenderName"].(string),
+			CreatedAt:  msg["CreatedAt"].(time.Time),
+			IsRead:     msg["IsRead"].(bool),
 		}
 		messages = append(messages, message)
 	}
