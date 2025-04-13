@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -55,17 +54,10 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
 			return
 		}
-
-		// デバッグ用出力
-		fmt.Println("== 登録フォームの内容 ==")
-		fmt.Println("名前:", form.Name)
-		fmt.Println("メール:", form.Email)
-		fmt.Println("パスワード:", form.Password)
-
 		data := domain.TemplateData{
 			IsLoggedIn: false,
 			SignupForm: domain.SignupForm{
-				Username:     form.Name,
+				Username: form.Name,
 				Email:    form.Email,
 				Password: form.Password,
 			},
@@ -90,7 +82,7 @@ func SignupConfirmHandler(w http.ResponseWriter, r *http.Request) {
 			ID:        utils.GenerateUUID(),
 			Name:      form.Name,
 			Email:     form.Email,
-			Password:  form.Password, // 実際の実装ではハッシュ化が必要
+			Password:  form.Password,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}

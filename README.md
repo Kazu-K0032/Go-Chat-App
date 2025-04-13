@@ -32,7 +32,7 @@ Goを使用した基本的なチャットアプリになります。
   * Firebaseプロジェクト⇒「Firestore Database」から、データベースを作成
   * Firestoreの「ルール」から以下のルールに変更
     
-    ```json
+    ```.json
     rules_version = '2';
     
     service cloud.firestore {
