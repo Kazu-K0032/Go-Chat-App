@@ -10,9 +10,6 @@ on:
 permissions:
   contents: read
 
-env:
-  COMMIT_HASH: bd83ba7e2b3b59ec4007ddc30c72ef12e5d2fff7
-
 jobs:
   main_deploy:
     name: release_deploy
@@ -31,7 +28,7 @@ jobs:
           fi
 
       - name: main_deploy
-        uses: appleboy/ssh-action@${{ env.COMMIT_HASH }}
+        uses: appleboy/ssh-action@bd83ba7e2b3b59ec4007ddc30c72ef12e5d2fff7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
