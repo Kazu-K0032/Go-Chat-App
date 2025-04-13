@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+
 	"security_chat_app/internal/config"
 
 	"cloud.google.com/go/storage"
@@ -17,10 +18,10 @@ import (
 // アイコンをアップロードする
 func UploadIcon(userID string, filePath string) (string, error) {
 	// Firebase Storageクライアントを初期化
-	opt := option.WithCredentialsFile(config.Config.FirebaseServiceAccountKey)
+	opt := option.WithCredentialsFile(config.Config.ServiceKeyPath)
 	config := &firebase.Config{
-		ProjectID:     "go-chat-app-cf888",
-		StorageBucket: "go-chat-app-cf888.firebasestorage.app",
+		ProjectID:     config.Config.ProjectId,
+		StorageBucket: config.Config.StorageBucket,
 	}
 
 	app, err := firebase.NewApp(context.Background(), config, opt)
@@ -80,6 +81,6 @@ func UploadIcon(userID string, filePath string) (string, error) {
 // デフォルトアイコンのURLを取得
 func GetDefaultIconURL(objectPath string) (string, error) {
 	// 公開URLを生成
-	url := fmt.Sprintf("https://firebasestorage.googleapis.com/v0/b/go-chat-app-cf888.firebasestorage.app/o/%s?alt=media", url.PathEscape(objectPath))
+	url := fmt.Sprintf("https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media", config.Config.StorageBucket, url.PathEscape(objectPath))
 	return url, nil
 }

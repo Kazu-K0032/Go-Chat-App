@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"io"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -46,7 +47,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	if user.Icon == "" {
 		// デフォルトアイコンのパスを生成
 		randomNum := rand.Intn(7)
-		defaultIconPath := fmt.Sprintf(icons.DefaultIconPath + "/default_icon_%s.png", icons.DefaultIconNames[randomNum])
+		defaultIconPath := fmt.Sprintf(icons.DefaultIconPath+"/default_icon_%s.png", icons.DefaultIconNames[randomNum])
 
 		// デフォルトアイコンのURLを取得
 		iconURL, er := firebase.GetDefaultIconURL(defaultIconPath)
@@ -157,7 +158,8 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	// Firebase Storageにアップロード
 	iconURL, err := firebase.UploadIcon(session.User.ID, tempFilePath)
 	if err != nil {
-		http.Error(w, "アイコンのアップロードに失敗しました", http.StatusInternalServerError)
+		log.Printf("アイコンアップロードエラー: %v", err)
+		http.Error(w, fmt.Sprintf("アイコンのアップロードに失敗しました: %v", err), http.StatusInternalServerError)
 		return
 	}
 
