@@ -44,7 +44,6 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 		// フォームデータの解析
 		r.ParseForm()
 		newUsername := r.FormValue("new_username")
-		log.Printf("新しいユーザー名: %s", newUsername)
 
 		// バリデーション
 		var validationErrors []string
@@ -73,10 +72,8 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// ユーザー名の更新
-		log.Printf("ユーザー名更新開始: userID=%s, newUsername=%s", session.User.ID, newUsername)
 		err = firebase.UpdateField("users", session.User.ID, "Name", newUsername)
 		if err != nil {
-			log.Printf("ユーザー名更新エラー: %v, userID=%s, newUsername=%s", err, session.User.ID, newUsername)
 			validationErrors = append(validationErrors, "ユーザー名の更新に失敗しました")
 			data := SettingsPageData{
 				IsLoggedIn:       true,

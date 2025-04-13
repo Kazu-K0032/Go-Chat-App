@@ -18,8 +18,6 @@ type Session struct {
 
 // CheckSession セッションの有効性をチェックする
 func (s *Session) CheckSession() bool {
-	log.Printf("セッション有効性チェック開始: sessionID=%s", s.ID)
-
 	if s == nil {
 		log.Printf("セッションがnilです")
 		return false
@@ -36,7 +34,5 @@ func (s *Session) CheckSession() bool {
 		log.Printf("セッションが無効に設定されています: sessionID=%s", s.ID)
 		return false
 	}
-
-	log.Printf("セッション有効性チェック成功: sessionID=%s", s.ID)
 	return true
 }

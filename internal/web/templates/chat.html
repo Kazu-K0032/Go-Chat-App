@@ -82,7 +82,7 @@
         </div>
         <div class="l-chatMain__content p-message__content">
           <p class="p-message__text c-txt">{{ .Content }}</p>
-          <time class="p-message__time c-time">{{ .Time.Format "15:04" }}</time>
+          <time class="p-message__time c-time">{{ .CreatedAt.Format "15:04" }}</time>
         </div>
       </div>
       {{ else }}
@@ -90,7 +90,7 @@
       <div class="l-chatMain__message p-message --sent">
         <div class="l-chatMain__content p-message__content">
           <p class="p-message__text c-txt">{{ .Content }}</p>
-          <time class="p-message__time c-time">{{ .Time.Format "15:04" }}</time>
+          <time class="p-message__time c-time">{{ .CreatedAt.Format "15:04" }}</time>
         </div>
       </div>
       {{ end }} {{ end }}

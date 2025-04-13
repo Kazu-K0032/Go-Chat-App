@@ -16,23 +16,18 @@ import (
 )
 
 func InitFirebase() (*firestore.Client, error) {
-	log.Printf("Firebase初期化開始")
-
-	opt := option.WithCredentialsFile(config.Config.FirebaseServiceAccountKey)
-	log.Printf("認証情報ファイル読み込み: %s", config.Config.FirebaseServiceAccountKey)
+	opt := option.WithCredentialsFile(config.Config.ServiceKeyPath)
 
 	// Firebase設定を明示的に指定
 	config := &firebase.Config{
-		ProjectID: "go-chat-app-cf888",
+		ProjectID: config.Config.ProjectId,
 	}
-	log.Printf("Firebase設定: ProjectID=%s", config.ProjectID)
 
 	app, err := firebase.NewApp(context.Background(), config, opt)
 	if err != nil {
 		log.Printf("Firebaseアプリの初期化に失敗: %v", err)
 		return nil, err
 	}
-	log.Printf("Firebaseアプリ初期化成功")
 
 	// タイムアウトを設定したコンテキストを使用
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -43,7 +38,6 @@ func InitFirebase() (*firestore.Client, error) {
 		log.Printf("Firestoreクライアント作成に失敗: %v", err)
 		return nil, err
 	}
-	log.Printf("Firestoreクライアント作成成功")
 
 	return client, nil
 }
@@ -51,7 +45,7 @@ func InitFirebase() (*firestore.Client, error) {
 // InitFirebaseClient Firebaseクライアントを初期化する
 func InitFirebaseClient() (*firebase.App, error) {
 	// サービスアカウントキーの読み込み
-	serviceAccountKey, err := os.ReadFile(config.Config.FirebaseServiceAccountKey)
+	serviceAccountKey, err := os.ReadFile(config.Config.ServiceKeyPath)
 	if err != nil {
 		return nil, fmt.Errorf("サービスアカウントキーの読み込みに失敗: %v", err)
 	}
@@ -75,7 +69,7 @@ func InitFirebaseClient() (*firebase.App, error) {
 	}
 
 	// Firebase初期化オプションの設定
-	opt := option.WithCredentialsFile(config.Config.FirebaseServiceAccountKey)
+	opt := option.WithCredentialsFile(config.Config.ServiceKeyPath)
 
 	// Firebaseアプリの初期化
 	app, err := firebase.NewApp(context.Background(), &firebase.Config{
