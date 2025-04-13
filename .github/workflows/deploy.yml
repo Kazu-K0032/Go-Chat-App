@@ -40,3 +40,15 @@ jobs:
             set -e
             cd "$DEPLOY_DIR"
             git pull origin "$DEPLOY_BRANCH"
+
+      - name: restart_server
+        uses: appleboy/ssh-action@bd83ba7e2b3b59ec4007ddc30c72ef12e5d2fff7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          script: |
+            # tmuxセッションに接続してサーバーを再起動
+            tmux send-keys -t go-server "C-c" C-m
+            sleep 2
+            tmux send-keys -t go-server "go run cmd/app/main.go" C-m
