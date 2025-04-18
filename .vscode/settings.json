@@ -51,9 +51,6 @@
 
   "editor.formatOnSave": true,
 
-  // デフォルトのフォーマッターをPrettierに設定
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-
   // 各言語ごとのフォーマッター設定
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -65,6 +62,16 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[scss]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+    "editor.defaultFormatter": "stylelint.vscode-stylelint",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.stylelint": "explicit"
+    }
+  },
+
+  // Stylelintの設定
+  "stylelint.validate": ["css", "scss"],
+  "stylelint.snippet": ["css", "scss"],
+  "css.validate": false,
+  "scss.validate": false
 }

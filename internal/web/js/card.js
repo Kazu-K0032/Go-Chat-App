@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const iconWraps = document.querySelectorAll(".js-iconWrap");
+  const iconWraps = document.querySelectorAll("#js-iconWrap");
 
   iconWraps.forEach((wrap) => {
     wrap.addEventListener("click", (e) => {
