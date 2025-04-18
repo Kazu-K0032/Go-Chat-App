@@ -14,13 +14,6 @@
   box-shadow: $box-shadow-lg;
   background-color: #fff;
 
-  &.--footer {
-    // フッターのナビゲーション
-    width: 50%;
-    margin-left: auto;
-    box-shadow: none;
-  }
-
   &__container {
     display: flex;
     justify-content: space-between;
@@ -35,14 +28,6 @@
   &__list {
     display: flex;
     gap: 2rem;
-
-    &.--footer {
-      // フッターのナビゲーション
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      width: 100%;
-    }
   }
 
   &__item {
@@ -50,37 +35,6 @@
     color: $color-text-gray;
     font-weight: $font-weight-medium;
     text-decoration: none;
-
-    &.--footer {
-      // フッターのナビゲーション
-      flex: 1;
-      text-align: center;
-
-      a {
-        display: inline-block;
-        position: relative;
-        width: 100%;
-        padding: 0.5rem;
-        transition: color 0.3s ease;
-        white-space: nowrap;
-
-        &::after {
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          width: 0;
-          height: 1px;
-          background-color: $color-btn-hover;
-          transform: translateX(-50%);
-          transition: all 0.3s ease;
-          content: "";
-        }
-
-        &:hover::after {
-          width: 100%;
-        }
-      }
-    }
 
     &:hover {
       color: $color-btn-hover;
@@ -377,29 +331,10 @@
 // ==============================================
 @media screen and (width <= 1024px) {
   .p-nav {
-    &.--footer {
-      // フッターのナビゲーション
-      width: 70%;
-    }
     &__container {
       max-width: 90%;
       padding: 0.8rem;
       font-size: 1.2rem;
-    }
-    &__list {
-      &.--footer {
-        // フッターのナビゲーション
-        gap: 1.2rem;
-      }
-    }
-    &__item {
-      &.--footer {
-        // フッターのナビゲーション
-        a {
-          padding: 0.5rem 0;
-          font-size: 1.4rem;
-        }
-      }
     }
   }
 
@@ -490,11 +425,6 @@
 // ==============================================
 @media screen and (width <= 649px) {
   .p-nav {
-    &.--footer {
-      // フッターのナビゲーション
-      width: 100%;
-      margin: 1.5rem 0 0;
-    }
     &__container {
       flex-direction: column;
       gap: 0.5rem;
@@ -510,36 +440,10 @@
       justify-content: center;
       gap: 1.5rem;
       width: 100%;
-      &.--footer {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1.5rem;
-      }
     }
 
     &__item {
       font-size: 1rem;
-
-      &.--footer {
-        // フッターのナビゲーション
-        flex: 0 0 auto;
-
-        a {
-          padding: 0.5rem;
-          transition: opacity 0.3s ease;
-          opacity: 0.8;
-          font-size: 1rem;
-
-          &::after {
-            bottom: -2px;
-          }
-
-          &:hover {
-            opacity: 1;
-          }
-        }
-      }
     }
   }
 
