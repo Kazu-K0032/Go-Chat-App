@@ -1,21 +1,14 @@
 package handler
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"security_chat_app/internal/domain"
 	"security_chat_app/internal/infrastructure/firebase"
-	"security_chat_app/internal/infrastructure/repository"
 	"security_chat_app/internal/interface/markup"
+	"security_chat_app/internal/utils/uuid"
 )
-
-// ResetForm パスワード再設定フォームのデータ構造体
-type ResetForm struct {
-	Email           string
-	Password        string
-	PasswordConfirm string
-}
 
 // ResetPasswordHandler パスワード再設定処理を実行
 func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,28 +23,32 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
-		form := ResetForm{
-			Email:           r.FormValue("email"),
-			Password:        r.FormValue("password"),
-			PasswordConfirm: r.FormValue("password_confirm"),
+		form := domain.ResetForm{
+			Email: r.FormValue("email"),
 		}
+		password := r.FormValue("password")
+		passwordConfirm := r.FormValue("password_confirm")
 
 		// バリデーション
 		var validationErrors []string
 		if form.Email == "" {
 			validationErrors = append(validationErrors, "メールアドレスを入力してください")
 		}
-		if form.Password == "" {
+		if password == "" {
 			validationErrors = append(validationErrors, "新しいパスワードを入力してください")
 		}
-		if form.Password != form.PasswordConfirm {
+		if len(password) < 8 {
+			validationErrors = append(validationErrors, "パスワードは8文字以上で入力してください")
+		}
+		if password != passwordConfirm {
 			validationErrors = append(validationErrors, "パスワードが一致しません")
 		}
 
 		if len(validationErrors) > 0 {
+			log.Printf("バリデーションエラー: %v", validationErrors)
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				ResetForm:        domain.ResetForm{Email: form.Email},
+				ResetForm:        form,
 				ValidationErrors: validationErrors,
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
@@ -59,40 +56,61 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// ユーザー検索
-		user, err := repository.GetUserByEmail(form.Email)
+		users, err := firebase.GetDataByQuery("users", "Email", "==", form.Email)
 		if err != nil {
+			log.Printf("ユーザー検索エラー: %v", err)
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				ResetForm:        domain.ResetForm{Email: form.Email},
+				ResetForm:        form,
 				ValidationErrors: []string{"ユーザー検索エラーが発生しました"},
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
 			return
 		}
 
-		if user == nil {
+		if len(users) == 0 {
+			log.Printf("ユーザーが見つかりません: %s", form.Email)
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				ResetForm:        domain.ResetForm{Email: form.Email},
+				ResetForm:        form,
 				ValidationErrors: []string{"該当するユーザーが見つかりません"},
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
 			return
 		}
 
-		// パスワード更新
-		err = firebase.UpdateField("users", user.ID, "password", form.Password)
+		// パスワードのハッシュ化
+		hashedPassword, err := uuid.HashPassword(password)
 		if err != nil {
-			fmt.Println("Firestore Update エラー:", err)
+			log.Printf("パスワードハッシュ化エラー: %v", err)
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
-				ResetForm:        domain.ResetForm{Email: form.Email},
+				ResetForm:        form,
 				ValidationErrors: []string{"パスワード更新エラーが発生しました"},
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
 			return
 		}
-		// 成功時はホームページにリダイレクト
-		http.Redirect(w, r, "/?success=パスワードを再設定しました", http.StatusSeeOther)
+
+		// パスワード更新
+		userID := users[0]["ID"].(string)
+		err = firebase.UpdateField("users", userID, "Password", hashedPassword)
+		if err != nil {
+			log.Printf("パスワード更新エラー: %v", err)
+			data := domain.TemplateData{
+				IsLoggedIn:       false,
+				ResetForm:        form,
+				ValidationErrors: []string{"パスワード更新エラーが発生しました"},
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "reset-password", "footer")
+			return
+		}
+
+		// 成功時はログインページにリダイレクト
+		http.Redirect(w, r, "/login?success=パスワードを再設定しました", http.StatusSeeOther)
+		return
 	}
+
+	// その他のHTTPメソッドは許可しない
+	http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 }
