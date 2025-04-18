@@ -11,8 +11,7 @@
       >
         <a href="/chat?chat_id={{ .ID }}" class="p-chatCard__link">
           <div
-            id="js-iconWrap"
-            class="l-chat__imgWrap p-chatCard__iconWrap c-icon__wrap"
+            class="js-iconWrap l-chat__imgWrap p-chatCard__iconWrap c-icon__wrap"
             data-user-id="{{ .Contact.ID }}"
           >
             {{ if .Contact.Icon }}
@@ -68,7 +67,10 @@
       <!-- 受信メッセージ -->
       {{ if ne .SenderID $.User.ID }}
       <div class="l-chatMain__message p-message --received">
-        <div class="l-chatMain__imgWrap p-message__iconWrap c-icon__wrap">
+        <div
+          class="js-iconWrap l-chatMain__imgWrap p-message__iconWrap c-icon__wrap"
+          data-user-id="{{ $.CurrentChat.Contact.ID }}"
+        >
           {{ if $.CurrentChat.Contact.Icon }}
           <img
             src="{{ $.CurrentChat.Contact.Icon }}"
@@ -121,7 +123,7 @@
           required
         ></textarea>
         <button type="submit" class="l-chatMain__btn c-btn" id="js-sendButton">
-          送信
+          <span class="js-buttonText">送信</span>
         </button>
       </form>
     </div>
