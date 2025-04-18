@@ -25,7 +25,11 @@
       {{ range .Users }} {{ $name := .name }} {{ $icon := .icon }} {{ $isOnline
       := .isOnline }} {{ $id := .id }}
       <li class="p-userList__item">
-        <div class="p-userList__imgWrap c-icon__wrap">
+        <div
+          id="js-iconWrap"
+          class="p-userList__imgWrap c-icon__wrap"
+          data-user-id="{{ $id }}"
+        >
           {{ if $icon }}
           <img
             src="{{ $icon }}"
@@ -68,7 +72,11 @@
       {{ range .Users }} {{ $name := .name }} {{ $icon := .icon }} {{ $isOnline
       := .isOnline }} {{ $id := .id }}
       <li class="p-userList__item">
-        <div class="p-userList__imgWrap c-icon__wrap">
+        <div
+          id="js-iconWrap"
+          class="p-userList__imgWrap c-icon__wrap"
+          data-user-id="{{ $id }}"
+        >
           {{ if $icon }}
           <img
             src="{{ $icon }}"
@@ -107,4 +115,5 @@
     {{ end }} {{ end }}
   </div>
 </div>
+<script src="/js/card.js"></script>
 {{ end }}

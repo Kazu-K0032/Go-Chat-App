@@ -20,24 +20,37 @@ import (
 
 // ProfileData プロフィールページのデータ構造体
 type ProfileData struct {
-	IsLoggedIn bool
-	User       *domain.User
-	Posts      []domain.Post
-	Replies    []domain.Post
-	Likes      []domain.Post
+	IsLoggedIn     bool
+	LoggedInUserID string
+	User           *domain.User
+	Posts          []domain.Post
+	Replies        []domain.Post
+	Likes          []domain.Post
 }
 
 // プロフィールページの表示
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
-	// セッションの検証
 	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
+	// URLからユーザーIDを取得
+	path := r.URL.Path
+	var targetUserID string
+	if path == "/profile" || path == "/profile/" {
+		targetUserID = session.User.ID
+	} else {
+		targetUserID = path[len("/profile/"):]
+		if targetUserID == "" {
+			http.Error(w, "ユーザーIDが指定されていません", http.StatusBadRequest)
+			return
+		}
+	}
+
 	// ユーザー情報の取得
-	user, err := repository.GetUserByEmail(session.User.Email)
+	user, err := repository.GetUserByID(targetUserID)
 	if err != nil {
 		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
 		return
@@ -45,11 +58,8 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// アイコンが設定されていない場合はデフォルトアイコンを設定
 	if user.Icon == "" {
-		// デフォルトアイコンのパスを生成
 		randomNum := rand.Intn(7)
 		defaultIconPath := fmt.Sprintf(icons.DefaultIconPath+"/default_icon_%s.png", icons.DefaultIconNames[randomNum])
-
-		// デフォルトアイコンのURLを取得
 		iconURL, er := firebase.GetDefaultIconURL(defaultIconPath)
 		if er != nil {
 			fmt.Printf("デフォルトアイコンの取得に失敗: %v\n", err)
@@ -85,21 +95,24 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		likes = []domain.Post{}
 	}
 
-	// 最終更新日時を現在時刻に更新
-	user.UpdatedAt = time.Now()
-	err = firebase.UpdateField("users", user.ID, "UpdatedAt", user.UpdatedAt)
-	if err != nil {
-		http.Error(w, "最終更新日時の更新に失敗しました", http.StatusInternalServerError)
-		return
+	// 最終更新日時を現在時刻に更新 (自分のプロフィールの場合のみ更新すべきか検討)
+	if targetUserID == session.User.ID {
+		user.UpdatedAt = time.Now()
+		err = firebase.UpdateField("users", user.ID, "UpdatedAt", user.UpdatedAt)
+		if err != nil {
+			http.Error(w, "最終更新日時の更新に失敗しました", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	// プロフィールデータの作成
 	data := ProfileData{
-		IsLoggedIn: true,
-		User:       user,
-		Posts:      posts,
-		Replies:    replies,
-		Likes:      likes,
+		IsLoggedIn:     true,
+		LoggedInUserID: session.User.ID,
+		User:           user,
+		Posts:          posts,
+		Replies:        replies,
+		Likes:          likes,
 	}
 
 	// テンプレートを描画
@@ -108,15 +121,24 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 // アイコンアップロードハンドラ
 func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
-	// セッションの検証
 	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Error(w, "セッションが無効です", http.StatusUnauthorized)
 		return
 	}
 
+	// URLからユーザーIDを取得
+	path := r.URL.Path
+	targetUserID := path[len("/profile/icon/"):]
+
+	// 自分のプロフィール以外での変更を防止
+	if targetUserID != "" && targetUserID != session.User.ID {
+		http.Error(w, "他のユーザーのアイコンは変更できません", http.StatusForbidden)
+		return
+	}
+
 	// マルチパートフォームの解析
-	err = r.ParseMultipartForm(10 << 20) // 10MBの制限
+	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		http.Error(w, "フォームの解析に失敗しました", http.StatusBadRequest)
 		return

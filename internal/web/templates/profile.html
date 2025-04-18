@@ -4,6 +4,7 @@
   <section class="l-profile">
     <div class="l-profile__iconWrap">
       <!-- アイコン画像 -->
+      {{ if eq .User.ID .LoggedInUserID }}
       <form action="/profile/icon" method="POST" enctype="multipart/form-data">
         <label for="icon-upload" class="c-label --profile">
           <img
@@ -24,6 +25,16 @@
           />
         </label>
       </form>
+      {{ else }}
+      <a href="{{ .User.Icon }}" target="_blank" class="c-icon__link">
+        <img
+          src="{{ .User.Icon }}"
+          alt="{{ .User.Name }}のアイコン"
+          class="c-icon__img"
+          onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
+        />
+      </a>
+      {{ end }}
     </div>
 
     <h1 class="c-lgTtl --profile">{{.User.Name}}</h1>
