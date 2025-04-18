@@ -86,10 +86,19 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 	// 自分以外かつチャット履歴のないユーザーをフィルタリング
 	var filteredUsers []map[string]interface{}
 	for _, u := range users {
-		userID, ok := u["ID"].(string)
+		// 大文字の「ID」と小文字の「id」の両方をチェック
+		var userID string
+		var ok bool
+		
+		// まず大文字の「ID」を試す
+		userID, ok = u["ID"].(string)
 		if !ok {
-			log.Printf("ユーザーIDの取得に失敗: %+v", u)
-			continue
+			// 大文字が失敗したら小文字の「id」を試す
+			userID, ok = u["id"].(string)
+			if !ok {
+				log.Printf("ユーザーIDの取得に失敗: %+v", u)
+				continue
+			}
 		}
 
 		if userID != user.ID && !chattedUsers[userID] {
@@ -152,9 +161,17 @@ func GetUserData(userID string) (*domain.User, error) {
 	}
 
 	// 必要なフィールドの存在確認と型アサーション
-	id, ok := userData["ID"].(string)
+	var id string
+	var ok bool
+	
+	// まず大文字の「ID」を試す
+	id, ok = userData["ID"].(string)
 	if !ok {
-		return nil, fmt.Errorf("ユーザーIDの取得に失敗しました")
+		// 大文字が失敗したら小文字の「id」を試す
+		id, ok = userData["id"].(string)
+		if !ok {
+			return nil, fmt.Errorf("ユーザーIDの取得に失敗しました")
+		}
 	}
 
 	name, ok := userData["Name"].(string)
