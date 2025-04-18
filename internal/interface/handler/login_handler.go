@@ -19,7 +19,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		log.Printf("ログインページ表示")
 		data := domain.TemplateData{
-			IsLoggedIn: false,
+			LoginForm: domain.LoginForm{},
+			Success:   r.URL.Query().Get("success") == "true",
 		}
 		markup.GenerateHTML(w, data, "layout", "header", "login", "footer")
 		return
