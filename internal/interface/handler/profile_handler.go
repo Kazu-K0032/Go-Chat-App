@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"security_chat_app/internal/domain"
@@ -129,7 +130,11 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 
 	// URLからユーザーIDを取得
 	path := r.URL.Path
-	targetUserID := path[len("/profile/icon/"):]
+	prefix := "/profile/icon/"
+	var targetUserID string
+	if strings.HasPrefix(path, prefix) && len(path) > len(prefix) {
+		targetUserID = path[len(prefix):]
+	}
 
 	// 自分のプロフィール以外での変更を防止
 	if targetUserID != "" && targetUserID != session.User.ID {
@@ -152,12 +157,38 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	// ファイルの拡張子を取得
-	ext := filepath.Ext(header.Filename)
-	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
-		http.Error(w, "サポートされていないファイル形式です", http.StatusBadRequest)
+	// ファイルサイズの制限（5MB）
+	const maxFileSize = 5 * 1024 * 1024
+	if header.Size > maxFileSize {
+		http.Error(w, "ファイルサイズは5MB以下にしてください", http.StatusBadRequest)
 		return
 	}
+
+	// ファイルの拡張子を取得と検証
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	allowedExts := map[string]bool{
+		".jpg":  true,
+		".jpeg": true,
+		".png":  true,
+	}
+	if !allowedExts[ext] {
+		http.Error(w, "アップロードできるファイル形式は.jpg、.jpeg、.pngのみです", http.StatusBadRequest)
+		return
+	}
+
+	// 画像ファイルの検証
+	buff := make([]byte, 512)
+	_, err = file.Read(buff)
+	if err != nil {
+		http.Error(w, "ファイルの読み込みに失敗しました", http.StatusInternalServerError)
+		return
+	}
+	filetype := http.DetectContentType(buff)
+	if !strings.HasPrefix(filetype, "image/") {
+		http.Error(w, "画像ファイルのみアップロード可能です", http.StatusBadRequest)
+		return
+	}
+	file.Seek(0, 0)
 
 	// 一時ファイルを作成
 	tempFile, err := os.CreateTemp("", "icon-*"+ext)
