@@ -1,4 +1,4 @@
-# security_chat_app
+# go-chat-app
 
 Goを使用した基本的なチャットアプリになります。
 
