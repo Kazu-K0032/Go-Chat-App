@@ -10,13 +10,13 @@
   background-color: $bg-secondary;
 
   &__sidebar {
-    overflow-y: auto;
     position: sticky;
     top: 0;
     width: 300px;
     height: 100%;
-    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
     background-color: $bg-gray;
+    border-right: 1px solid #e0e0e0;
 
     &::-webkit-scrollbar {
       width: 8px;
@@ -27,8 +27,8 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      border-radius: 4px;
       background: #e0e0e0;
+      border-radius: 4px;
     }
 
     &::-webkit-scrollbar-thumb:hover {
@@ -52,8 +52,8 @@
   &__empty {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     height: 100%;
     padding: 2rem;
   }
@@ -62,8 +62,8 @@
 // メインエリア
 .l-chatMain {
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   background-color: #fff;
 
   &__header {
@@ -73,15 +73,15 @@
 
   &__messages {
     flex: 1;
-    overflow-y: auto;
     padding: 2rem;
+    overflow-y: auto;
   }
 
   &__message {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 2rem;
     padding: 0 1rem;
+    margin-bottom: 2rem;
 
     &.--received {
       justify-content: flex-start;
@@ -95,27 +95,27 @@
   &__empty {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     height: 100%;
-    margin: 2rem;
     padding: 3rem;
-    border-radius: 8px;
-    background-color: #f8f9fa;
+    margin: 2rem;
     text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 8px;
 
     &Text {
-      color: $color-text-gray;
       font-size: 1.6rem;
       font-weight: $font-weight-medium;
       line-height: 1.5;
+      color: $color-text-gray;
     }
   }
 
   &__inputWrap {
     padding: 1.5rem 2rem;
-    border-top: 1px solid #e0e0e0;
     background-color: #fff;
+    border-top: 1px solid #e0e0e0;
   }
 
   &__form {
@@ -127,17 +127,17 @@
   &__textarea {
     min-height: 80px;
     padding: 1.2rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #fff;
-    transition: border-color 0.3s ease;
     font-size: 1.6rem;
     line-height: 1.5;
     resize: vertical;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
 
     &:focus {
-      border-color: $color-primary;
       outline: none;
+      border-color: $color-primary;
     }
   }
 
@@ -168,13 +168,13 @@
     }
 
     &__message {
-      margin-bottom: 1.6rem;
       padding: 0 0.8rem;
+      margin-bottom: 1.6rem;
     }
 
     &__empty {
-      margin: 1.6rem;
       padding: 2.5rem;
+      margin: 1.6rem;
 
       &Text {
         font-size: 1.4rem;
@@ -206,9 +206,9 @@
 // ==============================================
 @media screen and (width <= 649px) {
   .l-chat {
+    position: relative;
     flex-direction: column;
     height: calc(100vh - 60px);
-    position: relative;
 
     &__sidebar {
       width: 100%;
@@ -222,8 +222,8 @@
     }
 
     &__empty {
-      margin: 1.2rem;
       padding: 2rem;
+      margin: 1.2rem;
 
       &Text {
         font-size: 1.3rem;
@@ -235,10 +235,10 @@
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 100%;
-    height: calc(70vh - 60px);
     display: flex;
     flex-direction: column;
+    width: 100%;
+    height: calc(70vh - 60px);
 
     &__header {
       padding: 1rem 1.2rem;
@@ -246,14 +246,14 @@
 
     &__messages {
       flex: 1;
-      overflow-y: auto;
       padding: 1.2rem;
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
 
     &__message {
-      margin-bottom: 1.2rem;
       padding: 0 0.6rem;
+      margin-bottom: 1.2rem;
     }
 
     &__inputWrap {

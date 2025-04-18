@@ -1,21 +1,21 @@
 @charset "UTF-8";
+
 /**
  * チャットページのスタイルを管理するファイル
 */
 *,
 ::before,
 ::after {
-  min-width: 0;
-  border-width: 0;
-  border-style: solid;
   box-sizing: border-box;
+  min-width: 0;
+  border-style: solid;
+  border-width: 0;
 }
 
 html {
   line-height: 1.15;
-  -webkit-text-size-adjust: 100%;
-     -moz-text-size-adjust: 100%;
-          text-size-adjust: 100%;
+  text-size-adjust: 100%;
+     text-size-adjust: 100%;
   text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
 }
@@ -53,9 +53,9 @@ h6 {
 
 ul,
 ol {
-  list-style: none;
-  margin: 0;
   padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 dt {
@@ -67,18 +67,18 @@ dd {
 }
 
 hr {
-  overflow: visible;
   clear: both;
+  box-sizing: content-box;
   height: 0;
   margin: 0;
-  border-top-width: 1px;
-  box-sizing: content-box;
+  overflow: visible;
   color: inherit;
+  border-top-width: 1px;
 }
 
 pre {
-  font-size: inherit;
   font-family: monospace;
+  font-size: inherit;
 }
 
 address {
@@ -86,13 +86,13 @@ address {
 }
 
 a {
-  background-color: transparent;
   color: inherit;
   text-decoration: none;
+  background-color: transparent;
 }
 
 abbr[title] {
-  -webkit-text-decoration: underline dotted;
+  text-decoration: underline dotted;
           text-decoration: underline dotted;
 }
 
@@ -104,8 +104,8 @@ strong {
 code,
 kbd,
 samp {
-  font-size: inherit;
   font-family: monospace;
+  font-size: inherit;
 }
 
 small {
@@ -141,31 +141,31 @@ input,
 optgroup,
 select,
 textarea {
-  margin: 0;
   padding: 0;
-  border-radius: 0;
-  background: transparent;
-  color: inherit;
+  margin: 0;
   font: inherit;
-  text-align: inherit;
   vertical-align: middle;
+  color: inherit;
+  text-align: inherit;
   text-transform: inherit;
-  -webkit-appearance: none;
-     -moz-appearance: none;
+  appearance: none;
+     appearance: none;
           appearance: none;
+  background: transparent;
+  border-radius: 0;
 }
 
 button,
-[type=button],
-[type=reset],
-[type=submit] {
+[type="button"],
+[type="reset"],
+[type="submit"] {
   cursor: pointer;
 }
 
 button:disabled,
-[type=button]:disabled,
-[type=reset]:disabled,
-[type=submit]:disabled {
+[type="button"]:disabled,
+[type="reset"]:disabled,
+[type="submit"]:disabled {
   cursor: default;
 }
 
@@ -183,8 +183,8 @@ option {
 
 fieldset {
   min-width: 0;
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 
 legend {
@@ -199,29 +199,29 @@ textarea {
   overflow: auto;
 }
 
-[type=number]::-webkit-inner-spin-button,
-[type=number]::-webkit-outer-spin-button {
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
   height: auto;
 }
 
-[type=search] {
+[type="search"] {
   outline-offset: -2px;
 }
 
-[type=search]::-webkit-search-decoration {
-  -webkit-appearance: none;
+[type="search"]::-webkit-search-decoration {
+  appearance: none;
           appearance: none;
 }
 
 ::-webkit-file-upload-button {
   font: inherit;
-  -webkit-appearance: button;
+  appearance: button;
           appearance: button;
 }
 
-[type=number] {
-  -webkit-appearance: textfield;
-     -moz-appearance: textfield;
+[type="number"] {
+  appearance: textfield;
+     appearance: textfield;
           appearance: textfield;
 }
 
@@ -242,8 +242,8 @@ summary {
 }
 
 table {
-  border-color: inherit;
   border-collapse: collapse;
+  border-color: inherit;
 }
 
 caption {
@@ -265,10 +265,10 @@ th {
  * ベーススタイルを管理するファイル
 */
 html {
-  background-color: #f4fbff;
-  color: #333;
-  font-size: 62.5%;
   font-family: "Noto Sans JP", sans-serif;
+  font-size: 62.5%;
+  color: #333;
+  background-color: #f4fbff;
 }
 
 body {
@@ -278,6 +278,7 @@ body {
 /**
  * 変数を格納するファイル
 */
+
 /**
  * ヘッダーのLayoutスタイルを管理するファイル
  * header.htmlにて`l-`が接頭辞につくものが対象
@@ -287,8 +288,8 @@ body {
   top: 0;
   z-index: 100;
   height: 60px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 }
 
 @media screen and (width <= 649px) {
@@ -296,6 +297,7 @@ body {
     height: auto;
   }
 }
+
 /**
  * フッターのLayoutスタイルを管理するファイル
  * footer.htmlにて`l-`が接頭辞につくものが対象
@@ -304,10 +306,12 @@ body {
   padding: 8px 0;
   background-color: #fff;
 }
+
 .l-footer__container {
   max-width: 1000px;
   margin: 0 auto;
 }
+
 .l-footer__bottom {
   text-align: center;
 }
@@ -319,23 +323,26 @@ body {
 .l-app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 .l-main {
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
+  height: 100%;
   padding: 2rem;
+  margin: 0 auto;
 }
 
 .l-section {
   display: none;
   width: 100%;
 }
+
 .l-section.is-active {
   display: block;
 }
+
 .l-section.--settings {
   display: flex;
   flex-direction: column;
@@ -353,39 +360,43 @@ body {
 */
 .c-lgTtl {
   margin: 40px 0;
-  color: #333;
   font-size: 2.4rem;
+  color: #333;
   text-align: center;
 }
+
 .c-lgTtl.--profile {
   margin: 40px 0;
-  color: #333;
   font-size: 2rem;
+  color: #333;
 }
 
 .c-midTtl {
-  color: #333;
   font-size: 1.8rem;
   font-weight: 500;
+  color: #333;
 }
+
 .c-midTtl.--profile {
   margin: 0;
-  transition: color 0.3s ease;
-  color: #666;
   font-size: 1.4rem;
   font-weight: 400;
   line-height: 1.5;
+  color: #666;
   text-align: center;
+  transition: color 0.3s ease;
 }
+
 .c-midTtl.--profile:hover {
   color: #404040;
 }
 
 .c-smTtl {
-  color: #657786;
   font-size: 1.4rem;
   font-weight: 400;
+  color: #657786;
 }
+
 .c-smTtl.--tab {
   font-weight: 700;
 }
@@ -394,110 +405,124 @@ body {
   display: flex;
   justify-content: center;
 }
+
 .c-validation__text {
-  color: #f00;
   font-size: 1.4rem;
+  color: #f00;
 }
 
 .c-logo {
-  color: #1a1a1a;
   font-size: 2rem;
   font-weight: bold;
+  color: #1a1a1a;
 }
 
 .c-input {
   width: 100%;
-  margin-bottom: 1.6rem;
   padding: 1.2rem;
+  margin-bottom: 1.6rem;
+  font-size: 1.6rem;
   border: 1px solid #000;
   border-radius: 4px;
   transition: border-color 0.3s ease;
-  font-size: 1.6rem;
 }
+
 .c-input:focus {
-  border-color: #4a90e2;
   outline: none;
+  border-color: #4a90e2;
 }
-.c-input::-moz-placeholder {
+
+.c-input::placeholder {
   color: #999;
 }
+
 .c-input::placeholder {
   color: #999;
 }
 
 .c-label {
-  display: inline-block;
   position: relative;
+  display: inline-block;
   cursor: pointer;
 }
+
 .c-label.--profile {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   transition: opacity 0.3s ease;
 }
+
 .c-label.--profile:hover {
   opacity: 0.8;
 }
+
 .c-label.--profile::after {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.3s ease;
-  opacity: 0;
-  color: #fff;
   font-size: 0.9rem;
   font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  color: #fff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
   content: "画像を変更";
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease;
 }
+
 .c-label.--profile:hover::after {
   opacity: 1;
 }
+
 .c-label__img {
   max-width: 100%;
   height: auto;
 }
+
 .c-label__img.--profile {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
+  object-fit: cover;
      object-fit: cover;
   transition: filter 0.3s ease;
 }
+
 .c-label__input.--profile {
-  overflow: hidden;
   position: absolute;
   width: 1px;
   height: 1px;
-  margin: -1px;
   padding: 0;
+  margin: -1px;
+  overflow: hidden;
   border: 0;
   clip: rect(0, 0, 0, 0);
 }
 
 .c-btn {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   width: 100%;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
-  background-color: #007bff;
-  transition: background-color 0.3s ease;
-  color: #fff;
   font-size: 1.8rem;
+  color: #fff;
   cursor: pointer;
+  background-color: #007bff;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
+
 .c-btn:hover {
   background-color: #007bff;
 }
+
 .c-btn.--secondary {
   background-color: #6c757d;
 }
+
 .c-btn.--secondary:hover {
   background-color: #545b62;
 }
@@ -505,11 +530,12 @@ body {
 .c-link {
   display: block;
   margin-top: 16px;
-  color: #4a90e2;
   font-size: 1.8rem;
-  text-decoration: none;
+  color: #4a90e2;
   text-align: center;
+  text-decoration: none;
 }
+
 .c-link:hover {
   text-decoration: underline;
 }
@@ -518,58 +544,69 @@ body {
   overflow: hidden;
   border-radius: 50%;
 }
+
 .c-icon__img {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
+  object-fit: cover;
      object-fit: cover;
 }
+
 .c-icon__img:hover {
   cursor: pointer;
 }
 
 .c-txt {
-  color: #000;
   font-size: 1rem;
+  color: #000;
 }
+
 .c-txt.--copyright {
   color: #666;
 }
+
 .c-txt.--settings {
   font-size: 1.4rem;
   font-weight: 500;
 }
 
 .c-time {
-  color: #999;
   font-size: 12px;
+  color: #999;
 }
 
 @media screen and (width <= 1024px) {
   .c-logo {
     font-size: 1.8rem;
   }
+
   .c-midTtl.--profile {
     font-size: 1.3rem;
   }
+
   .c-label.--profile::after {
     font-size: 1.4rem;
   }
 }
+
 @media screen and (width <= 649px) {
   .c-logo {
     font-size: 1.5rem;
   }
+
   .c-link {
     margin-top: 0;
   }
+
   .c-midTtl.--profile {
     font-size: 1.2rem;
   }
+
   .c-label.--profile::after {
     font-size: 1rem;
   }
 }
+
 /**
  * FLOCSSにおけるProjectスタイルを管理するファイル
  * 全htmlファイルにて`p-`が接頭辞につくものが対象
@@ -577,29 +614,33 @@ body {
 .p-nav {
   width: 100%;
   height: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 }
+
 .p-nav__container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   max-width: 1000px;
   height: 100%;
-  margin: 0 auto;
   padding: 1rem;
+  margin: 0 auto;
   font-size: 1.5rem;
 }
+
 .p-nav__list {
   display: flex;
   gap: 2rem;
 }
+
 .p-nav__item {
-  transition: color 0.3s ease;
-  color: #666;
   font-weight: 500;
+  color: #666;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
+
 .p-nav__item:hover {
   color: #007bff;
 }
@@ -608,127 +649,145 @@ body {
   display: flex;
   flex-direction: column;
   row-gap: 1rem;
-  list-style: none;
   max-width: 800px;
-  margin: 0 auto;
   padding: 0;
+  margin: 0 auto;
+  list-style: none;
 }
+
 .p-userList__item {
   display: flex;
   align-items: center;
   padding: 2rem;
-  border-bottom: 1px solid #e1e8ed;
   background-color: #fff;
+  border-bottom: 1px solid #e1e8ed;
   transition: background-color 0.3s ease;
 }
+
 .p-userList__item:last-child {
   border-bottom: none;
 }
+
 .p-userList__item:hover {
   background-color: #f8f9fa;
 }
+
 .p-userList__imgWrap {
   width: 48px;
   height: 48px;
   margin-right: 1.5rem;
 }
+
 .p-userList__icon {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  -o-object-fit: cover;
+  object-fit: cover;
      object-fit: cover;
+  border-radius: 50%;
 }
+
 .p-userList__info {
   flex: 1;
 }
+
 .p-userList__name {
   margin: 0 0 0.5rem;
-  color: #333;
   font-size: 1.6rem;
   font-weight: 600;
+  color: #333;
 }
+
 .p-userList__status {
   margin: 0;
-  color: #666;
   font-size: 1.4rem;
+  color: #666;
 }
+
 .p-userList__action {
   margin-left: 1.5rem;
 }
+
 .p-userList__btn {
   padding: 0.8rem 1.6rem;
   font-size: 1.4rem;
 }
 
 .p-chatCard {
+  position: relative;
   display: flex;
   align-items: center;
-  position: relative;
   width: 100%;
   padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .p-chatCard:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px rgb(0 0 0 / 15%);
   transform: translateY(-2px);
 }
+
 .p-chatCard__link {
   display: flex;
   width: 100%;
 }
+
 .p-chatCard__iconWrap {
   flex-shrink: 0;
-  overflow: hidden;
   width: 56px;
   height: 56px;
   margin-right: 1.5rem;
+  overflow: hidden;
   border: 2px solid #f0f0f0;
   border-radius: 50%;
 }
+
 .p-chatCard__icon {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
+  object-fit: cover;
      object-fit: cover;
 }
+
 .p-chatCard__content {
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   gap: 0.5rem;
   min-width: 0;
   padding-right: 6rem;
 }
+
 .p-chatCard__name {
-  overflow: hidden;
   margin-bottom: 0.5rem;
-  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 1.6rem;
   font-weight: 600;
+  color: #333;
   white-space: nowrap;
-  text-overflow: ellipsis;
 }
+
 .p-chatCard__time {
   position: absolute;
   top: 1.5rem;
   right: 1.5rem;
-  color: #999;
   font-size: 1.2rem;
+  color: #999;
 }
+
 .p-chatCard__preview {
   display: -webkit-box;
-  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
   -webkit-line-clamp: 2;
   line-clamp: 2;
-  overflow: hidden;
-  color: #666;
   font-size: 1.4rem;
   line-height: 1.5;
-  text-overflow: ellipsis;
+  color: #666;
+  -webkit-box-orient: vertical;
 }
 
 .p-message {
@@ -737,73 +796,84 @@ body {
   max-width: 70%;
   margin-bottom: 2rem;
 }
+
 .p-message.--sent {
   flex-direction: row-reverse;
   justify-content: flex-start;
   margin-left: auto;
 }
+
 .p-message.--sent .p-message__content {
   margin: 0 1.2rem 0 0;
-  border-radius: 16px 2px 16px 16px;
   background-color: #007bff;
+  border-radius: 16px 2px 16px 16px;
 }
+
 .p-message.--sent .p-message__content::before {
   right: -8px;
   left: auto;
   border-right: 0;
   border-left: 8px solid #007bff;
 }
+
 .p-message.--sent .p-message__text {
   color: #fff;
   text-align: left;
 }
+
 .p-message.--sent .p-message__time {
   right: 0;
   text-align: right;
 }
+
 .p-message__iconWrap {
   flex-shrink: 0;
-  overflow: hidden;
   width: 40px;
   height: 40px;
+  overflow: hidden;
   border: 2px solid #f0f0f0;
   border-radius: 50%;
 }
+
 .p-message__icon {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
+  object-fit: cover;
      object-fit: cover;
 }
+
 .p-message__content {
   position: relative;
-  margin: 0 0 0 1.2rem;
   padding: 1.2rem 1.6rem;
-  border-radius: 2px 16px 16px;
+  margin: 0 0 0 1.2rem;
   background-color: #f5f5f5;
+  border-radius: 2px 16px 16px;
 }
+
 .p-message__content::before {
   position: absolute;
   top: 12px;
   left: -8px;
+  content: "";
   border-top: 8px solid transparent;
   border-right: 8px solid #f5f5f5;
   border-bottom: 8px solid transparent;
-  content: "";
 }
+
 .p-message__text {
   margin: 0;
-  color: #333;
   font-size: 1.5rem;
   line-height: 1.5;
+  color: #333;
   word-break: break-word;
 }
+
 .p-message__time {
   position: absolute;
   bottom: -2rem;
   left: 0;
-  color: #999;
   font-size: 1.2rem;
+  color: #999;
 }
 
 .p-confirm {
@@ -814,24 +884,28 @@ body {
   margin-bottom: 20px;
   border-radius: 4px;
 }
+
 .p-confirm__item {
-  margin-bottom: 15px;
   padding: 1.6rem;
+  margin-bottom: 15px;
   background: #f5f5f5;
 }
+
 .p-confirm__item:last-child {
   margin-bottom: 0;
 }
+
 .p-confirm__label {
   display: block;
   margin-bottom: 5px;
-  color: #666;
   font-size: 14px;
+  color: #666;
 }
+
 .p-confirm__txt {
   margin: 0;
-  color: #333;
   font-size: 16px;
+  color: #333;
 }
 
 .p-form {
@@ -839,16 +913,17 @@ body {
   flex-direction: column;
   align-items: center;
   max-width: 400px;
-  margin: 40px auto;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 40px auto;
   background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 }
+
 .p-form__btnWrap {
   display: flex;
-  justify-content: center;
   gap: 10px;
+  justify-content: center;
   width: 80%;
 }
 
@@ -858,168 +933,210 @@ body {
     padding: 0.8rem;
     font-size: 1.2rem;
   }
+
   .p-profile {
     padding: 1.5rem;
   }
+
   .p-profile-stats {
     flex-direction: column;
-    align-items: center;
     gap: 1rem;
+    align-items: center;
   }
+
   .p-tabs__list {
     gap: 1rem;
   }
+
   .p-tabs__link {
     padding: 0.75rem 0;
     font-size: 0.875rem;
   }
+
   .p-userList {
     max-width: 600px;
   }
+
   .p-chatCard {
     padding: 1.2rem;
   }
+
   .p-chatCard__iconWrap {
     width: 48px;
     height: 48px;
     margin-right: 1.2rem;
   }
+
   .p-chatCard__content {
     padding-right: 5rem;
   }
+
   .p-chatCard__name {
     font-size: 1.4rem;
   }
+
   .p-chatCard__preview {
     font-size: 1.2rem;
   }
+
   .p-chatCard__time {
     top: 1.2rem;
     right: 1.2rem;
     font-size: 1.1rem;
   }
+
   .p-message {
     max-width: 75%;
     margin-bottom: 1.8rem;
   }
+
   .p-message__iconWrap {
     width: 36px;
     height: 36px;
   }
+
   .p-message__content {
-    margin: 0 0 0 1rem;
     padding: 1rem 1.4rem;
+    margin: 0 0 0 1rem;
   }
+
   .p-message.--sent .p-message__content {
     margin: 0 1rem 0 0;
   }
+
   .p-message__text {
     font-size: 1.4rem;
   }
+
   .p-message__time {
     bottom: -1.8rem;
     font-size: 1.1rem;
   }
 }
+
 @media screen and (width <= 649px) {
   .p-nav__container {
     flex-direction: column;
     gap: 0.5rem;
     padding: 0.5rem;
   }
+
   .p-nav__logo {
     font-size: 1.5rem;
   }
+
   .p-nav__list {
     flex-wrap: wrap;
-    justify-content: center;
     gap: 1.5rem;
+    justify-content: center;
     width: 100%;
   }
+
   .p-nav__item {
     font-size: 1rem;
   }
+
   .p-chatCard {
     padding: 1rem;
   }
+
   .p-chatCard__iconWrap {
     width: 40px;
     height: 40px;
     margin-right: 1rem;
   }
+
   .p-chatCard__content {
     padding-right: 4rem;
   }
+
   .p-chatCard__name {
     font-size: 1.3rem;
   }
+
   .p-chatCard__preview {
     font-size: 1.1rem;
   }
+
   .p-chatCard__time {
     top: 1rem;
     right: 1rem;
     font-size: 1rem;
   }
+
   .p-message {
     max-width: 85%;
     margin-bottom: 1.6rem;
   }
+
   .p-message__iconWrap {
     width: 32px;
     height: 32px;
   }
+
   .p-message__content {
-    margin: 0 0 0 0.8rem;
     padding: 0.8rem 1.2rem;
+    margin: 0 0 0 0.8rem;
   }
+
   .p-message__content::before {
     top: 10px;
     left: -6px;
     border-right-width: 6px;
   }
+
   .p-message.--sent .p-message__content {
     margin: 0 0.8rem 0 0;
   }
+
   .p-message.--sent .p-message__content::before {
     right: -6px;
     border-left-width: 6px;
   }
+
   .p-message__text {
     font-size: 1.3rem;
   }
+
   .p-message__time {
     bottom: -1.6rem;
     font-size: 1rem;
   }
 }
+
 .l-chat {
   display: flex;
   height: 80vh;
   background-color: #f5f5f5;
 }
+
 .l-chat__sidebar {
-  overflow-y: auto;
   position: sticky;
   top: 0;
   width: 300px;
   height: 100%;
-  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
   background-color: #e9e9e9;
+  border-right: 1px solid #e0e0e0;
 }
+
 .l-chat__sidebar::-webkit-scrollbar {
   width: 8px;
 }
+
 .l-chat__sidebar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .l-chat__sidebar::-webkit-scrollbar-thumb {
-  border-radius: 4px;
   background: #e0e0e0;
+  border-radius: 4px;
 }
+
 .l-chat__sidebar::-webkit-scrollbar-thumb:hover {
   background: #ccc;
 }
+
 .l-chat__list {
   display: flex;
   flex-direction: column;
@@ -1028,92 +1145,106 @@ body {
   min-height: 100%;
   padding: 1rem;
 }
+
 .l-chat__item {
   width: 100%;
 }
+
 .l-chat__empty {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   height: 100%;
   padding: 2rem;
 }
 
 .l-chatMain {
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   background-color: #fff;
 }
+
 .l-chatMain__header {
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #e0e0e0;
 }
+
 .l-chatMain__messages {
   flex: 1;
-  overflow-y: auto;
   padding: 2rem;
+  overflow-y: auto;
 }
+
 .l-chatMain__message {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 2rem;
   padding: 0 1rem;
+  margin-bottom: 2rem;
 }
+
 .l-chatMain__message.--received {
   justify-content: flex-start;
 }
+
 .l-chatMain__message.--sent {
   justify-content: flex-end;
 }
+
 .l-chatMain__empty {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   height: 100%;
-  margin: 2rem;
   padding: 3rem;
-  border-radius: 8px;
-  background-color: #f8f9fa;
+  margin: 2rem;
   text-align: center;
+  background-color: #f8f9fa;
+  border-radius: 8px;
 }
+
 .l-chatMain__emptyText {
-  color: #666;
   font-size: 1.6rem;
   font-weight: 500;
   line-height: 1.5;
+  color: #666;
 }
+
 .l-chatMain__inputWrap {
   padding: 1.5rem 2rem;
-  border-top: 1px solid #e0e0e0;
   background-color: #fff;
+  border-top: 1px solid #e0e0e0;
 }
+
 .l-chatMain__form {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 1rem;
 }
+
 .l-chatMain__textarea {
   min-height: 80px;
   padding: 1.2rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #fff;
-  transition: border-color 0.3s ease;
   font-size: 1.6rem;
   line-height: 1.5;
   resize: vertical;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
 }
+
 .l-chatMain__textarea:focus {
-  border-color: #007bff;
   outline: none;
+  border-color: #007bff;
 }
+
 .l-chatMain__btn {
   align-self: flex-end;
   min-width: 100px;
-  height: -moz-fit-content;
+  height: fit-content;
   height: fit-content;
 }
 
@@ -1121,96 +1252,118 @@ body {
   .l-chat__sidebar {
     width: 280px;
   }
+
   .l-chatMain__header {
     padding: 1.2rem 1.6rem;
   }
+
   .l-chatMain__messages {
     padding: 1.6rem;
   }
+
   .l-chatMain__message {
-    margin-bottom: 1.6rem;
     padding: 0 0.8rem;
+    margin-bottom: 1.6rem;
   }
+
   .l-chatMain__empty {
-    margin: 1.6rem;
     padding: 2.5rem;
+    margin: 1.6rem;
   }
+
   .l-chatMain__emptyText {
     font-size: 1.4rem;
   }
+
   .l-chatMain__inputWrap {
     padding: 1.2rem 1.6rem;
   }
+
   .l-chatMain__form {
     gap: 0.8rem;
   }
+
   .l-chatMain__textarea {
     min-height: 70px;
     padding: 1rem;
     font-size: 1.4rem;
   }
+
   .l-chatMain__btn {
     min-width: 80px;
   }
 }
+
 @media screen and (width <= 649px) {
   .l-chat {
+    position: relative;
     flex-direction: column;
     height: calc(100vh - 60px);
-    position: relative;
   }
+
   .l-chat__sidebar {
     width: 100%;
     height: 30vh;
     border-right: none;
     border-bottom: 1px solid #e0e0e0;
   }
+
   .l-chat__list {
     padding: 0.8rem;
   }
+
   .l-chat__empty {
-    margin: 1.2rem;
     padding: 2rem;
+    margin: 1.2rem;
   }
+
   .l-chat__emptyText {
     font-size: 1.3rem;
   }
+
   .l-chatMain {
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 100%;
-    height: calc(70vh - 60px);
     display: flex;
     flex-direction: column;
+    width: 100%;
+    height: calc(70vh - 60px);
   }
+
   .l-chatMain__header {
     padding: 1rem 1.2rem;
   }
+
   .l-chatMain__messages {
     flex: 1;
-    overflow-y: auto;
     padding: 1.2rem;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
+
   .l-chatMain__message {
-    margin-bottom: 1.2rem;
     padding: 0 0.6rem;
+    margin-bottom: 1.2rem;
   }
+
   .l-chatMain__inputWrap {
     padding: 1rem 1.2rem;
     background-color: #fff;
     border-top: 1px solid #e0e0e0;
   }
+
   .l-chatMain__form {
     gap: 0.6rem;
   }
+
   .l-chatMain__textarea {
     min-height: 60px;
     max-height: 120px;
     padding: 0.8rem;
     font-size: 1.3rem;
   }
+
   .l-chatMain__btn {
     min-width: 60px;
   }

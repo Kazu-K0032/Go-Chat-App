@@ -10,14 +10,15 @@
 .l-app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 .l-main {
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
+  height: 100%;
   padding: 2rem;
+  margin: 0 auto;
 }
 
 // セクション
