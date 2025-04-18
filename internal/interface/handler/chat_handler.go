@@ -96,13 +96,18 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// メッセージIDを生成
+		messageID := generateMessageID()
+
 		// メッセージを作成
 		message := map[string]interface{}{
-			"SenderID":   user.ID,
-			"SenderName": user.Name,
-			"Content":    content,
-			"CreatedAt":  time.Now(),
-			"IsRead":     false,
+			"id":         messageID,
+			"sender_id":  user.ID,
+			"sender_name": user.Name,
+			"content":    content,
+			"created_at": time.Now(),
+			"is_read":    false,
+			"type":       "text",
 		}
 
 		// メッセージを保存
@@ -112,11 +117,21 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// チャットの最終更新時刻を更新
+		err = firebase.UpdateField("chats", chatID, "updated_at", time.Now())
+		if err != nil {
+			log.Printf("チャットの更新時刻の更新に失敗: %v", err)
+		}
+
 		// JSONレスポンスを返す
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"content": content,
-			"time":    time.Now().Format("15:04"),
+			"id":         messageID,
+			"content":    content,
+			"sender_id":  user.ID,
+			"sender_name": user.Name,
+			"created_at": time.Now().Format("15:04"),
+			"is_read":    false,
 		})
 		return
 	}

@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const messageForm = document.getElementById("messageForm");
   const messageInput = document.getElementById("js-messageInput");
   const messageArea = document.getElementById("js-messageArea");
+  const sendButton = document.getElementById("js-sendButton");
+  const buttonText = sendButton.querySelector(".js-buttonText");
 
   // テキストエリアの高さを自動調整する関数
   function adjustTextareaHeight(textarea) {
@@ -25,57 +27,64 @@ document.addEventListener("DOMContentLoaded", function () {
   messageForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const formData = new FormData(messageForm);
-    const chatID = formData.get("chatID");
-    const content = formData.get("content").trim();
+    if (!messageInput.value.trim()) {
+      return;
+    }
 
-    // 空のメッセージは送信しない
-    if (!content) return;
+    const formData = new FormData(messageForm);
+    sendButton.disabled = true;
+    buttonText.textContent = "送信中";
 
     try {
-      const response = await fetch(window.location.href, {
+      const response = await fetch("/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `chatID=${encodeURIComponent(
-          chatID
-        )}&content=${encodeURIComponent(content)}`,
+        body: formData,
       });
 
-      if (response.ok) {
-        // メッセージを表示
-        const messageData = await response.json();
-        const formattedContent = messageData.content
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/\n/g, "<br>");
-
-        const messageHtml = `
-          <div class="l-chatMain__message p-message --sent">
-            <div class="l-chatMain__content p-message__content">
-              <p class="p-message__text c-txt">${formattedContent}</p>
-              <time class="p-message__time c-time">${messageData.time}</time>
-            </div>
-          </div>
-        `;
-        messageArea.insertAdjacentHTML("beforeend", messageHtml);
-
-        // 入力欄をクリアして高さをリセット
-        messageInput.value = "";
-        messageInput.style.height = "auto";
-
-        // メッセージエリアを最下部にスクロール
-        messageArea.scrollTop = messageArea.scrollHeight;
-      } else {
-        console.error("メッセージの送信に失敗しました");
+      if (!response.ok) {
+        throw new Error("メッセージの送信に失敗しました");
       }
+
+      const data = await response.json();
+
+      // メッセージ要素を作成
+      const messageDiv = document.createElement("div");
+      messageDiv.className = "l-chatMain__message p-message --sent";
+      messageDiv.innerHTML = `
+        <div class="l-chatMain__content p-message__content">
+          <p class="p-message__text c-txt">${escapeHtml(data.content)}</p>
+          <time class="p-message__time c-time">${data.created_at}</time>
+        </div>
+      `;
+
+      // メッセージを追加
+      messageArea.appendChild(messageDiv);
+
+      // 最下部にスクロール
+      messageArea.scrollTop = messageArea.scrollHeight;
+
+      // 入力欄をクリア
+      messageInput.value = "";
+      adjustTextareaHeight(messageInput);
     } catch (error) {
-      console.error("エラーが発生しました:", error);
+      console.error("Error:", error);
+      alert("メッセージの送信に失敗しました");
+    } finally {
+      sendButton.disabled = false;
+      buttonText.textContent = "送信";
     }
   });
 
   // 初期表示時にすべてのメッセージエリアの高さを調整
   messageInput.dispatchEvent(new Event("input"));
 });
+
+// HTMLエスケープ
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
