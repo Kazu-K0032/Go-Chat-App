@@ -4,6 +4,7 @@
   <section class="l-profile">
     <div class="l-profile__iconWrap">
       <!-- アイコン画像 -->
+      {{ if eq .User.ID .LoggedInUserID }}
       <form action="/profile/icon" method="POST" enctype="multipart/form-data">
         <label for="icon-upload" class="c-label --profile">
           <img
@@ -24,6 +25,16 @@
           />
         </label>
       </form>
+      {{ else }}
+      <a href="{{ .User.Icon }}" target="_blank" class="c-icon__link">
+        <img
+          src="{{ .User.Icon }}"
+          alt="{{ .User.Name }}のアイコン"
+          class="c-icon__img"
+          onerror="this.onerror=null; this.src='{{ getRandomDefaultIcon }}';"
+        />
+      </a>
+      {{ end }}
     </div>
 
     <h1 class="c-lgTtl --profile">{{.User.Name}}</h1>
@@ -44,75 +55,6 @@
       </li>
     </ul>
   </section>
-
-  <!-- タブナビゲーション -->
-  <nav class="l-tabs">
-    <ul class="l-tabs__list">
-      <li class="l-tabs__item">
-        <a
-          href="#posts"
-          class="l-tabs__link is-active c-smTtl --tab"
-          data-tab="posts"
-          >投稿</a
-        >
-      </li>
-      <li class="l-tabs__item">
-        <a href="#replies" class="l-tabs__link c-smTtl --tab" data-tab="replies"
-          >返信</a
-        >
-      </li>
-      <li class="l-tabs__item">
-        <a href="#likes" class="l-tabs__link c-smTtl --tab" data-tab="likes"
-          >いいね</a
-        >
-      </li>
-    </ul>
-  </nav>
-
-  <!-- タブコンテンツ -->
-  <div class="l-tab-contents">
-    <!-- 投稿タブ -->
-    <section id="posts" class="l-section p-post is-active">
-      {{if .Posts}} {{range .Posts}}
-      <article class="p-post__list">
-        <p class="p-post__content">{{.Content}}</p>
-        <time class="p-post__date"
-          >{{.CreatedAt.Format "2006-01-02 15:04:05"}}</time
-        >
-      </article>
-      {{end}} {{else}}
-      <p class="p-post__empty">投稿はありません</p>
-      {{end}}
-    </section>
-
-    <!-- 返信タブ -->
-    <section id="replies" class="l-section p-post --reply">
-      {{if .Replies}} {{range .Replies}}
-      <article class="p-post__list">
-        <p class="p-post__content">{{.Content}}</p>
-        <time class="p-post__date"
-          >{{.CreatedAt.Format "2006-01-02 15:04:05"}}</time
-        >
-      </article>
-      {{end}} {{else}}
-      <p class="p-post__empty">返信はありません</p>
-      {{end}}
-    </section>
-
-    <!-- いいねタブ -->
-    <section id="likes" class="l-section p-post --like">
-      {{if .Likes}} {{range .Likes}}
-      <article class="p-post__list">
-        <p class="p-post__content">{{.Content}}</p>
-        <time class="p-post__date"
-          >{{.CreatedAt.Format "2006-01-02 15:04:05"}}</time
-        >
-      </article>
-      {{end}} {{else}}
-      <p class="p-post__empty">いいねした投稿はありません</p>
-      {{end}}
-    </section>
-  </div>
 </div>
 
 <script src="/js/profile.js"></script>

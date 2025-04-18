@@ -4,9 +4,12 @@
 @use "_index" as *;
 
 .l-search {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
+  row-gap: 20px;
+  height: calc(100vh - 15rem);
   padding: 2rem;
 
   &__header {
@@ -14,7 +17,15 @@
   }
 
   &__content {
+    flex: 1;
     width: 100%;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
 
@@ -26,56 +37,58 @@
 
   &__inputWrap {
     display: flex;
-    align-items: stretch;
     gap: 1.5rem;
+    align-items: stretch;
     width: 100%;
   }
 
   &__input {
+    box-sizing: border-box;
     width: 100%;
     min-width: 0;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-sizing: border-box;
-    background-color: #fff;
-    transition: all 0.3s ease;
+    padding-left: 1.5rem;
+    font-size: 1.8rem;
     color: #333;
     appearance: none;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 
     &:focus {
+      outline: none;
       border-color: #4a90e2;
       box-shadow: 0 0 0 2px rgb(74 144 226 / 10%);
-      outline: none;
     }
 
     &::placeholder {
+      font-size: 1.8rem;
       color: #999;
-      font-size: 1.6rem;
     }
   }
 
   &__btn {
+    box-sizing: border-box;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     min-width: 12rem;
     height: 6rem;
     padding: 0 3rem;
-    border: none;
-    border-radius: 8px;
-    box-sizing: border-box;
-    background-color: #4a90e2;
-    transition: all 0.3s ease;
-    color: #fff;
     font-size: 1.8rem;
     font-weight: 500;
+    color: #fff;
     white-space: nowrap;
-    cursor: pointer;
     appearance: none;
+    cursor: pointer;
+    background-color: #4a90e2;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 
     &:hover {
-      box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
       background-color: #357abd;
+      box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
       transform: translateY(-1px);
     }
 
@@ -91,9 +104,9 @@
   text-align: center;
 
   &__text {
-    color: $color-secondary;
     font-size: 2rem;
     font-weight: $font-weight-medium;
+    color: $color-secondary;
   }
 }
 
@@ -109,10 +122,11 @@
     &__input {
       height: 5.6rem;
       padding: 0 1.8rem;
+      padding-left: 1.8rem;
       font-size: 1.7rem;
 
       &::placeholder {
-        font-size: 1.5rem;
+        font-size: 1.7rem;
       }
     }
 
@@ -144,10 +158,11 @@
     &__input {
       height: 5.2rem;
       padding: 0 1.6rem;
+      padding-left: 1.6rem;
       font-size: 1.6rem;
 
       &::placeholder {
-        font-size: 1.4rem;
+        font-size: 1.6rem;
       }
     }
 
@@ -178,10 +193,11 @@
     &__input {
       height: 5rem;
       padding: 0 1.5rem;
+      padding-left: 1.5rem;
       font-size: 1.5rem;
 
       &::placeholder {
-        font-size: 1.3rem;
+        font-size: 1.5rem;
       }
     }
 

@@ -5,10 +5,10 @@
 *,
 ::before,
 ::after {
-  min-width: 0;
-  border-width: 0;
-  border-style: solid;
   box-sizing: border-box;
+  min-width: 0;
+  border-style: solid;
+  border-width: 0;
 }
 
 html {
@@ -52,13 +52,13 @@ h6 {
 
 ul,
 ol {
-  list-style: none;
-  margin: 0;
   padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 dt {
-  font-weight: bold;
+  font-weight: 700;
 }
 
 dd {
@@ -66,18 +66,18 @@ dd {
 }
 
 hr {
-  overflow: visible;
   clear: both;
+  box-sizing: content-box;
   height: 0;
   margin: 0;
-  border-top-width: 1px;
-  box-sizing: content-box;
+  overflow: visible;
   color: inherit;
+  border-top-width: 1px;
 }
 
 pre {
-  font-size: inherit;
   font-family: monospace;
+  font-size: inherit;
 }
 
 address {
@@ -85,9 +85,9 @@ address {
 }
 
 a {
-  background-color: transparent;
   color: inherit;
   text-decoration: none;
+  background-color: transparent;
 }
 
 abbr[title] {
@@ -103,8 +103,8 @@ strong {
 code,
 kbd,
 samp {
-  font-size: inherit;
   font-family: monospace;
+  font-size: inherit;
 }
 
 small {
@@ -140,18 +140,18 @@ input,
 optgroup,
 select,
 textarea {
-  margin: 0;
   padding: 0;
-  border-radius: 0;
-  background: transparent;
-  color: inherit;
+  margin: 0;
   font: inherit;
-  text-align: inherit;
   vertical-align: middle;
+  color: inherit;
+  text-align: inherit;
   text-transform: inherit;
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
+  background: transparent;
+  border-radius: 0;
 }
 
 button,
@@ -182,8 +182,8 @@ option {
 
 fieldset {
   min-width: 0;
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 
 legend {
@@ -241,8 +241,8 @@ summary {
 }
 
 table {
-  border-color: inherit;
   border-collapse: collapse;
+  border-color: inherit;
 }
 
 caption {
@@ -256,7 +256,7 @@ th {
 }
 
 th {
-  font-weight: bold;
+  font-weight: 700;
   text-align: left;
 }
 
@@ -264,10 +264,10 @@ th {
  * ベーススタイルを管理するファイル
 */
 html {
-  background-color: #f4fbff;
-  color: #333;
-  font-size: 62.5%;
   font-family: "Noto Sans JP", sans-serif;
+  font-size: 62.5%;
+  color: #333;
+  background-color: #f4fbff;
 }
 
 body {
@@ -286,8 +286,8 @@ body {
   top: 0;
   z-index: 100;
   height: 60px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 @media screen and (width <= 649px) {
@@ -300,72 +300,17 @@ body {
  * footer.htmlにて`l-`が接頭辞につくものが対象
 */
 .l-footer {
-  height: auto;
-  margin-top: auto;
-  padding: 2rem 0;
+  padding: 8px 0;
   background-color: #fff;
 }
 .l-footer__container {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 0 1rem;
-}
-.l-footer__content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.l-footer__logoWrap {
-  display: flex;
-}
-.l-footer__logo {
-  margin-top: 16px;
 }
 .l-footer__bottom {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
   text-align: center;
 }
 
-@media screen and (width <= 1024px) {
-  .l-footer {
-    padding: 1.5rem 0;
-  }
-  .l-footer__container {
-    max-width: 90%;
-  }
-  .l-footer__logo {
-    margin-top: 12px;
-    font-size: 1.2rem;
-  }
-  .l-footer__bottom {
-    margin-top: 1.5rem;
-  }
-}
-@media screen and (width <= 649px) {
-  .l-footer {
-    padding: 1rem 0;
-  }
-  .l-footer__container {
-    max-width: 100%;
-    padding: 0 1rem;
-  }
-  .l-footer__content {
-    flex-direction: column;
-  }
-  .l-footer__logoWrap {
-    justify-content: center;
-  }
-  .l-footer__logo {
-    margin-top: 0;
-    font-size: 1.1rem;
-  }
-  .l-footer__bottom {
-    margin-top: 1rem;
-    padding-top: 0.8rem;
-  }
-}
 /**
  * メインコンテンツのLayoutスタイルを管理するファイル
  * <main>タグにて`l-`が接頭辞につくものが対象
@@ -373,14 +318,15 @@ body {
 .l-app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 .l-main {
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
+  height: 100%;
   padding: 2rem;
+  margin: 0 auto;
 }
 
 .l-section {
@@ -407,38 +353,38 @@ body {
 */
 .c-lgTtl {
   margin: 40px 0;
-  color: #333;
   font-size: 2.4rem;
+  color: #333;
   text-align: center;
 }
 .c-lgTtl.--profile {
   margin: 40px 0;
-  color: #333;
   font-size: 2rem;
+  color: #333;
 }
 
 .c-midTtl {
-  color: #333;
   font-size: 1.8rem;
   font-weight: 500;
+  color: #333;
 }
 .c-midTtl.--profile {
   margin: 0;
-  transition: color 0.3s ease;
-  color: #666;
   font-size: 1.4rem;
   font-weight: 400;
   line-height: 1.5;
+  color: #666;
   text-align: center;
+  transition: color 0.3s ease;
 }
 .c-midTtl.--profile:hover {
   color: #404040;
 }
 
 .c-smTtl {
-  color: #657786;
   font-size: 1.4rem;
   font-weight: 400;
+  color: #657786;
 }
 .c-smTtl.--tab {
   font-weight: 700;
@@ -449,28 +395,28 @@ body {
   justify-content: center;
 }
 .c-validation__text {
-  color: #f00;
   font-size: 1.4rem;
+  color: #f00;
 }
 
 .c-logo {
-  color: #1a1a1a;
   font-size: 2rem;
   font-weight: bold;
+  color: #1a1a1a;
 }
 
 .c-input {
   width: 100%;
-  margin-bottom: 1.6rem;
   padding: 1.2rem;
+  margin-bottom: 1.6rem;
+  font-size: 1.6rem;
   border: 1px solid #000;
   border-radius: 4px;
   transition: border-color 0.3s ease;
-  font-size: 1.6rem;
 }
 .c-input:focus {
-  border-color: #4a90e2;
   outline: none;
+  border-color: #4a90e2;
 }
 .c-input::-moz-placeholder {
   color: #999;
@@ -480,14 +426,14 @@ body {
 }
 
 .c-label {
-  display: inline-block;
   position: relative;
+  display: inline-block;
   cursor: pointer;
 }
 .c-label.--profile {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   transition: opacity 0.3s ease;
@@ -499,14 +445,14 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.3s ease;
-  opacity: 0;
-  color: #fff;
   font-size: 0.9rem;
   font-weight: 500;
+  color: #fff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   content: "画像を変更";
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease;
 }
 .c-label.--profile:hover::after {
   opacity: 1;
@@ -523,28 +469,28 @@ body {
   transition: filter 0.3s ease;
 }
 .c-label__input.--profile {
-  overflow: hidden;
   position: absolute;
   width: 1px;
   height: 1px;
-  margin: -1px;
   padding: 0;
+  margin: -1px;
+  overflow: hidden;
   border: 0;
   clip: rect(0, 0, 0, 0);
 }
 
 .c-btn {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   width: 100%;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
-  background-color: #007bff;
-  transition: background-color 0.3s ease;
-  color: #fff;
   font-size: 1.8rem;
+  color: #fff;
   cursor: pointer;
+  background-color: #007bff;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 .c-btn:hover {
   background-color: #007bff;
@@ -559,19 +505,13 @@ body {
 .c-link {
   display: block;
   margin-top: 16px;
-  color: #4a90e2;
   font-size: 1.8rem;
-  text-decoration: none;
+  color: #4a90e2;
   text-align: center;
-}
-.c-link.--footer {
-  color: #666;
+  text-decoration: none;
 }
 .c-link:hover {
   text-decoration: underline;
-}
-.c-link:hover.--footer {
-  text-decoration: none;
 }
 
 .c-icon__wrap {
@@ -584,10 +524,13 @@ body {
   -o-object-fit: cover;
      object-fit: cover;
 }
+.c-icon__img:hover {
+  cursor: pointer;
+}
 
 .c-txt {
-  color: #000;
   font-size: 1rem;
+  color: #000;
 }
 .c-txt.--copyright {
   color: #666;
@@ -598,8 +541,8 @@ body {
 }
 
 .c-time {
-  color: #999;
   font-size: 12px;
+  color: #999;
 }
 
 @media screen and (width <= 1024px) {
@@ -617,7 +560,7 @@ body {
   .c-logo {
     font-size: 1.5rem;
   }
-  .c-link.--footer {
+  .c-link {
     margin-top: 0;
   }
   .c-midTtl.--profile {
@@ -634,65 +577,28 @@ body {
 .p-nav {
   width: 100%;
   height: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
-}
-.p-nav.--footer {
-  width: 50%;
-  margin-left: auto;
-  box-shadow: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .p-nav__container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   max-width: 1000px;
   height: 100%;
-  margin: 0 auto;
   padding: 1rem;
+  margin: 0 auto;
   font-size: 1.5rem;
 }
 .p-nav__list {
   display: flex;
   gap: 2rem;
 }
-.p-nav__list.--footer {
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-}
 .p-nav__item {
-  transition: color 0.3s ease;
-  color: #666;
   font-weight: 500;
+  color: #666;
   text-decoration: none;
-}
-.p-nav__item.--footer {
-  flex: 1;
-  text-align: center;
-}
-.p-nav__item.--footer a {
-  display: inline-block;
-  position: relative;
-  width: 100%;
-  padding: 0.5rem;
   transition: color 0.3s ease;
-  white-space: nowrap;
-}
-.p-nav__item.--footer a::after {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 1px;
-  background-color: #007bff;
-  transform: translateX(-50%);
-  transition: all 0.3s ease;
-  content: "";
-}
-.p-nav__item.--footer a:hover::after {
-  width: 100%;
 }
 .p-nav__item:hover {
   color: #007bff;
@@ -702,17 +608,17 @@ body {
   display: flex;
   flex-direction: column;
   row-gap: 1rem;
-  list-style: none;
   max-width: 800px;
-  margin: 0 auto;
   padding: 0;
+  margin: 0 auto;
+  list-style: none;
 }
 .p-userList__item {
   display: flex;
   align-items: center;
   padding: 2rem;
-  border-bottom: 1px solid #e1e8ed;
   background-color: #fff;
+  border-bottom: 1px solid #e1e8ed;
   transition: background-color 0.3s ease;
 }
 .p-userList__item:last-child {
@@ -729,23 +635,23 @@ body {
 .p-userList__icon {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   -o-object-fit: cover;
      object-fit: cover;
+  border-radius: 50%;
 }
 .p-userList__info {
   flex: 1;
 }
 .p-userList__name {
   margin: 0 0 0.5rem;
-  color: #333;
   font-size: 1.6rem;
   font-weight: 600;
+  color: #333;
 }
 .p-userList__status {
   margin: 0;
-  color: #666;
   font-size: 1.4rem;
+  color: #666;
 }
 .p-userList__action {
   margin-left: 1.5rem;
@@ -756,14 +662,14 @@ body {
 }
 
 .p-chatCard {
+  position: relative;
   display: flex;
   align-items: center;
-  position: relative;
   width: 100%;
   padding: 1.5rem;
+  background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .p-chatCard:hover {
@@ -776,10 +682,10 @@ body {
 }
 .p-chatCard__iconWrap {
   flex-shrink: 0;
-  overflow: hidden;
   width: 56px;
   height: 56px;
   margin-right: 1.5rem;
+  overflow: hidden;
   border: 2px solid #f0f0f0;
   border-radius: 50%;
 }
@@ -791,38 +697,38 @@ body {
 }
 .p-chatCard__content {
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   gap: 0.5rem;
   min-width: 0;
   padding-right: 6rem;
 }
 .p-chatCard__name {
-  overflow: hidden;
   margin-bottom: 0.5rem;
-  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 1.6rem;
   font-weight: 600;
+  color: #333;
   white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .p-chatCard__time {
   position: absolute;
   top: 1.5rem;
   right: 1.5rem;
-  color: #999;
   font-size: 1.2rem;
+  color: #999;
 }
 .p-chatCard__preview {
   display: -webkit-box;
-  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
   -webkit-line-clamp: 2;
   line-clamp: 2;
-  overflow: hidden;
-  color: #666;
   font-size: 1.4rem;
   line-height: 1.5;
-  text-overflow: ellipsis;
+  color: #666;
+  -webkit-box-orient: vertical;
 }
 
 .p-message {
@@ -838,8 +744,8 @@ body {
 }
 .p-message.--sent .p-message__content {
   margin: 0 1.2rem 0 0;
-  border-radius: 16px 2px 16px 16px;
   background-color: #007bff;
+  border-radius: 16px 2px 16px 16px;
 }
 .p-message.--sent .p-message__content::before {
   right: -8px;
@@ -857,9 +763,9 @@ body {
 }
 .p-message__iconWrap {
   flex-shrink: 0;
-  overflow: hidden;
   width: 40px;
   height: 40px;
+  overflow: hidden;
   border: 2px solid #f0f0f0;
   border-radius: 50%;
 }
@@ -871,33 +777,33 @@ body {
 }
 .p-message__content {
   position: relative;
-  margin: 0 0 0 1.2rem;
   padding: 1.2rem 1.6rem;
-  border-radius: 2px 16px 16px;
+  margin: 0 0 0 1.2rem;
   background-color: #f5f5f5;
+  border-radius: 2px 16px 16px;
 }
 .p-message__content::before {
   position: absolute;
   top: 12px;
   left: -8px;
+  content: "";
   border-top: 8px solid transparent;
   border-right: 8px solid #f5f5f5;
   border-bottom: 8px solid transparent;
-  content: "";
 }
 .p-message__text {
   margin: 0;
-  color: #333;
   font-size: 1.5rem;
   line-height: 1.5;
+  color: #333;
   word-break: break-word;
 }
 .p-message__time {
   position: absolute;
   bottom: -2rem;
   left: 0;
-  color: #999;
   font-size: 1.2rem;
+  color: #999;
 }
 
 .p-confirm {
@@ -909,8 +815,8 @@ body {
   border-radius: 4px;
 }
 .p-confirm__item {
-  margin-bottom: 15px;
   padding: 1.6rem;
+  margin-bottom: 15px;
   background: #f5f5f5;
 }
 .p-confirm__item:last-child {
@@ -919,13 +825,13 @@ body {
 .p-confirm__label {
   display: block;
   margin-bottom: 5px;
-  color: #666;
   font-size: 14px;
+  color: #666;
 }
 .p-confirm__txt {
   margin: 0;
-  color: #333;
   font-size: 16px;
+  color: #333;
 }
 
 .p-form {
@@ -933,42 +839,32 @@ body {
   flex-direction: column;
   align-items: center;
   max-width: 400px;
-  margin: 40px auto;
   padding: 20px;
+  margin: 40px auto;
+  background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background: #fff;
 }
 .p-form__btnWrap {
   display: flex;
-  justify-content: center;
   gap: 10px;
+  justify-content: center;
   width: 80%;
 }
 
 @media screen and (width <= 1024px) {
-  .p-nav.--footer {
-    width: 70%;
-  }
   .p-nav__container {
     max-width: 90%;
     padding: 0.8rem;
     font-size: 1.2rem;
-  }
-  .p-nav__list.--footer {
-    gap: 1.2rem;
-  }
-  .p-nav__item.--footer a {
-    padding: 0.5rem 0;
-    font-size: 1.4rem;
   }
   .p-profile {
     padding: 1.5rem;
   }
   .p-profile-stats {
     flex-direction: column;
-    align-items: center;
     gap: 1rem;
+    align-items: center;
   }
   .p-tabs__list {
     gap: 1rem;
@@ -1011,8 +907,8 @@ body {
     height: 36px;
   }
   .p-message__content {
-    margin: 0 0 0 1rem;
     padding: 1rem 1.4rem;
+    margin: 0 0 0 1rem;
   }
   .p-message.--sent .p-message__content {
     margin: 0 1rem 0 0;
@@ -1026,10 +922,6 @@ body {
   }
 }
 @media screen and (width <= 649px) {
-  .p-nav.--footer {
-    width: 100%;
-    margin: 1.5rem 0 0;
-  }
   .p-nav__container {
     flex-direction: column;
     gap: 0.5rem;
@@ -1040,33 +932,12 @@ body {
   }
   .p-nav__list {
     flex-wrap: wrap;
-    justify-content: center;
     gap: 1.5rem;
+    justify-content: center;
     width: 100%;
-  }
-  .p-nav__list.--footer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1.5rem;
   }
   .p-nav__item {
     font-size: 1rem;
-  }
-  .p-nav__item.--footer {
-    flex: 0 0 auto;
-  }
-  .p-nav__item.--footer a {
-    padding: 0.5rem;
-    transition: opacity 0.3s ease;
-    opacity: 0.8;
-    font-size: 1rem;
-  }
-  .p-nav__item.--footer a::after {
-    bottom: -2px;
-  }
-  .p-nav__item.--footer a:hover {
-    opacity: 1;
   }
   .p-chatCard {
     padding: 1rem;
@@ -1099,8 +970,8 @@ body {
     height: 32px;
   }
   .p-message__content {
-    margin: 0 0 0 0.8rem;
     padding: 0.8rem 1.2rem;
+    margin: 0 0 0 0.8rem;
   }
   .p-message__content::before {
     top: 10px;
@@ -1124,71 +995,71 @@ body {
 }
 .l-container {
   max-width: 800px;
-  margin: 0 auto;
   padding: 2rem 1rem;
+  margin: 0 auto;
 }
 
 .l-profile {
-  margin-bottom: 2rem;
   padding: 2rem;
+  margin-bottom: 2rem;
+  background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background: #fff;
 }
 .l-profile__iconWrap {
-  overflow: hidden;
   position: relative;
   width: 120px;
   height: 120px;
   margin: 0 auto 1.5rem;
+  overflow: hidden;
+  cursor: pointer;
   border: 3px solid #e1e8ed;
   border-radius: 50%;
   transition: border-color 0.3s ease;
-  cursor: pointer;
 }
 .l-profile__iconWrap:hover {
   border-color: #007bff;
 }
 .l-profile__name {
   margin-bottom: 0.5rem;
-  color: #1a1a1a;
   font-size: 1.5rem;
   font-weight: 700;
+  color: #1a1a1a;
   text-align: center;
 }
 .l-profile__email {
   margin-bottom: 1rem;
-  color: #657786;
   font-size: 1rem;
+  color: #657786;
   text-align: center;
 }
 .l-profile__created-date {
   margin-bottom: 1.5rem;
-  color: #657786;
   font-size: 0.875rem;
+  color: #657786;
   text-align: center;
 }
 .l-profile__subTtlContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 0.8rem;
+  align-items: center;
   margin: 1.5rem 0;
 }
 
 .l-profile-stats {
   display: flex;
-  justify-content: center;
   gap: 2rem;
-  list-style: none;
-  margin: 0;
+  justify-content: center;
   padding: 0;
   padding-top: 1.5rem;
+  margin: 0;
+  list-style: none;
   border-top: 1px solid #e1e8ed;
 }
 .l-profile-stats__item {
-  color: #657786;
   font-size: 0.875rem;
+  color: #657786;
 }
 
 .l-tabs {
@@ -1198,30 +1069,30 @@ body {
 .l-tabs__list {
   display: flex;
   gap: 2rem;
-  list-style: none;
-  margin: 0;
   padding: 0;
+  margin: 0;
+  list-style: none;
 }
 .l-tabs__item {
   flex: 1;
   max-width: 120px;
 }
 .l-tabs__link {
-  display: block;
   position: relative;
+  display: block;
   padding: 1rem 0;
-  transition: color 0.2s ease;
-  color: #657786;
   font-weight: 500;
-  text-decoration: none;
+  color: #657786;
   text-align: center;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 .l-tabs__link:hover {
   color: #1a1a1a;
 }
 .l-tabs__link.is-active {
-  color: #1a1a1a;
   font-weight: 700;
+  color: #1a1a1a;
 }
 .l-tabs__link.is-active::after {
   position: absolute;
@@ -1229,8 +1100,8 @@ body {
   left: 0;
   width: 100%;
   height: 2px;
-  background: #1a1a1a;
   content: "";
+  background: #1a1a1a;
 }
 
 .l-tab-contents {
@@ -1239,16 +1110,16 @@ body {
 
 .p-post {
   padding: 2rem;
+  background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background: #fff;
 }
 .p-post__list {
   padding: 1.5rem;
-  border-radius: 8px;
-  background: #f8f9fa;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .p-post__list:not(:last-child) {
   margin-bottom: 1rem;
@@ -1259,16 +1130,16 @@ body {
 }
 .p-post__content {
   margin-bottom: 1rem;
-  color: #666;
   font-size: 1.4rem;
   line-height: 1.6;
+  color: #666;
   word-break: break-word;
   white-space: pre-wrap;
 }
 .p-post__date {
   display: block;
-  color: #999999;
   font-size: 1.2rem;
+  color: #999999;
   text-align: right;
 }
 .p-post.--reply .p-post__list {
@@ -1279,14 +1150,14 @@ body {
 }
 .p-post.--like .p-post__list::before {
   margin-right: 0.5rem;
-  color: #ff4757;
   font-size: 1.4rem;
+  color: #ff4757;
   content: "♥";
 }
 .p-post__empty {
   padding: 3rem 0;
-  color: #8c8c8c;
   font-size: 1.4rem;
+  color: #8c8c8c;
   text-align: center;
 }
 
@@ -1326,8 +1197,8 @@ body {
     padding: 1rem;
   }
   .l-profile {
-    margin-bottom: 1.5rem;
     padding: 1rem;
+    margin-bottom: 1.5rem;
   }
   .l-profile__iconWrap {
     width: 100px;
@@ -1336,8 +1207,8 @@ body {
   }
   .l-profile-stats {
     flex-direction: column;
-    align-items: center;
     gap: 1rem;
+    align-items: center;
     padding-top: 1rem;
   }
   .l-tabs {

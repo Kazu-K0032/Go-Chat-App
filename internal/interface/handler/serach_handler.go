@@ -56,7 +56,7 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 	if query != "" {
 		users, err = SearchUsers(query)
 	} else {
-		users, err = firebase.GetAllData("users")
+		users, err = firebase.GetAllData("users", "")
 	}
 
 	if err != nil {
@@ -64,7 +64,7 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 	}
 
 	// チャット履歴を取得
-	chats, err := firebase.GetAllData("chats")
+	chats, err := firebase.GetAllData("chats", user.ID)
 	if err != nil {
 		return SearchPageData{}, fmt.Errorf("チャット履歴の取得に失敗しました: %v", err)
 	}
@@ -76,9 +76,23 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 		if !ok {
 			continue
 		}
+		
+		// 現在のユーザーが参加しているチャットかどうかを確認
+		isUserChat := false
 		for _, p := range participants {
-			if participantID, ok := p.(string); ok {
-				chattedUsers[participantID] = true
+			if participantID, ok := p.(string); ok && participantID == user.ID {
+				isUserChat = true
+				break
+			}
+		}
+
+		// 現在のユーザーが参加しているチャットの場合のみ、
+		// 相手のユーザーIDをchattedUsersに追加
+		if isUserChat {
+			for _, p := range participants {
+				if participantID, ok := p.(string); ok && participantID != user.ID {
+					chattedUsers[participantID] = true
+				}
 			}
 		}
 	}
@@ -86,10 +100,19 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 	// 自分以外かつチャット履歴のないユーザーをフィルタリング
 	var filteredUsers []map[string]interface{}
 	for _, u := range users {
-		userID, ok := u["ID"].(string)
+		// 大文字の「ID」と小文字の「id」の両方をチェック
+		var userID string
+		var ok bool
+		
+		// まず大文字の「ID」を試す
+		userID, ok = u["ID"].(string)
 		if !ok {
-			log.Printf("ユーザーIDの取得に失敗: %+v", u)
-			continue
+			// 大文字が失敗したら小文字の「id」を試す
+			userID, ok = u["id"].(string)
+			if !ok {
+				log.Printf("ユーザーIDの取得に失敗: %+v", u)
+				continue
+			}
 		}
 
 		if userID != user.ID && !chattedUsers[userID] {
@@ -152,9 +175,17 @@ func GetUserData(userID string) (*domain.User, error) {
 	}
 
 	// 必要なフィールドの存在確認と型アサーション
-	id, ok := userData["ID"].(string)
+	var id string
+	var ok bool
+	
+	// まず大文字の「ID」を試す
+	id, ok = userData["ID"].(string)
 	if !ok {
-		return nil, fmt.Errorf("ユーザーIDの取得に失敗しました")
+		// 大文字が失敗したら小文字の「id」を試す
+		id, ok = userData["id"].(string)
+		if !ok {
+			return nil, fmt.Errorf("ユーザーIDの取得に失敗しました")
+		}
 	}
 
 	name, ok := userData["Name"].(string)

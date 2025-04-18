@@ -10,12 +10,13 @@ import (
 )
 
 type ConfigList struct {
-	Port           string
-	LogFile        string
-	Static         string
-	ServiceKeyPath string
-	ProjectId      string
-	StorageBucket  string
+	Port            string
+	LogFile         string
+	Static          string
+	DefaultIconDir string
+	ServiceKeyPath  string
+	ProjectId       string
+	StorageBucket   string
 }
 
 var Config ConfigList
@@ -39,12 +40,13 @@ func LoadConfig() {
 	}
 
 	Config = ConfigList{
-		Port:           "8080",
-		LogFile:        "",
-		Static:         "",
-		ServiceKeyPath: "",
-		ProjectId:      "",
-		StorageBucket:  "",
+		Port:            "8080",
+		LogFile:         "",
+		Static:          "",
+		DefaultIconDir:  "",
+		ServiceKeyPath:  "",
+		ProjectId:       "",
+		StorageBucket:   "",
 	}
 
 	// config.local.iniから値を読み込む（存在する場合）
@@ -70,6 +72,9 @@ func loadConfigValues(cfg *ini.File, config *ConfigList) {
 	if static := cfg.Section("web").Key("static").String(); static != "" {
 		config.Static = static
 	}
+	if defaultIconDir := cfg.Section("firebase").Key("defaultIconDir").String(); defaultIconDir != "" {
+		config.DefaultIconDir = defaultIconDir
+	}
 	if serviceAccountKey := cfg.Section("firebase").Key("serviceKeyPath").String(); serviceAccountKey != "" {
 		config.ServiceKeyPath = serviceAccountKey
 	}
@@ -91,6 +96,10 @@ func validateConfig(config *ConfigList) {
 	if config.Static == "" {
 		log.Println("警告: Staticが設定されていません。デフォルト値を使用します。")
 		config.Static = "app/views"
+	}
+	if config.DefaultIconDir == "" {
+		log.Println("警告: DefaultIconDirが設定されていません。デフォルト値を使用します。")
+		config.DefaultIconDir = "icons/default/"
 	}
 	if config.ServiceKeyPath == "" {
 		log.Fatalln("エラー: serviceKeyPathが設定されていません。")

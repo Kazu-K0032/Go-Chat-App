@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"security_chat_app/internal/domain"
@@ -20,24 +21,37 @@ import (
 
 // ProfileData プロフィールページのデータ構造体
 type ProfileData struct {
-	IsLoggedIn bool
-	User       *domain.User
-	Posts      []domain.Post
-	Replies    []domain.Post
-	Likes      []domain.Post
+	IsLoggedIn     bool
+	LoggedInUserID string
+	User           *domain.User
+	Posts          []domain.Post
+	Replies        []domain.Post
+	Likes          []domain.Post
 }
 
 // プロフィールページの表示
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
-	// セッションの検証
 	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
+	// URLからユーザーIDを取得
+	path := r.URL.Path
+	var targetUserID string
+	if path == "/profile" || path == "/profile/" {
+		targetUserID = session.User.ID
+	} else {
+		targetUserID = path[len("/profile/"):]
+		if targetUserID == "" {
+			http.Error(w, "ユーザーIDが指定されていません", http.StatusBadRequest)
+			return
+		}
+	}
+
 	// ユーザー情報の取得
-	user, err := repository.GetUserByEmail(session.User.Email)
+	user, err := repository.GetUserByID(targetUserID)
 	if err != nil {
 		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
 		return
@@ -45,11 +59,8 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// アイコンが設定されていない場合はデフォルトアイコンを設定
 	if user.Icon == "" {
-		// デフォルトアイコンのパスを生成
 		randomNum := rand.Intn(7)
 		defaultIconPath := fmt.Sprintf(icons.DefaultIconPath+"/default_icon_%s.png", icons.DefaultIconNames[randomNum])
-
-		// デフォルトアイコンのURLを取得
 		iconURL, er := firebase.GetDefaultIconURL(defaultIconPath)
 		if er != nil {
 			fmt.Printf("デフォルトアイコンの取得に失敗: %v\n", err)
@@ -85,21 +96,24 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		likes = []domain.Post{}
 	}
 
-	// 最終更新日時を現在時刻に更新
-	user.UpdatedAt = time.Now()
-	err = firebase.UpdateField("users", user.ID, "UpdatedAt", user.UpdatedAt)
-	if err != nil {
-		http.Error(w, "最終更新日時の更新に失敗しました", http.StatusInternalServerError)
-		return
+	// 最終更新日時を現在時刻に更新 (自分のプロフィールの場合のみ更新すべきか検討)
+	if targetUserID == session.User.ID {
+		user.UpdatedAt = time.Now()
+		err = firebase.UpdateField("users", user.ID, "UpdatedAt", user.UpdatedAt)
+		if err != nil {
+			http.Error(w, "最終更新日時の更新に失敗しました", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	// プロフィールデータの作成
 	data := ProfileData{
-		IsLoggedIn: true,
-		User:       user,
-		Posts:      posts,
-		Replies:    replies,
-		Likes:      likes,
+		IsLoggedIn:     true,
+		LoggedInUserID: session.User.ID,
+		User:           user,
+		Posts:          posts,
+		Replies:        replies,
+		Likes:          likes,
 	}
 
 	// テンプレートを描画
@@ -108,15 +122,28 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 // アイコンアップロードハンドラ
 func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
-	// セッションの検証
 	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
 		http.Error(w, "セッションが無効です", http.StatusUnauthorized)
 		return
 	}
 
+	// URLからユーザーIDを取得
+	path := r.URL.Path
+	prefix := "/profile/icon/"
+	var targetUserID string
+	if strings.HasPrefix(path, prefix) && len(path) > len(prefix) {
+		targetUserID = path[len(prefix):]
+	}
+
+	// 自分のプロフィール以外での変更を防止
+	if targetUserID != "" && targetUserID != session.User.ID {
+		http.Error(w, "他のユーザーのアイコンは変更できません", http.StatusForbidden)
+		return
+	}
+
 	// マルチパートフォームの解析
-	err = r.ParseMultipartForm(10 << 20) // 10MBの制限
+	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		http.Error(w, "フォームの解析に失敗しました", http.StatusBadRequest)
 		return
@@ -130,12 +157,38 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	// ファイルの拡張子を取得
-	ext := filepath.Ext(header.Filename)
-	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
-		http.Error(w, "サポートされていないファイル形式です", http.StatusBadRequest)
+	// ファイルサイズの制限（5MB）
+	const maxFileSize = 5 * 1024 * 1024
+	if header.Size > maxFileSize {
+		http.Error(w, "ファイルサイズは5MB以下にしてください", http.StatusBadRequest)
 		return
 	}
+
+	// ファイルの拡張子を取得と検証
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	allowedExts := map[string]bool{
+		".jpg":  true,
+		".jpeg": true,
+		".png":  true,
+	}
+	if !allowedExts[ext] {
+		http.Error(w, "アップロードできるファイル形式は.jpg、.jpeg、.pngのみです", http.StatusBadRequest)
+		return
+	}
+
+	// 画像ファイルの検証
+	buff := make([]byte, 512)
+	_, err = file.Read(buff)
+	if err != nil {
+		http.Error(w, "ファイルの読み込みに失敗しました", http.StatusInternalServerError)
+		return
+	}
+	filetype := http.DetectContentType(buff)
+	if !strings.HasPrefix(filetype, "image/") {
+		http.Error(w, "画像ファイルのみアップロード可能です", http.StatusBadRequest)
+		return
+	}
+	file.Seek(0, 0)
 
 	// 一時ファイルを作成
 	tempFile, err := os.CreateTemp("", "icon-*"+ext)

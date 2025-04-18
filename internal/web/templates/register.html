@@ -1,6 +1,6 @@
 {{ define "content" }}
 <h1 class="c-lgTtl">新規登録</h1>
-<form class="p-form" role="form" action="/signup" method="post">
+<form class="p-form" role="form" action="/signup/confirm" method="get">
   <input
     type="text"
     name="name"
@@ -8,7 +8,7 @@
     placeholder="ユーザー名"
     required
     autofocus
-    value="{{.SignupForm.Username}}"
+    value="{{.SignupForm.Name}}"
   />
   <input
     type="email"
@@ -27,14 +27,16 @@
     value="{{.SignupForm.Password}}"
   />
 
-  {{if .Error}}
-  <div class="c-error">
-    <p class="c-error__txt">{{.Error}}</p>
+  {{if .ValidationErrors}}
+  <div class="c-validation">
+    {{range .ValidationErrors}}
+    <p class="c-validation__text">{{.}}</p>
+    {{end}}
   </div>
   {{end}}
 
   <br />
-  <button class="c-btn" type="submit">登録</button>
+  <button class="c-btn" type="submit">確認画面へ</button>
   <br />
   <a class="c-link" href="/login">ログイン</a>
 </form>

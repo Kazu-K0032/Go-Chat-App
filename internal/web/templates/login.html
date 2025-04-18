@@ -1,6 +1,12 @@
 {{ define "content" }}
 <h1 class="c-lgTtl">ログイン</h1>
-{{if .ValidationErrors}}
+{{if .Success}}
+<div class="c-success">
+  <p class="c-success__text">
+    アカウントの登録が完了しました。ログインしてください。
+  </p>
+</div>
+{{end}} {{if .ValidationErrors}}
 <div class="c-validation">
   {{range .ValidationErrors}}
   <p class="c-validation__text">{{.}}</p>

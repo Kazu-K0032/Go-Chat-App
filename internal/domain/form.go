@@ -2,7 +2,7 @@ package domain
 
 // サインアップフォームのデータ構造体
 type SignupForm struct {
-	Username string
+	Name     string
 	Email    string
 	Password string
 }
@@ -15,5 +15,14 @@ type LoginForm struct {
 
 // パスワードリセットフォームのデータ構造体
 type ResetForm struct {
-	Email string
+	Email           string
+	Password        string
+	PasswordConfirm string
+}
+
+// パスワード変更フォームのデータ構造体
+type PasswordForm struct {
+	CurrentPassword    string
+	NewPassword       string
+	NewPasswordConfirm string
 }
