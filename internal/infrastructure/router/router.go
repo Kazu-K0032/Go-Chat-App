@@ -25,6 +25,7 @@ func SetupRouter(chatUsecase domain.ChatUsecase) *http.ServeMux {
 	mux.HandleFunc("/signup/confirm", handler.SignupConfirmHandler)
 	mux.HandleFunc("/reset-password", handler.ResetPasswordHandler)
 	mux.HandleFunc("/profile", handler.ProfileHandler)
+	mux.HandleFunc("/profile/", handler.ProfileHandler)
 	mux.HandleFunc("/profile/icon", handler.ProfileIconHandler)
 	mux.HandleFunc("/chat/", handler.StartChatHandler)
 	mux.HandleFunc("/chat", handler.ChatHandler)

@@ -9,6 +9,7 @@ import (
 	"security_chat_app/internal/domain"
 
 	"cloud.google.com/go/firestore"
+	"google.golang.org/api/iterator"
 )
 
 // コレクションにデータを追加する
@@ -116,7 +117,7 @@ func DeleteData(collection string, documentID string) error {
 }
 
 // コレクションの全データを取得する
-func GetAllData(collection string) ([]map[string]interface{}, error) {
+func GetAllData(collection string, userID string) ([]map[string]interface{}, error) {
 	client, err := InitFirebase()
 	if err != nil {
 		return nil, err
@@ -124,9 +125,21 @@ func GetAllData(collection string) ([]map[string]interface{}, error) {
 	defer client.Close()
 
 	ctx := context.Background()
-	docs, err := client.Collection(collection).Documents(ctx).GetAll()
-	if err != nil {
-		return nil, err
+	
+	var docs []*firestore.DocumentSnapshot
+	var err2 error
+	
+	if collection == "chats" {
+		// チャットの場合は、participantsフィールドに基づいてフィルタリング
+		query := client.Collection(collection).Where("participants", "array-contains", userID)
+		docs, err2 = query.Documents(ctx).GetAll()
+	} else {
+		// その他のコレクションは従来通り全件取得
+		docs, err2 = client.Collection(collection).Documents(ctx).GetAll()
+	}
+	
+	if err2 != nil {
+		return nil, err2
 	}
 
 	var results []map[string]interface{}
@@ -402,4 +415,40 @@ func GetUserLikedPosts(userID string) ([]domain.Post, error) {
 	}
 
 	return likes, nil
+}
+
+// GetAllChats は指定されたユーザーIDが参加者として含まれるチャットを全て取得します
+func GetAllChats(userID string) ([]map[string]interface{}, error) {
+	client, err := InitFirebase()
+	if err != nil {
+		return nil, err
+	}
+	defer client.Close()
+
+	ctx := context.Background()
+
+	// チャットコレクションを参照
+	chatsRef := client.Collection("chats")
+
+	// ユーザーIDが参加者に含まれるチャットを検索
+	query := chatsRef.Where("participants", "array-contains", userID)
+	iter := query.Documents(ctx)
+	defer iter.Stop()
+
+	var chats []map[string]interface{}
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("チャットデータの取得に失敗: %v", err)
+		}
+
+		data := doc.Data()
+		data["id"] = doc.Ref.ID
+		chats = append(chats, data)
+	}
+
+	return chats, nil
 }

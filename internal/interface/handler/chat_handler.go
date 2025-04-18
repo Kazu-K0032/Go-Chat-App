@@ -96,13 +96,18 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// メッセージIDを生成
+		messageID := generateMessageID()
+
 		// メッセージを作成
 		message := map[string]interface{}{
-			"SenderID":   user.ID,
-			"SenderName": user.Name,
-			"Content":    content,
-			"CreatedAt":  time.Now(),
-			"IsRead":     false,
+			"id":         messageID,
+			"sender_id":  user.ID,
+			"sender_name": user.Name,
+			"content":    content,
+			"created_at": time.Now(),
+			"is_read":    false,
+			"type":       "text",
 		}
 
 		// メッセージを保存
@@ -112,11 +117,21 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// チャットの最終更新時刻を更新
+		err = firebase.UpdateField("chats", chatID, "updated_at", time.Now())
+		if err != nil {
+			log.Printf("チャットの更新時刻の更新に失敗: %v", err)
+		}
+
 		// JSONレスポンスを返す
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"content": content,
-			"time":    time.Now().Format("15:04"),
+			"id":         messageID,
+			"content":    content,
+			"sender_id":  user.ID,
+			"sender_name": user.Name,
+			"created_at": time.Now().Format("15:04"),
+			"is_read":    false,
 		})
 		return
 	}
@@ -265,7 +280,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 // チャット履歴を取得
 func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 	// チャット履歴を取得
-	chats, err := firebase.GetAllData("chats")
+	chats, err := firebase.GetAllChats(user.ID)
 	if err != nil {
 		return nil, fmt.Errorf("チャット履歴の取得に失敗しました: %v", err)
 	}
@@ -277,36 +292,42 @@ func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 		// チャットIDの取得
 		chatID, ok := chatData["id"].(string)
 		if !ok {
+			log.Printf("チャットIDの取得に失敗: %v", chatData)
 			continue
 		}
 
 		// 参加者の取得
 		participants, ok := chatData["participants"].([]interface{})
-		if !ok {
+		if !ok || len(participants) != 2 {
 			continue
 		}
 
-		// 現在のユーザーが参加者かチェック
+		// 自分が参加者に含まれているか確認
 		isParticipant := false
 		var targetUserID string
 		for _, p := range participants {
-			if participantID, ok := p.(string); ok {
-				if participantID == user.ID {
-					isParticipant = true
-				} else {
-					targetUserID = participantID
-				}
+			participantID, ok := p.(string)
+			if !ok {
+				continue
+			}
+			if participantID == user.ID {
+				isParticipant = true
+			} else {
+				targetUserID = participantID
 			}
 		}
 
-		if !isParticipant || seenChats[chatID] {
+		// 自分が参加者でない場合はスキップ
+		if !isParticipant || targetUserID == "" || seenChats[chatID] {
 			continue
 		}
+
 		seenChats[chatID] = true
 
 		// メッセージの取得
 		messagesData, err := firebase.GetChatMessages(chatID)
 		if err != nil {
+			log.Printf("メッセージの取得に失敗: chatID=%s, error=%v", chatID, err)
 			continue
 		}
 
@@ -367,6 +388,7 @@ func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 		// チャット相手の情報を取得
 		targetUser, err := GetUserData(targetUserID)
 		if err != nil {
+			log.Printf("チャット相手の情報取得に失敗: targetUserID=%s, error=%v", targetUserID, err)
 			continue
 		}
 

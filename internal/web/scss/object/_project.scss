@@ -11,76 +11,30 @@
 .p-nav {
   width: 100%;
   height: 100%;
-  box-shadow: $box-shadow-lg;
   background-color: #fff;
-
-  &.--footer {
-    // フッターのナビゲーション
-    width: 50%;
-    margin-left: auto;
-    box-shadow: none;
-  }
+  box-shadow: $box-shadow-lg;
 
   &__container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     max-width: 1000px;
     height: 100%;
-    margin: 0 auto;
     padding: 1rem;
+    margin: 0 auto;
     font-size: 1.5rem;
   }
 
   &__list {
     display: flex;
     gap: 2rem;
-
-    &.--footer {
-      // フッターのナビゲーション
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      width: 100%;
-    }
   }
 
   &__item {
-    transition: color 0.3s ease;
-    color: $color-text-gray;
     font-weight: $font-weight-medium;
+    color: $color-text-gray;
     text-decoration: none;
-
-    &.--footer {
-      // フッターのナビゲーション
-      flex: 1;
-      text-align: center;
-
-      a {
-        display: inline-block;
-        position: relative;
-        width: 100%;
-        padding: 0.5rem;
-        transition: color 0.3s ease;
-        white-space: nowrap;
-
-        &::after {
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          width: 0;
-          height: 1px;
-          background-color: $color-btn-hover;
-          transform: translateX(-50%);
-          transition: all 0.3s ease;
-          content: "";
-        }
-
-        &:hover::after {
-          width: 100%;
-        }
-      }
-    }
+    transition: color 0.3s ease;
 
     &:hover {
       color: $color-btn-hover;
@@ -93,17 +47,17 @@
   display: flex;
   flex-direction: column;
   row-gap: 1rem;
-  list-style: none;
   max-width: 800px;
-  margin: 0 auto;
   padding: 0;
+  margin: 0 auto;
+  list-style: none;
 
   &__item {
     display: flex;
     align-items: center;
     padding: 2rem;
-    border-bottom: 1px solid #e1e8ed;
     background-color: #fff;
+    border-bottom: 1px solid #e1e8ed;
     transition: background-color 0.3s ease;
 
     &:last-child {
@@ -124,8 +78,8 @@
   &__icon {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
     object-fit: cover;
+    border-radius: 50%;
   }
 
   &__info {
@@ -134,15 +88,15 @@
 
   &__name {
     margin: 0 0 0.5rem;
-    color: #333;
     font-size: 1.6rem;
     font-weight: 600;
+    color: #333;
   }
 
   &__status {
     margin: 0;
-    color: #666;
     font-size: 1.4rem;
+    color: #666;
   }
 
   &__action {
@@ -157,18 +111,18 @@
 
 // チャットカード
 .p-chatCard {
+  position: relative;
   display: flex;
   align-items: center;
-  position: relative;
   width: 100%;
   padding: 1.5rem;
+  background-color: #fff;
   border-radius: 8px;
   box-shadow: $box-shadow-lg;
-  background-color: #fff;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    box-shadow: 0 4px 8px rgb(0 0 0 / 0.15);
+    box-shadow: 0 4px 8px rgb(0 0 0 / 15%);
     transform: translateY(-2px);
   }
 
@@ -179,10 +133,10 @@
 
   &__iconWrap {
     flex-shrink: 0;
-    overflow: hidden;
     width: 56px;
     height: 56px;
     margin-right: 1.5rem;
+    overflow: hidden;
     border: 2px solid #f0f0f0;
     border-radius: 50%;
   }
@@ -195,41 +149,41 @@
 
   &__content {
     display: flex;
-    flex-direction: column;
     flex: 1;
+    flex-direction: column;
     gap: 0.5rem;
     min-width: 0;
     padding-right: 6rem;
   }
 
   &__name {
-    overflow: hidden;
     margin-bottom: 0.5rem;
-    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-size: 1.6rem;
     font-weight: 600;
+    color: #333;
     white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   &__time {
     position: absolute;
     top: 1.5rem;
     right: 1.5rem;
-    color: #999;
     font-size: 1.2rem;
+    color: #999;
   }
 
   &__preview {
     display: -webkit-box;
-    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
     -webkit-line-clamp: 2;
     line-clamp: 2;
-    overflow: hidden;
-    color: $color-text-gray;
     font-size: 1.4rem;
     line-height: 1.5;
-    text-overflow: ellipsis;
+    color: $color-text-gray;
+    -webkit-box-orient: vertical;
   }
 }
 
@@ -247,8 +201,8 @@
 
     .p-message__content {
       margin: 0 1.2rem 0 0;
-      border-radius: 16px 2px 16px 16px;
       background-color: $color-primary;
+      border-radius: 16px 2px 16px 16px;
 
       &::before {
         right: -8px;
@@ -271,9 +225,9 @@
 
   &__iconWrap {
     flex-shrink: 0;
-    overflow: hidden;
     width: 40px;
     height: 40px;
+    overflow: hidden;
     border: 2px solid #f0f0f0;
     border-radius: 50%;
   }
@@ -286,27 +240,27 @@
 
   &__content {
     position: relative;
-    margin: 0 0 0 1.2rem;
     padding: 1.2rem 1.6rem;
-    border-radius: 2px 16px 16px;
+    margin: 0 0 0 1.2rem;
     background-color: $bg-secondary;
+    border-radius: 2px 16px 16px;
 
     &::before {
       position: absolute;
       top: 12px;
       left: -8px;
+      content: "";
       border-top: 8px solid transparent;
       border-right: 8px solid $bg-secondary;
       border-bottom: 8px solid transparent;
-      content: "";
     }
   }
 
   &__text {
     margin: 0;
-    color: #333;
     font-size: 1.5rem;
     line-height: 1.5;
+    color: #333;
     word-break: break-word;
   }
 
@@ -314,8 +268,8 @@
     position: absolute;
     bottom: -2rem;
     left: 0;
-    color: #999;
     font-size: 1.2rem;
+    color: #999;
   }
 }
 
@@ -329,8 +283,8 @@
   border-radius: 4px;
 
   &__item {
-    margin-bottom: 15px;
     padding: 1.6rem;
+    margin-bottom: 15px;
     background: $bg-secondary;
 
     &:last-child {
@@ -341,14 +295,14 @@
   &__label {
     display: block;
     margin-bottom: 5px;
-    color: #666;
     font-size: 14px;
+    color: #666;
   }
 
   &__txt {
     margin: 0;
-    color: #333;
     font-size: 16px;
+    color: #333;
   }
 }
 
@@ -358,16 +312,16 @@
   flex-direction: column;
   align-items: center;
   max-width: 400px;
-  margin: 40px auto;
   padding: 20px;
+  margin: 40px auto;
+  background: #fff;
   border-radius: 8px;
   box-shadow: $box-shadow-lg;
-  background: #fff;
 
   &__btnWrap {
     display: flex;
-    justify-content: center;
     gap: 10px;
+    justify-content: center;
     width: 80%;
   }
 }
@@ -377,29 +331,10 @@
 // ==============================================
 @media screen and (width <= 1024px) {
   .p-nav {
-    &.--footer {
-      // フッターのナビゲーション
-      width: 70%;
-    }
     &__container {
       max-width: 90%;
       padding: 0.8rem;
       font-size: 1.2rem;
-    }
-    &__list {
-      &.--footer {
-        // フッターのナビゲーション
-        gap: 1.2rem;
-      }
-    }
-    &__item {
-      &.--footer {
-        // フッターのナビゲーション
-        a {
-          padding: 0.5rem 0;
-          font-size: 1.4rem;
-        }
-      }
     }
   }
 
@@ -409,8 +344,8 @@
 
   .p-profile-stats {
     flex-direction: column;
-    align-items: center;
     gap: 1rem;
+    align-items: center;
   }
 
   .p-tabs {
@@ -466,8 +401,8 @@
     }
 
     &__content {
-      margin: 0 0 0 1rem;
       padding: 1rem 1.4rem;
+      margin: 0 0 0 1rem;
     }
 
     &.--sent .p-message__content {
@@ -490,11 +425,6 @@
 // ==============================================
 @media screen and (width <= 649px) {
   .p-nav {
-    &.--footer {
-      // フッターのナビゲーション
-      width: 100%;
-      margin: 1.5rem 0 0;
-    }
     &__container {
       flex-direction: column;
       gap: 0.5rem;
@@ -507,39 +437,13 @@
 
     &__list {
       flex-wrap: wrap;
-      justify-content: center;
       gap: 1.5rem;
+      justify-content: center;
       width: 100%;
-      &.--footer {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1.5rem;
-      }
     }
 
     &__item {
       font-size: 1rem;
-
-      &.--footer {
-        // フッターのナビゲーション
-        flex: 0 0 auto;
-
-        a {
-          padding: 0.5rem;
-          transition: opacity 0.3s ease;
-          opacity: 0.8;
-          font-size: 1rem;
-
-          &::after {
-            bottom: -2px;
-          }
-
-          &:hover {
-            opacity: 1;
-          }
-        }
-      }
     }
   }
 
@@ -581,8 +485,8 @@
     }
 
     &__content {
-      margin: 0 0 0 0.8rem;
       padding: 0.8rem 1.2rem;
+      margin: 0 0 0 0.8rem;
 
       &::before {
         top: 10px;

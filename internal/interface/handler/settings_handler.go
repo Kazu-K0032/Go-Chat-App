@@ -9,6 +9,7 @@ import (
 	"security_chat_app/internal/infrastructure/firebase"
 	"security_chat_app/internal/interface/markup"
 	"security_chat_app/internal/interface/middleware"
+	"security_chat_app/internal/utils/uuid"
 )
 
 // 設定ページのデータ構造体
@@ -17,11 +18,7 @@ type SettingsPageData struct {
 	User             *domain.User // ユーザー情報
 	ShowPasswordForm bool         // パスワード変更フォームの表示状態
 	ShowUsernameForm bool         // ユーザー名変更フォームの表示状態
-	PasswordForm     struct {
-		CurrentPassword    string // 現在のパスワード
-		NewPassword        string // 新しいパスワード
-		NewPasswordConfirm string // 新しいパスワードの確認
-	}
+	PasswordForm     domain.PasswordForm // パスワード変更フォーム
 	UsernameForm struct {
 		NewUsername string // 新しいユーザー名
 	}
@@ -106,68 +103,77 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		// パスワード変更フォームの処理
 		r.ParseForm()
-		currentPassword := r.FormValue("current_password")
-		newPassword := r.FormValue("new_password")
-		newPasswordConfirm := r.FormValue("new_password_confirm")
+		form := domain.PasswordForm{
+			CurrentPassword:    r.FormValue("current_password"),
+			NewPassword:       r.FormValue("new_password"),
+			NewPasswordConfirm: r.FormValue("new_password_confirm"),
+		}
 
 		// バリデーション
 		var validationErrors []string
-		if currentPassword == "" {
+		if form.CurrentPassword == "" {
 			validationErrors = append(validationErrors, "現在のパスワードを入力してください")
 		}
-		if newPassword == "" {
+		if form.NewPassword == "" {
 			validationErrors = append(validationErrors, "新しいパスワードを入力してください")
 		}
-		if newPassword != newPasswordConfirm {
+		if len(form.NewPassword) < 8 {
+			validationErrors = append(validationErrors, "パスワードは8文字以上で入力してください")
+		}
+		if form.NewPassword != form.NewPasswordConfirm {
 			validationErrors = append(validationErrors, "新しいパスワードが一致しません")
 		}
 
+		// 現在のパスワードの検証
+		if !uuid.VerifyPassword(session.User.Password, form.CurrentPassword) {
+			validationErrors = append(validationErrors, "現在のパスワードが正しくありません")
+		}
+
 		if len(validationErrors) > 0 {
+			log.Printf("バリデーションエラー: %v", validationErrors)
 			data := SettingsPageData{
 				IsLoggedIn:       true,
 				User:             session.User,
 				ShowPasswordForm: true,
-				PasswordForm: struct {
-					CurrentPassword    string // 現在のパスワード
-					NewPassword        string // 新しいパスワード
-					NewPasswordConfirm string // 新しいパスワードの確認
-				}{
-					CurrentPassword:    currentPassword,
-					NewPassword:        newPassword,
-					NewPasswordConfirm: newPasswordConfirm,
-				},
+				PasswordForm:     form,
 				ValidationErrors: validationErrors,
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "settings", "footer")
 			return
 		}
 
-		// パスワード更新
-		err = firebase.UpdateField("users", session.User.ID, "Password", newPassword)
+		// 新しいパスワードのハッシュ化
+		hashedPassword, err := uuid.HashPassword(form.NewPassword)
 		if err != nil {
-			log.Printf("パスワード更新エラー: %v, userID=%s", err, session.User.ID)
-			validationErrors = append(validationErrors, "パスワードの更新に失敗しました")
+			log.Printf("パスワードハッシュ化エラー: %v", err)
 			data := SettingsPageData{
 				IsLoggedIn:       true,
 				User:             session.User,
 				ShowPasswordForm: true,
-				PasswordForm: struct {
-					CurrentPassword    string // 現在のパスワード
-					NewPassword        string // 新しいパスワード
-					NewPasswordConfirm string // 新しいパスワードの確認
-				}{
-					CurrentPassword:    currentPassword,
-					NewPassword:        newPassword,
-					NewPasswordConfirm: newPasswordConfirm,
-				},
-				ValidationErrors: validationErrors,
+				PasswordForm:     form,
+				ValidationErrors: []string{"パスワード更新エラーが発生しました"},
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "settings", "footer")
+			return
+		}
+
+		// パスワードの更新
+		err = firebase.UpdateField("users", session.User.ID, "Password", hashedPassword)
+		if err != nil {
+			log.Printf("パスワード更新エラー: %v", err)
+			data := SettingsPageData{
+				IsLoggedIn:       true,
+				User:             session.User,
+				ShowPasswordForm: true,
+				PasswordForm:     form,
+				ValidationErrors: []string{"パスワード更新エラーが発生しました"},
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "settings", "footer")
 			return
 		}
 
 		// 成功時は設定ページにリダイレクト
-		http.Redirect(w, r, "/settings", http.StatusSeeOther)
+		http.Redirect(w, r, "/settings?success=パスワードを更新しました", http.StatusSeeOther)
 		return
 	}
 

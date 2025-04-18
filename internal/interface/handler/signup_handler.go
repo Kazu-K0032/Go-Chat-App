@@ -1,25 +1,25 @@
 package handler
 
 import (
+	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"security_chat_app/internal/domain"
 	"security_chat_app/internal/infrastructure/firebase"
-	"security_chat_app/internal/infrastructure/repository"
 	"security_chat_app/internal/interface/markup"
+	"security_chat_app/internal/interface/middleware"
 	utils "security_chat_app/internal/utils/uuid"
 )
 
-type SignupForm struct {
-	Name     string
-	Email    string
-	Password string
-}
-
 // SignupHandler 新規登録画面の表示と確認画面への遷移を処理
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("サインアップリクエスト受信: %s %s", r.Method, r.URL.Path)
+
+	// サインアップ画面の表示
 	if r.Method == http.MethodGet {
+		log.Printf("サインアップページ表示")
 		data := domain.TemplateData{
 			IsLoggedIn: false,
 		}
@@ -27,75 +27,279 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// サインアップ処理
 	if r.Method == http.MethodPost {
+		log.Printf("サインアップ処理開始")
 		r.ParseForm()
-		form := SignupForm{
+		form := domain.SignupForm{
 			Name:     r.FormValue("name"),
 			Email:    r.FormValue("email"),
 			Password: r.FormValue("password"),
 		}
+		log.Printf("サインアップ試行: name=%s, email=%s", form.Name, form.Email)
 
-		// メールアドレスの重複チェック
-		existingUser, err := repository.GetUserByEmail(form.Email)
-		if err != nil {
-			http.Error(w, "データベースエラー", http.StatusInternalServerError)
-			return
+		// バリデーション
+		var validationErrors []string
+		if form.Name == "" {
+			validationErrors = append(validationErrors, "名前を入力してください")
 		}
-		if existingUser != nil {
+		if form.Email == "" {
+			validationErrors = append(validationErrors, "メールアドレスを入力してください")
+		}
+		if !strings.Contains(form.Email, "@") {
+			validationErrors = append(validationErrors, "有効なメールアドレスを入力してください")
+		}
+		if form.Password == "" {
+			validationErrors = append(validationErrors, "パスワードを入力してください")
+		}
+		if len(form.Password) < 8 {
+			validationErrors = append(validationErrors, "パスワードは8文字以上で入力してください")
+		}
+
+		if len(validationErrors) > 0 {
+			log.Printf("バリデーションエラー: %v", validationErrors)
 			data := domain.TemplateData{
-				IsLoggedIn: false,
-				SignupForm: domain.SignupForm{
-					Username: form.Name,
-					Email:    form.Email,
-					Password: form.Password,
-				},
-				Error: "このメールアドレスは既に登録されています",
+				IsLoggedIn:       false,
+				SignupForm:       domain.SignupForm{Name: form.Name, Email: form.Email, Password: form.Password},
+				ValidationErrors: validationErrors,
 			}
 			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
 			return
 		}
-		data := domain.TemplateData{
-			IsLoggedIn: false,
-			SignupForm: domain.SignupForm{
-				Username: form.Name,
-				Email:    form.Email,
-				Password: form.Password,
-			},
-		}
-		markup.GenerateHTML(w, data, "layout", "header", "register_confirm", "footer")
-	}
-}
 
-// SignupConfirmHandler 登録内容の確認とFirebaseへの保存を処理
-func SignupConfirmHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		r.ParseForm()
-		form := SignupForm{
-			Name:     r.FormValue("name"),
-			Email:    r.FormValue("email"),
-			Password: r.FormValue("password"),
+		// メールアドレスの重複チェック
+		existingUsers, err := firebase.GetDataByQuery("users", "Email", "==", form.Email)
+		if err != nil {
+			log.Printf("ユーザー検索エラー: %v", err)
+			data := domain.TemplateData{
+				IsLoggedIn:       false,
+				SignupForm:       domain.SignupForm{Name: form.Name, Email: form.Email, Password: form.Password},
+				ValidationErrors: []string{"エラーが発生しました"},
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
+			return
 		}
 
-		// ユーザーデータの作成
+		if len(existingUsers) > 0 {
+			log.Printf("メールアドレス重複エラー: %s", form.Email)
+			data := domain.TemplateData{
+				IsLoggedIn:       false,
+				SignupForm:       domain.SignupForm{Name: form.Name, Email: form.Email, Password: form.Password},
+				ValidationErrors: []string{"このメールアドレスは既に登録されています"},
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
+			return
+		}
+
+		// パスワードのハッシュ化
+		hashedPassword, err := utils.HashPassword(form.Password)
+		if err != nil {
+			log.Printf("パスワードハッシュ化エラー: %v", err)
+			data := domain.TemplateData{
+				IsLoggedIn:       false,
+				SignupForm:       domain.SignupForm{Name: form.Name, Email: form.Email, Password: form.Password},
+				ValidationErrors: []string{"エラーが発生しました"},
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
+			return
+		}
+
+		// UUIDの生成
+		userID, err := utils.GenerateUUID()
+		if err != nil {
+			log.Printf("UUID生成エラー: %v", err)
+			data := domain.TemplateData{
+				IsLoggedIn:       false,
+				SignupForm:       domain.SignupForm{Name: form.Name, Email: form.Email, Password: form.Password},
+				ValidationErrors: []string{"エラーが発生しました"},
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
+			return
+		}
+
+		// ユーザーの作成
 		user := &domain.User{
-			ID:        utils.GenerateUUID(),
+			ID:        userID,
 			Name:      form.Name,
 			Email:     form.Email,
-			Password:  form.Password,
+			Password:  hashedPassword,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
 
 		// Firestoreにユーザーを保存
-		err := firebase.AddData("users", user, user.ID)
+		err = firebase.AddData("users", user, user.ID)
 		if err != nil {
-			http.Error(w, "ユーザー登録エラー", http.StatusInternalServerError)
+			log.Printf("ユーザー作成エラー: %v", err)
+			data := domain.TemplateData{
+				IsLoggedIn:       false,
+				SignupForm:       domain.SignupForm{Name: form.Name, Email: form.Email, Password: form.Password},
+				ValidationErrors: []string{"ユーザー作成エラーが発生しました"},
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
 			return
 		}
 
-		// 登録成功後、ログインページにリダイレクト
+		// セッションの作成
+		session, err := middleware.CreateSession(user)
+		if err != nil {
+			log.Printf("セッション作成エラー: %v", err)
+			data := domain.TemplateData{
+				IsLoggedIn:       false,
+				SignupForm:       domain.SignupForm{Name: form.Name, Email: form.Email, Password: form.Password},
+				ValidationErrors: []string{"セッション作成エラーが発生しました"},
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
+			return
+		}
+
+		// セッションクッキーの設定
+		middleware.SetSessionCookie(w, session)
+		// サインアップ成功後、プロフィールページにリダイレクト
+		log.Printf("ユーザー作成成功: ID=%s, Name=%s", user.ID, user.Name)
+		log.Printf("サインアップ成功、プロフィールページへリダイレクト: userID=%s", user.ID)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// その他のHTTPメソッドは許可しない
+	log.Printf("不正なHTTPメソッド: %s", r.Method)
+	http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+}
+
+// SignupConfirmHandler 登録内容の確認とFirebaseへの保存を処理
+func SignupConfirmHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet, http.MethodPost:
+		// GETメソッドの場合はフォームの値をURLから取得
+		var form domain.SignupForm
+		if r.Method == http.MethodGet {
+			form = domain.SignupForm{
+				Name:     r.URL.Query().Get("name"),
+				Email:    r.URL.Query().Get("email"),
+				Password: r.URL.Query().Get("password"),
+			}
+		} else {
+			r.ParseForm()
+			form = domain.SignupForm{
+				Name:     r.FormValue("name"),
+				Email:    r.FormValue("email"),
+				Password: r.FormValue("password"),
+			}
+		}
+
+		// バリデーション
+		var validationErrors []string
+		if form.Name == "" {
+			validationErrors = append(validationErrors, "名前を入力してください")
+		}
+		if form.Email == "" {
+			validationErrors = append(validationErrors, "メールアドレスを入力してください")
+		}
+		if !strings.Contains(form.Email, "@") {
+			validationErrors = append(validationErrors, "有効なメールアドレスを入力してください")
+		}
+		if form.Password == "" {
+			validationErrors = append(validationErrors, "パスワードを入力してください")
+		}
+		if len(form.Password) < 8 {
+			validationErrors = append(validationErrors, "パスワードは8文字以上で入力してください")
+		}
+
+		if len(validationErrors) > 0 {
+			data := domain.TemplateData{
+				IsLoggedIn:       false,
+				SignupForm:       form,
+				ValidationErrors: validationErrors,
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
+			return
+		}
+
+		// メールアドレスの重複チェック
+		existingUsers, err := firebase.GetDataByQuery("users", "Email", "==", form.Email)
+		if err != nil {
+			log.Printf("ユーザー検索エラー: %v", err)
+			data := domain.TemplateData{
+				IsLoggedIn:       false,
+				SignupForm:       form,
+				ValidationErrors: []string{"エラーが発生しました"},
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
+			return
+		}
+
+		if len(existingUsers) > 0 {
+			data := domain.TemplateData{
+				IsLoggedIn:       false,
+				SignupForm:       form,
+				ValidationErrors: []string{"このメールアドレスは既に登録されています"},
+			}
+			markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
+			return
+		}
+
+		if r.Method == http.MethodPost {
+			// UUIDの生成
+			userID, err := utils.GenerateUUID()
+			if err != nil {
+				log.Printf("UUID生成エラー: %v", err)
+				data := domain.TemplateData{
+					IsLoggedIn:       false,
+					SignupForm:       form,
+					ValidationErrors: []string{"エラーが発生しました"},
+				}
+				markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
+				return
+			}
+
+			// パスワードのハッシュ化
+			hashedPassword, err := utils.HashPassword(form.Password)
+			if err != nil {
+				log.Printf("パスワードハッシュ化エラー: %v", err)
+				data := domain.TemplateData{
+					IsLoggedIn:       false,
+					SignupForm:       form,
+					ValidationErrors: []string{"エラーが発生しました"},
+				}
+				markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
+				return
+			}
+
+			// ユーザーデータの作成
+			user := &domain.User{
+				ID:        userID,
+				Name:      form.Name,
+				Email:     form.Email,
+				Password:  hashedPassword,
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
+			}
+
+			// Firestoreにユーザーを保存
+			err = firebase.AddData("users", user, user.ID)
+			if err != nil {
+				log.Printf("ユーザー作成エラー: %v", err)
+				data := domain.TemplateData{
+					IsLoggedIn:       false,
+					SignupForm:       form,
+					ValidationErrors: []string{"ユーザー作成エラーが発生しました"},
+				}
+				markup.GenerateHTML(w, data, "layout", "header", "register", "footer")
+				return
+			}
+
+			// 登録成功後、ログインページにリダイレクト
+			http.Redirect(w, r, "/login?success=true", http.StatusSeeOther)
+			return
+		}
+
+		// 確認画面の表示
+		data := domain.TemplateData{
+			IsLoggedIn: false,
+			SignupForm: form,
+		}
+		markup.GenerateHTML(w, data, "layout", "header", "register_confirm", "footer")
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}

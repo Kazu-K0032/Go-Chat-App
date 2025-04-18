@@ -14,6 +14,7 @@ type TemplateData struct {
 	ValidationErrors []string   // バリデーションエラー
 	Error            string     // エラー
 	ChatID           string     // チャットID
+	Success          bool       // 成功メッセージの表示フラグ
 }
 
 // DefaultIcon デフォルトアイコンの情報

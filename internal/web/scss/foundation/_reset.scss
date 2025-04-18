@@ -6,10 +6,10 @@
 *,
 ::before,
 ::after {
-  min-width: 0;
-  border-width: 0;
-  border-style: solid;
   box-sizing: border-box;
+  min-width: 0;
+  border-style: solid;
+  border-width: 0;
 }
 
 // Document
@@ -20,9 +20,9 @@
 // 3. Remove gray overlay on links for iOS.
 
 html {
-  line-height: 1.15; // 1
-  text-size-adjust: 100%; // 2
-  -webkit-tap-highlight-color: transparent; // 3
+  line-height: 1.15;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 // Sections
@@ -74,17 +74,18 @@ h6 {
 
 ul,
 ol {
-  list-style: none;
-  margin: 0;
   padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 // Lists (definition)
 // ============================================
 
 dt {
-  font-weight: bold;
+  font-weight: 700;
 }
+
 dd {
   margin-left: 0;
 }
@@ -96,22 +97,23 @@ dd {
 // 2. Show the overflow in Edge and IE.
 
 hr {
-  overflow: visible; // 2
   clear: both;
+  box-sizing: content-box; // 1
   height: 0; // 1
   margin: 0;
-  border-top-width: 1px;
-  box-sizing: content-box; // 1
+  overflow: visible; // 2
   color: inherit;
+  border-top-width: 1px;
 }
 
 // 1. Correct the inheritance and scaling of font size in all browsers.
 // 2. Correct the odd `em` font sizing in all browsers.
 
 pre {
-  font-size: inherit; // 2
   font-family: monospace; // 1
+  font-size: inherit; // 2
 }
+
 address {
   font-style: inherit;
 }
@@ -122,9 +124,9 @@ address {
 // Remove the gray background on active links in IE 10.
 
 a {
-  background-color: transparent;
   color: inherit;
   text-decoration: none;
+  background-color: transparent;
 }
 
 // 1. Remove the bottom border in Chrome 57-
@@ -147,8 +149,8 @@ strong {
 code,
 kbd,
 samp {
-  font-size: inherit; // 2
   font-family: monospace; // 1
+  font-size: inherit; // 2
 }
 
 // Add the correct font size in all browsers.
@@ -166,9 +168,11 @@ sup {
   line-height: 0;
   vertical-align: baseline;
 }
+
 sub {
   bottom: -0.25em;
 }
+
 sup {
   top: -0.5em;
 }
@@ -199,16 +203,16 @@ input,
 optgroup,
 select,
 textarea {
-  margin: 0;
   padding: 0;
-  border-radius: 0;
-  background: transparent;
-  color: inherit;
+  margin: 0;
   font: inherit;
-  text-align: inherit;
   vertical-align: middle;
+  color: inherit;
+  text-align: inherit;
   text-transform: inherit; // 2 // 1
   appearance: none;
+  background: transparent;
+  border-radius: 0;
 }
 
 // Correct cursors for clickable elements.
@@ -219,6 +223,7 @@ button,
 [type="submit"] {
   cursor: pointer;
 }
+
 button:disabled,
 [type="button"]:disabled,
 [type="reset"]:disabled,
@@ -231,6 +236,7 @@ button:disabled,
 :-moz-focusring {
   outline: auto;
 }
+
 select:disabled {
   opacity: inherit;
 }
@@ -245,9 +251,10 @@ option {
 
 fieldset {
   min-width: 0;
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
+
 legend {
   padding: 0;
 }
@@ -330,18 +337,21 @@ summary {
 // 1. Correct table border color inheritance in all Chrome and Safari.
 
 table {
-  border-color: inherit; // 1
   border-collapse: collapse;
+  border-color: inherit; // 1
 }
+
 caption {
   text-align: left;
 }
+
 td,
 th {
   padding: 0;
   vertical-align: top;
 }
+
 th {
-  font-weight: bold;
+  font-weight: 700;
   text-align: left;
 }

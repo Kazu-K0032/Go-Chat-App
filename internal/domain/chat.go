@@ -8,7 +8,7 @@ import (
 type MessageType string
 
 const (
-	MessageTypeText  MessageType = "text"
+	MessageTypeText  MessageType = "text" // 
 	MessageTypeImage MessageType = "image"
 	MessageTypeVideo MessageType = "video"
 	MessageTypeAudio MessageType = "audio"
