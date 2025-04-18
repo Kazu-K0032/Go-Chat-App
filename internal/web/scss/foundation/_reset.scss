@@ -20,9 +20,10 @@
 // 3. Remove gray overlay on links for iOS.
 
 html {
-  line-height: 1.15; // 1
-  text-size-adjust: 100%; // 2
-  -webkit-tap-highlight-color: transparent; // 3
+  line-height: 1.15;
+  text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 // Sections
@@ -83,8 +84,9 @@ ol {
 // ============================================
 
 dt {
-  font-weight: bold;
+  font-weight: 700;
 }
+
 dd {
   margin-left: 0;
 }
@@ -112,6 +114,7 @@ pre {
   font-size: inherit; // 2
   font-family: monospace; // 1
 }
+
 address {
   font-style: inherit;
 }
@@ -166,9 +169,11 @@ sup {
   line-height: 0;
   vertical-align: baseline;
 }
+
 sub {
   bottom: -0.25em;
 }
+
 sup {
   top: -0.5em;
 }
@@ -219,6 +224,7 @@ button,
 [type="submit"] {
   cursor: pointer;
 }
+
 button:disabled,
 [type="button"]:disabled,
 [type="reset"]:disabled,
@@ -231,6 +237,7 @@ button:disabled,
 :-moz-focusring {
   outline: auto;
 }
+
 select:disabled {
   opacity: inherit;
 }
@@ -248,6 +255,7 @@ fieldset {
   margin: 0;
   padding: 0;
 }
+
 legend {
   padding: 0;
 }
@@ -333,15 +341,18 @@ table {
   border-color: inherit; // 1
   border-collapse: collapse;
 }
+
 caption {
   text-align: left;
 }
+
 td,
 th {
   padding: 0;
   vertical-align: top;
 }
+
 th {
-  font-weight: bold;
+  font-weight: 700;
   text-align: left;
 }
