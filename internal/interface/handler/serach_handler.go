@@ -56,7 +56,7 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 	if query != "" {
 		users, err = SearchUsers(query)
 	} else {
-		users, err = firebase.GetAllData("users")
+		users, err = firebase.GetAllData("users", "")
 	}
 
 	if err != nil {
@@ -64,7 +64,7 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 	}
 
 	// チャット履歴を取得
-	chats, err := firebase.GetAllData("chats")
+	chats, err := firebase.GetAllData("chats", user.ID)
 	if err != nil {
 		return SearchPageData{}, fmt.Errorf("チャット履歴の取得に失敗しました: %v", err)
 	}
