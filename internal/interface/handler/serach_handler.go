@@ -76,9 +76,23 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 		if !ok {
 			continue
 		}
+		
+		// 現在のユーザーが参加しているチャットかどうかを確認
+		isUserChat := false
 		for _, p := range participants {
-			if participantID, ok := p.(string); ok {
-				chattedUsers[participantID] = true
+			if participantID, ok := p.(string); ok && participantID == user.ID {
+				isUserChat = true
+				break
+			}
+		}
+
+		// 現在のユーザーが参加しているチャットの場合のみ、
+		// 相手のユーザーIDをchattedUsersに追加
+		if isUserChat {
+			for _, p := range participants {
+				if participantID, ok := p.(string); ok && participantID != user.ID {
+					chattedUsers[participantID] = true
+				}
 			}
 		}
 	}
