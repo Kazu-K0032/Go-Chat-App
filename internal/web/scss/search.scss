@@ -4,17 +4,28 @@
 @use "_index" as *;
 
 .l-search {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 1200px;
+  row-gap: 20px;
+  height: calc(100vh - 15rem);
   padding: 2rem;
-  margin: 0 auto;
 
   &__header {
     margin-bottom: 3rem;
   }
 
   &__content {
+    flex: 1;
     width: 100%;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
 
