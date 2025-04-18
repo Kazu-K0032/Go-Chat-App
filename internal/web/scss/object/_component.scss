@@ -188,17 +188,8 @@
   text-decoration: none;
   text-align: center;
 
-  &.--footer {
-    // フッターのリンク
-    color: $color-text-gray;
-  }
-
   &:hover {
     text-decoration: underline;
-    &.--footer {
-      // フッターのリンク
-      text-decoration: none;
-    }
   }
 }
 
@@ -268,10 +259,7 @@
     font-size: 1.5rem;
   }
   .c-link {
-    &.--footer {
-      // フッターのリンク
-      margin-top: 0;
-    }
+    margin-top: 0;
   }
   .c-midTtl {
     &.--profile {
