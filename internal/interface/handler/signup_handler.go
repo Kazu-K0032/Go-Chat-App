@@ -10,7 +10,7 @@ import (
 	"security_chat_app/internal/infrastructure/firebase"
 	"security_chat_app/internal/interface/markup"
 	"security_chat_app/internal/interface/middleware"
-	utils "security_chat_app/internal/utils/uuid"
+	"security_chat_app/internal/utils/uuid"
 )
 
 // 新規登録画面の表示と確認画面への遷移を処理
@@ -185,14 +185,14 @@ func checkEmailDuplicate(email string) (bool, error) {
 // ユーザーデータの作成と保存
 func createAndSaveUser(form domain.SignupForm) (*domain.User, error) {
 	// パスワードのハッシュ化
-	hashedPassword, err := utils.HashPassword(form.Password)
+	hashedPassword, err := uuid.HashPassword(form.Password)
 	if err != nil {
 		log.Printf("パスワードハッシュ化エラー: %v", err)
 		return nil, err
 	}
 
 	// UUIDの生成
-	userID, err := utils.GenerateUUID()
+	userID, err := uuid.GenerateUUID()
 	if err != nil {
 		log.Printf("UUID生成エラー: %v", err)
 		return nil, err
