@@ -49,6 +49,8 @@ jobs:
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           script: |
             # tmuxセッションに接続してサーバーを再起動
+            tmux attach -t main
+            sleep 2
             tmux send-keys -t main "C-c" C-m
             sleep 2
             tmux send-keys -t main "go run cmd/app/main.go" C-m
