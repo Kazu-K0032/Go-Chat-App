@@ -7,22 +7,6 @@ import (
 // メッセージの種類
 type MessageType string
 
-const (
-	MessageTypeText  MessageType = "text" // 
-	MessageTypeImage MessageType = "image"
-	MessageTypeVideo MessageType = "video"
-	MessageTypeAudio MessageType = "audio"
-	MessageTypeFile  MessageType = "file"
-)
-
-// エラーコードの定数
-const (
-	ChatErrorCodeInvalidInput  = "INVALID_INPUT"
-	ChatErrorCodeNotFound      = "NOT_FOUND"
-	ChatErrorCodeUnauthorized  = "UNAUTHORIZED"
-	ChatErrorCodeInternalError = "INTERNAL_ERROR"
-)
-
 // チャットの構造体
 type Chat struct {
 	ID        string    // チャットのID
@@ -48,7 +32,6 @@ type Message struct {
 	ChatID     string      // チャットのID
 	SenderID   string      // 送信者のID
 	SenderName string      // 送信者の名前
-	Type       MessageType // メッセージの種類
 	Content    string      // メッセージの内容
 	MediaURL   string      // メッセージのメディアのURL
 	CreatedAt  time.Time   // メッセージの作成日時
@@ -76,15 +59,4 @@ type ChatController interface {
 	HandleCreateChat(user, message string) error
 	HandleGetChatHistory(user *User) ([]Chat, error)
 	HandleGetContacts(user *User) ([]Contact, error)
-}
-
-// チャット関連のエラー
-type ChatError struct {
-	Code    string // エラーコード
-	Message string // エラーメッセージ
-}
-
-// エラーの文字列を返す
-func (e *ChatError) Error() string {
-	return e.Message
 }

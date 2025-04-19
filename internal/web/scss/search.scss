@@ -6,9 +6,9 @@
 .l-search {
   display: flex;
   flex-direction: column;
+  row-gap: 20px;
   width: 100%;
   max-width: 1200px;
-  row-gap: 20px;
   height: calc(100vh - 15rem);
   padding: 2rem;
 

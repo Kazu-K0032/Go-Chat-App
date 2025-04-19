@@ -10,11 +10,11 @@ type TemplateData struct {
 	CurrentChat      *Chat      // 現在のチャット
 	SignupForm       SignupForm // サインアップフォーム
 	LoginForm        LoginForm  // ログインフォーム
+	Success          bool       // 成功メッセージの表示フラグ
 	ResetForm        ResetForm  // リセットフォーム
 	ValidationErrors []string   // バリデーションエラー
 	Error            string     // エラー
 	ChatID           string     // チャットID
-	Success          bool       // 成功メッセージの表示フラグ
 }
 
 // DefaultIcon デフォルトアイコンの情報
@@ -23,7 +23,7 @@ type DefaultIcon struct {
 	Name string // 名前
 }
 
-// GetDefaultIcons デフォルトアイコンの一覧を取得する
+// デフォルトアイコンの一覧を取得する
 func GetDefaultIcons() []DefaultIcon {
 	return []DefaultIcon{}
 }

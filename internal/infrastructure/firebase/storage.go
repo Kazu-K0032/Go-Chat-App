@@ -17,7 +17,6 @@ import (
 
 // アイコンをアップロードする
 func UploadIcon(userID string, filePath string) (string, error) {
-	// Firebase Storageクライアントを初期化
 	opt := option.WithCredentialsFile(config.Config.ServiceKeyPath)
 	config := &firebase.Config{
 		ProjectID:     config.Config.ProjectId,
