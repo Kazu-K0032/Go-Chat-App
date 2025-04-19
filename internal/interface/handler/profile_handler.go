@@ -19,14 +19,11 @@ import (
 	"security_chat_app/internal/utils/icons"
 )
 
-// ProfileData プロフィールページのデータ構造体
+// プロフィールページのデータ構造体
 type ProfileData struct {
 	IsLoggedIn     bool
 	LoggedInUserID string
 	User           *domain.User
-	Posts          []domain.Post
-	Replies        []domain.Post
-	Likes          []domain.Post
 }
 
 // プロフィールページの表示
@@ -45,7 +42,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		targetUserID = path[len("/profile/"):]
 		if targetUserID == "" {
-			http.Error(w, "ユーザーIDが指定されていません", http.StatusBadRequest)
+			log.Fatalf("ユーザーIDが指定されていません")
 			return
 		}
 	}
@@ -53,7 +50,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	// ユーザー情報の取得
 	user, err := repository.GetUserByID(targetUserID)
 	if err != nil {
-		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("ユーザー情報の取得に失敗: %v", err)
 		return
 	}
 
@@ -63,8 +60,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		defaultIconPath := fmt.Sprintf(icons.DefaultIconPath+"/default_icon_%s.png", icons.DefaultIconNames[randomNum])
 		iconURL, er := firebase.GetDefaultIconURL(defaultIconPath)
 		if er != nil {
-			fmt.Printf("デフォルトアイコンの取得に失敗: %v\n", err)
-			http.Error(w, "デフォルトアイコンの取得に失敗しました", http.StatusInternalServerError)
+			log.Fatalf("デフォルトアイコンの取得に失敗: %v", er)
 			return
 		}
 
@@ -72,28 +68,9 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		user.Icon = iconURL
 		err = firebase.UpdateField("users", user.ID, "Icon", iconURL)
 		if err != nil {
-			http.Error(w, "アイコンURLの更新に失敗しました", http.StatusInternalServerError)
+			log.Fatalf("アイコンURLの更新に失敗: %v", err)
 			return
 		}
-	}
-
-	// 投稿、返信、いいねを取得
-	posts, err := firebase.GetUserPosts(user.ID)
-	if err != nil {
-		fmt.Printf("投稿の取得に失敗: %v\n", err)
-		posts = []domain.Post{}
-	}
-
-	replies, err := firebase.GetUserReplies(user.ID)
-	if err != nil {
-		fmt.Printf("返信の取得に失敗: %v\n", err)
-		replies = []domain.Post{}
-	}
-
-	likes, err := firebase.GetUserLikedPosts(user.ID)
-	if err != nil {
-		fmt.Printf("いいねの取得に失敗: %v\n", err)
-		likes = []domain.Post{}
 	}
 
 	// 最終更新日時を現在時刻に更新 (自分のプロフィールの場合のみ更新すべきか検討)
@@ -101,7 +78,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		user.UpdatedAt = time.Now()
 		err = firebase.UpdateField("users", user.ID, "UpdatedAt", user.UpdatedAt)
 		if err != nil {
-			http.Error(w, "最終更新日時の更新に失敗しました", http.StatusInternalServerError)
+			log.Fatalf("最終更新日時の更新に失敗: %v", err)
 			return
 		}
 	}
@@ -111,9 +88,6 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		IsLoggedIn:     true,
 		LoggedInUserID: session.User.ID,
 		User:           user,
-		Posts:          posts,
-		Replies:        replies,
-		Likes:          likes,
 	}
 
 	// テンプレートを描画
@@ -124,7 +98,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
-		http.Error(w, "セッションが無効です", http.StatusUnauthorized)
+		log.Fatalf("セッションが無効: %v", err)
 		return
 	}
 
@@ -138,21 +112,21 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 自分のプロフィール以外での変更を防止
 	if targetUserID != "" && targetUserID != session.User.ID {
-		http.Error(w, "他のユーザーのアイコンは変更できません", http.StatusForbidden)
+		log.Fatalf("他のユーザーのアイコンは変更できません")
 		return
 	}
 
 	// マルチパートフォームの解析
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		http.Error(w, "フォームの解析に失敗しました", http.StatusBadRequest)
+		log.Fatalf("フォームの解析に失敗: %v", err)
 		return
 	}
 
 	// アイコンファイルを取得
 	file, header, err := r.FormFile("icon")
 	if err != nil {
-		http.Error(w, "アイコンファイルの取得に失敗しました", http.StatusBadRequest)
+		log.Fatalf("アイコンファイルの取得に失敗: %v", err)
 		return
 	}
 	defer file.Close()
@@ -160,7 +134,7 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	// ファイルサイズの制限（5MB）
 	const maxFileSize = 5 * 1024 * 1024
 	if header.Size > maxFileSize {
-		http.Error(w, "ファイルサイズは5MB以下にしてください", http.StatusBadRequest)
+		log.Fatalf("ファイルサイズは5MB以下にしてください: %v", err)
 		return
 	}
 
@@ -172,7 +146,7 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 		".png":  true,
 	}
 	if !allowedExts[ext] {
-		http.Error(w, "アップロードできるファイル形式は.jpg、.jpeg、.pngのみです", http.StatusBadRequest)
+		log.Fatalf("アップロードできるファイル形式は.jpg、.jpeg、.pngのみです: %v", err)
 		return
 	}
 
@@ -180,12 +154,12 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	buff := make([]byte, 512)
 	_, err = file.Read(buff)
 	if err != nil {
-		http.Error(w, "ファイルの読み込みに失敗しました", http.StatusInternalServerError)
+		log.Fatalf("ファイルの読み込みに失敗: %v", err)
 		return
 	}
 	filetype := http.DetectContentType(buff)
 	if !strings.HasPrefix(filetype, "image/") {
-		http.Error(w, "画像ファイルのみアップロード可能です", http.StatusBadRequest)
+		log.Fatalf("画像ファイルのみアップロード可能: %v", err)
 		return
 	}
 	file.Seek(0, 0)
@@ -193,7 +167,7 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	// 一時ファイルを作成
 	tempFile, err := os.CreateTemp("", "icon-*"+ext)
 	if err != nil {
-		http.Error(w, "一時ファイルの作成に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("一時ファイルの作成に失敗: %v", err)
 		return
 	}
 	defer tempFile.Close()
@@ -201,7 +175,7 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	// ファイルをコピー
 	_, err = io.Copy(tempFile, file)
 	if err != nil {
-		http.Error(w, "ファイルの保存に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("ファイルの保存に失敗: %v", err)
 		return
 	}
 
@@ -211,8 +185,7 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	// Firebase Storageにアップロード
 	iconURL, err := firebase.UploadIcon(session.User.ID, tempFilePath)
 	if err != nil {
-		log.Printf("アイコンアップロードエラー: %v", err)
-		http.Error(w, fmt.Sprintf("アイコンのアップロードに失敗しました: %v", err), http.StatusInternalServerError)
+		log.Fatalf("アイコンのアップロードに失敗: %v", err)
 		return
 	}
 
@@ -222,7 +195,7 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	// ユーザードキュメントを更新
 	err = firebase.UpdateField("users", session.User.ID, "Icon", iconURL)
 	if err != nil {
-		http.Error(w, "ユーザー情報の更新に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("ユーザー情報の更新に失敗: %v", err)
 		return
 	}
 
