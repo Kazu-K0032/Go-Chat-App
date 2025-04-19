@@ -98,6 +98,8 @@ https://go-chat-app.kuji-server.com/
 
 6. **設定ファイルの修正（`config.ini`）**
 
+    * または `config.ini` をコピーし `config.local.ini`に変更してください。
+
     * ポートの設定をしています。ご自身の環境に合わせて、随時修正してください。
 
     ```txt
@@ -120,14 +122,14 @@ https://go-chat-app.kuji-server.com/
     <img src="https://github.com/user-attachments/assets/7918ecc4-1617-478d-82db-65b183fbbf33" height="300">
 
 
-7. **モジュール初期化および依存解決**
+8. **モジュール初期化および依存解決**
 
    * 事前に、Go及びNode.jsをダウンロードしてください。
       * バージョンは、Goは最低1.21以上, Node.jsはv16.0.0以上を目安に更新してください。
       
       ```bash
       go version
-      npm -v
+      node -v
       ```
 
    * 以下を実行してください。
@@ -141,7 +143,7 @@ https://go-chat-app.kuji-server.com/
       npm install
       ```
 
-8. **サーバーの起動**
+9. **サーバーの起動**
 
      ```bash
      go run cmd/app/main.go
