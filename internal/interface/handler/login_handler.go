@@ -11,13 +11,10 @@ import (
 	"security_chat_app/internal/utils/uuid"
 )
 
-// LoginHandler ログイン処理を実行
+// ログイン処理
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("ログインリクエスト受信: %s %s", r.Method, r.URL.Path)
-
 	// ログイン画面の表示
 	if r.Method == http.MethodGet {
-		log.Printf("ログインページ表示")
 		data := domain.TemplateData{
 			LoginForm: domain.LoginForm{},
 			Success:   r.URL.Query().Get("success") == "true",
@@ -28,13 +25,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// ログイン処理
 	if r.Method == http.MethodPost {
-		log.Printf("ログイン処理開始")
 		r.ParseForm()
 		form := domain.LoginForm{
 			Email:    r.FormValue("email"),
 			Password: r.FormValue("password"),
 		}
-		log.Printf("ログイン試行: email=%s", form.Email)
 
 		// バリデーション
 		var validationErrors []string
@@ -46,7 +41,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if len(validationErrors) > 0 {
-			log.Printf("バリデーションエラー: %v", validationErrors)
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
 				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},
@@ -70,7 +64,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if user == nil || !uuid.VerifyPassword(user.Password, form.Password) {
-			log.Printf("パスワード認証エラー")
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
 				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},
@@ -95,14 +88,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		// セッションクッキーの設定
 		middleware.SetSessionCookie(w, session)
-		// ログイン成功後、プロフィールページにリダイレクト
-		log.Printf("ユーザー認証成功: ID=%s, Name=%s", user.ID, user.Name)
-		log.Printf("ログイン成功、ホームページへリダイレクト: userID=%s", user.ID)
 		http.Redirect(w, r, "/profile", http.StatusSeeOther)
 		return
 	}
 
 	// その他のHTTPメソッドは許可しない
-	log.Printf("不正なHTTPメソッド: %s", r.Method)
-	http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	log.Fatalf("メソッドが許可されていません")
 }

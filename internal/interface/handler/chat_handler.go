@@ -19,50 +19,44 @@ import (
 // チャット開始ハンドラ
 func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "メソッドが許可されていません", http.StatusMethodNotAllowed)
+		log.Fatalf("メソッドが許可されていません")
 		return
 	}
 
 	// セッションの検証
 	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
-		http.Error(w, "認証されていません", http.StatusUnauthorized)
+		log.Fatalf("認証されていません: %v", err)
 		return
 	}
 
 	// セッションからユーザー情報を取得
 	user, err := repository.GetUserByID(session.User.ID)
 	if err != nil {
-		log.Printf("ユーザー情報の取得に失敗: %v", err)
-		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("ユーザー情報の取得に失敗: %v", err)
 		return
 	}
 
 	// URLから対象ユーザーIDを取得
 	targetUserID := r.URL.Path[len("/chat/"):]
-	log.Printf("対象ユーザーID: %s", targetUserID)
 	if targetUserID == "" {
-		http.Error(w, "ユーザーIDが指定されていません", http.StatusBadRequest)
+		log.Fatalf("ユーザーIDが指定されていません")
 		return
 	}
 
 	// 対象ユーザーの存在確認
-	targetUser, err := GetUserData(targetUserID)
+	_, err = GetUserData(targetUserID)
 	if err != nil {
-		log.Printf("対象ユーザーの取得に失敗: %v", err)
-		http.Error(w, "対象ユーザーが見つかりません", http.StatusNotFound)
+		log.Fatalf("対象ユーザーが見つかりません: %v", err)
 		return
 	}
-	log.Printf("対象ユーザー情報: %+v", targetUser)
 
 	// チャットを開始
 	chatID, err := firebase.StartChat(user.ID, targetUserID)
 	if err != nil {
-		log.Printf("チャット開始に失敗: %v", err)
-		http.Error(w, "チャットの開始に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("チャットの開始に失敗: %v", err)
 		return
 	}
-	log.Printf("チャットID: %s", chatID)
 
 	// チャットページにリダイレクト
 	redirectURL := fmt.Sprintf("/chat?chat_id=%s", chatID)
@@ -81,7 +75,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// セッションからユーザー情報を取得
 	user, err := repository.GetUserByID(session.User.ID)
 	if err != nil {
-		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("ユーザー情報の取得に失敗: %v", err)
 		return
 	}
 
@@ -92,7 +86,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		content := r.FormValue("content")
 
 		if chatID == "" || content == "" {
-			http.Error(w, "チャットIDとメッセージ内容が必要です", http.StatusBadRequest)
+			log.Fatalf("チャットIDとメッセージ内容が必要です")
 			return
 		}
 
@@ -113,7 +107,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		// メッセージを保存
 		err = firebase.AddChatMessage(chatID, message)
 		if err != nil {
-			http.Error(w, "メッセージの送信に失敗しました", http.StatusInternalServerError)
+			log.Fatalf("メッセージの送信に失敗: %v", err)
 			return
 		}
 
@@ -139,7 +133,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// チャット履歴を取得
 	chats, err := getChatHistory(user)
 	if err != nil {
-		http.Error(w, "チャット一覧の取得に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("チャット一覧の取得に失敗: %v", err)
 		return
 	}
 
@@ -160,18 +154,18 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// チャットの存在確認
 	exists, err := firebase.CheckChatExists(chatID)
 	if err != nil {
-		http.Error(w, "チャットの確認に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("チャットの確認に失敗: %v", err)
 		return
 	}
 	if !exists {
-		http.Error(w, "チャットが見つかりません", http.StatusNotFound)
+		log.Fatalf("チャットが見つかりません")
 		return
 	}
 
 	// チャットの参加者を取得
 	participants, err := firebase.GetChatParticipants(chatID)
 	if err != nil {
-		http.Error(w, "チャットの参加者情報の取得に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("チャットの参加者情報の取得に失敗: %v", err)
 		return
 	}
 
@@ -187,21 +181,21 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// 対象ユーザーの存在確認
 	_, err = GetUserData(targetUserID)
 	if err != nil {
-		http.Error(w, "対象ユーザーが見つかりません", http.StatusNotFound)
+		log.Fatalf("対象ユーザーが見つかりません: %v", err)
 		return
 	}
 
 	// 対象ユーザーの情報を取得
 	targetUser, err := GetUserData(targetUserID)
 	if err != nil {
-		http.Error(w, "対象ユーザーの情報の取得に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("対象ユーザーの情報の取得に失敗: %v", err)
 		return
 	}
 
 	// メッセージを取得
 	messagesData, err := firebase.GetChatMessages(chatID)
 	if err != nil {
-		http.Error(w, "メッセージの取得に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("メッセージの取得に失敗: %v", err)
 		return
 	}
 
@@ -400,6 +394,7 @@ func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 				Username: targetUser.Name,
 				Icon:     targetUser.Icon,
 				LastSeen: time.Now(),
+				IsOnline: targetUser.IsOnline,
 			},
 			Messages:  messages,
 			UpdatedAt: lastMessageTime,
@@ -429,7 +424,7 @@ func NewChatController(chatUsecase domain.ChatUsecase) *ChatControllerImpl {
 // Create チャットを作成する
 func (c *ChatControllerImpl) Create(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		log.Fatalf("メソッドが許可されていません")
 		return
 	}
 
@@ -437,7 +432,7 @@ func (c *ChatControllerImpl) Create(w http.ResponseWriter, r *http.Request) {
 	message := r.FormValue("message")
 
 	if err := c.chatUsecase.CreateChat(user, message); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Fatalf("チャットの作成に失敗: %v", err)
 		return
 	}
 
@@ -447,21 +442,21 @@ func (c *ChatControllerImpl) Create(w http.ResponseWriter, r *http.Request) {
 // メッセージ送信ハンドラ
 func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		log.Fatalf("メソッドが許可されていません")
 		return
 	}
 
 	// セッションの検証
 	session, err := middleware.ValidateSession(w, r)
 	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		log.Fatalf("認証されていません: %v", err)
 		return
 	}
 
 	// セッションからユーザー情報を取得
 	user, err := repository.GetUserByID(session.User.ID)
 	if err != nil {
-		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("ユーザー情報の取得に失敗: %v", err)
 		return
 	}
 
@@ -470,7 +465,7 @@ func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 	content := r.FormValue("content")
 
 	if chatID == "" || content == "" {
-		http.Error(w, "チャットIDとメッセージ内容が必要です", http.StatusBadRequest)
+		log.Fatalf("チャットIDとメッセージ内容が必要です")
 		return
 	}
 
@@ -486,7 +481,7 @@ func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 	// メッセージを保存
 	err = firebase.AddChatMessage(chatID, message)
 	if err != nil {
-		http.Error(w, "メッセージの送信に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("メッセージの送信に失敗: %v", err)
 		return
 	}
 
