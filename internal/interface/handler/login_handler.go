@@ -11,9 +11,8 @@ import (
 	"security_chat_app/internal/utils/uuid"
 )
 
-// LoginHandler ログイン処理を実行
+// ログイン処理
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-
 	// ログイン画面の表示
 	if r.Method == http.MethodGet {
 		data := domain.TemplateData{
@@ -42,7 +41,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if len(validationErrors) > 0 {
-			log.Printf("バリデーションエラー: %v", validationErrors)
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
 				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},
@@ -66,7 +64,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if user == nil || !uuid.VerifyPassword(user.Password, form.Password) {
-			log.Printf("パスワード認証エラー")
 			data := domain.TemplateData{
 				IsLoggedIn:       false,
 				LoginForm:        domain.LoginForm{Email: form.Email, Password: form.Password},
