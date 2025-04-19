@@ -146,7 +146,7 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 		".png":  true,
 	}
 	if !allowedExts[ext] {
-		log.Fatalf("アップロードできるファイル形式は.jpg、.jpeg、.pngのみです: %v", err)
+		http.Redirect(w, r, "/profile?error=アップロードできるファイル形式は.jpg、.jpeg、.pngのみです", http.StatusSeeOther)
 		return
 	}
 
@@ -155,11 +155,13 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	_, err = file.Read(buff)
 	if err != nil {
 		log.Fatalf("ファイルの読み込みに失敗: %v", err)
+		http.Redirect(w, r, "/profile?error=ファイルの読み込みに失敗しました", http.StatusSeeOther)
 		return
 	}
 	filetype := http.DetectContentType(buff)
 	if !strings.HasPrefix(filetype, "image/") {
 		log.Fatalf("画像ファイルのみアップロード可能: %v", err)
+		http.Redirect(w, r, "/profile?error=画像ファイルのみアップロード可能です", http.StatusSeeOther)
 		return
 	}
 	file.Seek(0, 0)
@@ -186,6 +188,7 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	iconURL, err := firebase.UploadIcon(session.User.ID, tempFilePath)
 	if err != nil {
 		log.Fatalf("アイコンのアップロードに失敗: %v", err)
+		http.Redirect(w, r, "/profile?error=アイコンのアップロードに失敗しました", http.StatusSeeOther)
 		return
 	}
 
@@ -196,6 +199,7 @@ func ProfileIconHandler(w http.ResponseWriter, r *http.Request) {
 	err = firebase.UpdateField("users", session.User.ID, "Icon", iconURL)
 	if err != nil {
 		log.Fatalf("ユーザー情報の更新に失敗: %v", err)
+		http.Redirect(w, r, "/profile?error=ユーザー情報の更新に失敗しました", http.StatusSeeOther)
 		return
 	}
 
