@@ -23,7 +23,7 @@ type DefaultIcon struct {
 	Name string // 名前
 }
 
-// GetDefaultIcons デフォルトアイコンの一覧を取得する
+// デフォルトアイコンの一覧を取得する
 func GetDefaultIcons() []DefaultIcon {
 	return []DefaultIcon{}
 }
