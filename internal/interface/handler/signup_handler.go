@@ -17,7 +17,6 @@ import (
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	// サインアップ画面の表示
 	if r.Method == http.MethodGet {
-		log.Printf("サインアップページ表示")
 		data := domain.TemplateData{
 			IsLoggedIn: false,
 		}

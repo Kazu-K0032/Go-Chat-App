@@ -13,7 +13,7 @@ type ConfigList struct {
 	Port            string
 	LogFile         string
 	Static          string
-	DefaultIconDir string
+	DefaultIconDir  string
 	ServiceKeyPath  string
 	ProjectId       string
 	StorageBucket   string
@@ -88,27 +88,14 @@ func loadConfigValues(cfg *ini.File, config *ConfigList) {
 
 // 設定値の検証
 func validateConfig(config *ConfigList) {
-	// 必須項目の検証
 	if config.LogFile == "" {
-		log.Println("警告: LogFileが設定されていません。デフォルト値を使用します。")
 		config.LogFile = "debug.log"
 	}
 	if config.Static == "" {
-		log.Println("警告: Staticが設定されていません。デフォルト値を使用します。")
 		config.Static = "app/views"
 	}
 	if config.DefaultIconDir == "" {
-		log.Println("警告: DefaultIconDirが設定されていません。デフォルト値を使用します。")
 		config.DefaultIconDir = "icons/default/"
-	}
-	if config.ServiceKeyPath == "" {
-		log.Fatalln("エラー: serviceKeyPathが設定されていません。")
-	}
-	if config.ProjectId == "" {
-		log.Fatalln("エラー: projectIdが設定されていません。")
-	}
-	if config.StorageBucket == "" {
-		log.Fatalln("エラー: storageBucketが設定されていません。")
 	}
 
 	// ファイルの存在確認
