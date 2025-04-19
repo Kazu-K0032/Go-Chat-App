@@ -30,5 +30,5 @@ type Contact struct {
 	Username string    // 連絡先のユーザー名
 	Icon     string    // 連絡先のアイコンのURL
 	LastSeen time.Time // 連絡先の最終接続日時
-	Online   bool      // 連絡先がオンラインかどうか
+	IsOnline bool      // 連絡先がオンラインかどうか
 }
