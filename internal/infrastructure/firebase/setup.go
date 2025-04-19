@@ -52,7 +52,7 @@ func InitFirebase() (*firestore.Client, error) {
 // デフォルトアイコンを初期化する
 func initDefaultIcons(app *firebase.App) error {
 	ctx := context.Background()
-		storageClient, err := app.Storage(ctx)
+	storageClient, err := app.Storage(ctx)
 	if err != nil {
 		return fmt.Errorf("Storageクライアントの作成に失敗: %v", err)
 	}
@@ -62,8 +62,8 @@ func initDefaultIcons(app *firebase.App) error {
 	}
 	
 	// デフォルトアイコンディレクトリの存在確認
-	prefix := config.Config.DefaultIconDir
-	it := bucket.Objects(ctx, &storage.Query{Prefix: prefix})
+	storagePrefix := "icons/default/"
+	it := bucket.Objects(ctx, &storage.Query{Prefix: storagePrefix})
 	
 	hasObjects := false
 	for {
@@ -78,18 +78,30 @@ func initDefaultIcons(app *firebase.App) error {
 		break
 	}
 	
-	// デフォルトアイコンが存在しない場合、作成する
+	// デフォルトアイコンが存在しない場合、アップロードする
 	if !hasObjects {
-		files, err := os.ReadDir(config.Config.DefaultIconDir)
+		localIconDir := config.Config.DefaultIconDir
+		if localIconDir == "" {
+			return fmt.Errorf("デフォルトアイコンディレクトリのパスが設定されていません")
+		}
+
+		// デフォルトアイコンディレクトリが存在しない場合はエラー
+		if _, err := os.Stat(localIconDir); os.IsNotExist(err) {
+			log.Printf("デフォルトアイコンディレクトリが存在しません: %s", localIconDir)
+			return fmt.Errorf("デフォルトアイコンディレクトリが存在しません: %s", localIconDir)
+		}
+
+		files, err := os.ReadDir(localIconDir)
 		if err != nil {
 			return fmt.Errorf("デフォルトアイコンディレクトリの読み込みに失敗: %v", err)
 		}
+
 		for _, file := range files {
 			if file.IsDir() {
 				continue
 			}
 			
-			filePath := filepath.Join(config.Config.DefaultIconDir, file.Name())
+			filePath := filepath.Join(localIconDir, file.Name())
 			fileContent, err := os.Open(filePath)
 			if err != nil {
 				log.Printf("ファイル %s のオープンに失敗: %v", filePath, err)
@@ -97,7 +109,7 @@ func initDefaultIcons(app *firebase.App) error {
 			}
 			defer fileContent.Close()
 
-			objectPath := prefix + file.Name()
+			objectPath := storagePrefix + file.Name()
 			obj := bucket.Object(objectPath)
 			writer := obj.NewWriter(ctx)
 			writer.ObjectAttrs = storage.ObjectAttrs{
@@ -120,3 +132,4 @@ func initDefaultIcons(app *firebase.App) error {
 	}	
 	return nil
 }
+
