@@ -28,6 +28,9 @@
               class="p-chatCard__icon c-icon__img"
             />
             {{ end }}
+            <span
+              class="p-chatCard__status-indicator {{ if .Contact.IsOnline }}p-chatCard__status-indicator--online{{ else }}p-chatCard__status-indicator--offline{{ end }}"
+            ></span>
           </div>
           <div class="p-chatCard__info">
             <p class="p-chatCard__name">{{ .Contact.Username }}</p>

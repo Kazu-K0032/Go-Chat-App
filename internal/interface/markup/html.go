@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 
 	"security_chat_app/internal/domain"
@@ -62,8 +63,7 @@ func GenerateHTML(writer http.ResponseWriter, data any, filenames ...string) {
 
 	templates, err := template.New("layout").Funcs(templateFuncs).ParseFiles(files...)
 	if err != nil {
-		http.Error(writer, "テンプレートの読み込みに失敗しました", http.StatusInternalServerError)
-		fmt.Println("テンプレート読み込みエラー:", err)
+		log.Fatalf("テンプレートの読み込みに失敗: %v", err)
 		return
 	}
 
@@ -71,8 +71,7 @@ func GenerateHTML(writer http.ResponseWriter, data any, filenames ...string) {
 	var buf bytes.Buffer
 	err = templates.ExecuteTemplate(&buf, "layout", data)
 	if err != nil {
-		http.Error(writer, "テンプレートの実行に失敗しました", http.StatusInternalServerError)
-		fmt.Println("テンプレート実行エラー:", err)
+		log.Fatalf("テンプレートの実行に失敗: %v", err)
 		return
 	}
 

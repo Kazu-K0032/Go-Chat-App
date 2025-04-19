@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
-
-	"security_chat_app/internal/domain"
-
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
 )
@@ -23,17 +21,14 @@ func AddData(collection string, data interface{}, docID string) error {
 
 	ctx := context.Background()
 	if docID != "" {
-		// カスタムドキュメントIDを使用
 		_, err = client.Collection(collection).Doc(docID).Set(ctx, data)
 	} else {
-		// 自動生成のドキュメントIDを使用
 		_, _, err = client.Collection(collection).Add(ctx, data)
 	}
 	if err != nil {
 		log.Printf("データ追加エラー: %v", err)
 		return err
 	}
-	log.Printf("データを追加しました: collection=%s, docID=%s", collection, docID)
 	return nil
 }
 
@@ -130,11 +125,9 @@ func GetAllData(collection string, userID string) ([]map[string]interface{}, err
 	var err2 error
 	
 	if collection == "chats" {
-		// チャットの場合は、participantsフィールドに基づいてフィルタリング
 		query := client.Collection(collection).Where("participants", "array-contains", userID)
 		docs, err2 = query.Documents(ctx).GetAll()
 	} else {
-		// その他のコレクションは従来通り全件取得
 		docs, err2 = client.Collection(collection).Documents(ctx).GetAll()
 	}
 	
@@ -145,7 +138,7 @@ func GetAllData(collection string, userID string) ([]map[string]interface{}, err
 	var results []map[string]interface{}
 	for _, doc := range docs {
 		data := doc.Data()
-		data["id"] = doc.Ref.ID // ドキュメントIDをidフィールドとして追加
+		data["id"] = doc.Ref.ID
 		results = append(results, data)
 	}
 
@@ -162,24 +155,32 @@ func SearchUser(searchQuery string) ([]map[string]interface{}, error) {
 
 	ctx := context.Background()
 
-	// ユーザー名で部分一致検索（大文字小文字を区別しない）
-	usersQuery := client.Collection("users").
-		Where("Name", ">=", searchQuery).
-		Where("Name", "<=", searchQuery+"\uf8ff").
-		Limit(20)
-
-	docs, err := usersQuery.Documents(ctx).GetAll()
+	// すべてのユーザーを取得
+	usersRef := client.Collection("users")
+	docs, err := usersRef.Documents(ctx).GetAll()
 	if err != nil {
 		log.Printf("ユーザー検索エラー: %v", err)
 		return nil, err
 	}
 
+	// 検索クエリを小文字に変換
+	searchQueryLower := strings.ToLower(searchQuery)
+
 	var results []map[string]interface{}
 	for _, doc := range docs {
 		data := doc.Data()
-		data["ID"] = doc.Ref.ID // ドキュメントIDをIDフィールドとして追加
-		log.Printf("検索結果のユーザーデータ: %+v", data)
-		results = append(results, data)
+		data["ID"] = doc.Ref.ID
+
+		// ユーザー名を取得
+		name, ok := data["Name"].(string)
+		if !ok {
+			continue
+		}
+
+		// 大文字小文字を区別せずに部分一致検索
+		if strings.Contains(strings.ToLower(name), searchQueryLower) {
+			results = append(results, data)
+		}
 	}
 
 	return results, nil
@@ -322,102 +323,7 @@ func GetChatParticipants(chatID string) ([]string, error) {
 	return result, nil
 }
 
-// GetUserPosts ユーザーの投稿を取得する
-func GetUserPosts(userID string) ([]domain.Post, error) {
-	client, err := InitFirebase()
-	if err != nil {
-		return nil, err
-	}
-	defer client.Close()
-
-	ctx := context.Background()
-	query := client.Collection("posts").
-		Where("user_id", "==", userID).
-		Where("reply_to", "==", "").
-		OrderBy("created_at", firestore.Desc)
-
-	docs, err := query.Documents(ctx).GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var posts []domain.Post
-	for _, doc := range docs {
-		var post domain.Post
-		if err := doc.DataTo(&post); err != nil {
-			continue
-		}
-		post.ID = doc.Ref.ID
-		posts = append(posts, post)
-	}
-
-	return posts, nil
-}
-
-// GetUserReplies ユーザーの返信を取得する
-func GetUserReplies(userID string) ([]domain.Post, error) {
-	client, err := InitFirebase()
-	if err != nil {
-		return nil, err
-	}
-	defer client.Close()
-
-	ctx := context.Background()
-	query := client.Collection("posts").
-		Where("user_id", "==", userID).
-		Where("reply_to", "!=", "").
-		OrderBy("created_at", firestore.Desc)
-
-	docs, err := query.Documents(ctx).GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var replies []domain.Post
-	for _, doc := range docs {
-		var reply domain.Post
-		if err := doc.DataTo(&reply); err != nil {
-			continue
-		}
-		reply.ID = doc.Ref.ID
-		replies = append(replies, reply)
-	}
-
-	return replies, nil
-}
-
-// GetUserLikedPosts ユーザーがいいねした投稿を取得する
-func GetUserLikedPosts(userID string) ([]domain.Post, error) {
-	client, err := InitFirebase()
-	if err != nil {
-		return nil, err
-	}
-	defer client.Close()
-
-	ctx := context.Background()
-	query := client.Collection("posts").
-		Where("liked_by", "array-contains", userID).
-		OrderBy("created_at", firestore.Desc)
-
-	docs, err := query.Documents(ctx).GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var likes []domain.Post
-	for _, doc := range docs {
-		var post domain.Post
-		if err := doc.DataTo(&post); err != nil {
-			continue
-		}
-		post.ID = doc.Ref.ID
-		likes = append(likes, post)
-	}
-
-	return likes, nil
-}
-
-// GetAllChats は指定されたユーザーIDが参加者として含まれるチャットを全て取得します
+// 指定されたユーザーIDが参加者として含まれるチャットを全て取得します
 func GetAllChats(userID string) ([]map[string]interface{}, error) {
 	client, err := InitFirebase()
 	if err != nil {
