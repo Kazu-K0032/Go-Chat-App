@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"log"
 	"time"
-
-	"security_chat_app/internal/domain"
-
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
 )
@@ -319,101 +316,6 @@ func GetChatParticipants(chatID string) ([]string, error) {
 	}
 
 	return result, nil
-}
-
-// GetUserPosts ユーザーの投稿を取得する
-func GetUserPosts(userID string) ([]domain.Post, error) {
-	client, err := InitFirebase()
-	if err != nil {
-		return nil, err
-	}
-	defer client.Close()
-
-	ctx := context.Background()
-	query := client.Collection("posts").
-		Where("user_id", "==", userID).
-		Where("reply_to", "==", "").
-		OrderBy("created_at", firestore.Desc)
-
-	docs, err := query.Documents(ctx).GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var posts []domain.Post
-	for _, doc := range docs {
-		var post domain.Post
-		if err := doc.DataTo(&post); err != nil {
-			continue
-		}
-		post.ID = doc.Ref.ID
-		posts = append(posts, post)
-	}
-
-	return posts, nil
-}
-
-// GetUserReplies ユーザーの返信を取得する
-func GetUserReplies(userID string) ([]domain.Post, error) {
-	client, err := InitFirebase()
-	if err != nil {
-		return nil, err
-	}
-	defer client.Close()
-
-	ctx := context.Background()
-	query := client.Collection("posts").
-		Where("user_id", "==", userID).
-		Where("reply_to", "!=", "").
-		OrderBy("created_at", firestore.Desc)
-
-	docs, err := query.Documents(ctx).GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var replies []domain.Post
-	for _, doc := range docs {
-		var reply domain.Post
-		if err := doc.DataTo(&reply); err != nil {
-			continue
-		}
-		reply.ID = doc.Ref.ID
-		replies = append(replies, reply)
-	}
-
-	return replies, nil
-}
-
-// GetUserLikedPosts ユーザーがいいねした投稿を取得する
-func GetUserLikedPosts(userID string) ([]domain.Post, error) {
-	client, err := InitFirebase()
-	if err != nil {
-		return nil, err
-	}
-	defer client.Close()
-
-	ctx := context.Background()
-	query := client.Collection("posts").
-		Where("liked_by", "array-contains", userID).
-		OrderBy("created_at", firestore.Desc)
-
-	docs, err := query.Documents(ctx).GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var likes []domain.Post
-	for _, doc := range docs {
-		var post domain.Post
-		if err := doc.DataTo(&post); err != nil {
-			continue
-		}
-		post.ID = doc.Ref.ID
-		likes = append(likes, post)
-	}
-
-	return likes, nil
 }
 
 // GetAllChats は指定されたユーザーIDが参加者として含まれるチャットを全て取得します

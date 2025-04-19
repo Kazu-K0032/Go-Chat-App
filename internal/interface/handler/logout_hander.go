@@ -20,7 +20,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		
 		err = middleware.DeleteSession(w, r)
 		if err != nil {
-			http.Error(w, "ログアウトエラー", http.StatusInternalServerError)
+			log.Fatalf("ログアウトエラー: %v", err)
 			return
 		}
 		http.Redirect(w, r, "/login", http.StatusSeeOther)

@@ -80,8 +80,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// その他のHTTPメソッドは許可しない
-	log.Printf("不正なHTTPメソッド: %s", r.Method)
-	http.Error(w, "メソッドが許可されていません", http.StatusMethodNotAllowed)
+	log.Fatalf("メソッドが許可されていません")
 }
 
 // 登録内容の確認とFirebaseへの保存を処理
@@ -147,7 +146,7 @@ func SignupConfirmHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		markup.GenerateHTML(w, data, "layout", "header", "register_confirm", "footer")
 	default:
-		http.Error(w, "メソッドが許可されていません", http.StatusMethodNotAllowed)
+		log.Fatalf("メソッドが許可されていません")
 	}
 }
 

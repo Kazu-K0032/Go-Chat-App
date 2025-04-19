@@ -93,6 +93,5 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// その他のHTTPメソッドは許可しない
-	log.Printf("不正なHTTPメソッド: %s", r.Method)
-	http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	log.Fatalf("メソッドが許可されていません")
 }

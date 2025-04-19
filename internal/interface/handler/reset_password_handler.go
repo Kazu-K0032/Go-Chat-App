@@ -111,5 +111,5 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// その他のHTTPメソッドは許可しない
-	http.Error(w, "メソッドが許可されていません", http.StatusMethodNotAllowed)
+	log.Fatalf("メソッドが許可されていません")
 }

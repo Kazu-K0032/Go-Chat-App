@@ -33,7 +33,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	// 検索ページのデータを取得
 	data, err := getSearchPageData(session.User, r)
 	if err != nil {
-		http.Error(w, "検索データの取得に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("検索データの取得に失敗: %v", err)
 		return
 	}
 

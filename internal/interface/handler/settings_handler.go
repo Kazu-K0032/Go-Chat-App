@@ -90,7 +90,7 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 		session.User.Name = newUsername
 		err = middleware.UpdateSession(w, r, session)
 		if err != nil {
-			http.Error(w, "セッションの更新に失敗しました", http.StatusInternalServerError)
+			log.Fatalf("セッションの更新に失敗: %v", err)
 			return
 		}
 
@@ -179,7 +179,7 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 	// 設定ページのデータを取得
 	data, err := getSettingsPageData(session.User, r)
 	if err != nil {
-		http.Error(w, "設定ページのデータの取得に失敗しました", http.StatusInternalServerError)
+		log.Fatalf("設定ページのデータの取得に失敗: %v", err)
 		return
 	}
 
