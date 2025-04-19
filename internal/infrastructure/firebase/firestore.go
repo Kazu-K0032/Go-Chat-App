@@ -33,7 +33,6 @@ func AddData(collection string, data interface{}, docID string) error {
 		log.Printf("データ追加エラー: %v", err)
 		return err
 	}
-	log.Printf("データを追加しました: collection=%s, docID=%s", collection, docID)
 	return nil
 }
 

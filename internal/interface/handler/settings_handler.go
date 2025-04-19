@@ -37,7 +37,6 @@ func SettingsHandler(w http.ResponseWriter, r *http.Request) {
 
 	// ユーザー名変更の処理
 	if r.URL.Path == "/settings/username" && r.Method == http.MethodPost {
-		log.Printf("ユーザー名変更リクエストを受信: %s", r.URL.Path)
 		// フォームデータの解析
 		r.ParseForm()
 		newUsername := r.FormValue("new_username")

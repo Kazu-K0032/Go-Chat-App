@@ -13,11 +13,9 @@ import (
 
 // LoginHandler ログイン処理を実行
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("ログインリクエスト受信: %s %s", r.Method, r.URL.Path)
 
 	// ログイン画面の表示
 	if r.Method == http.MethodGet {
-		log.Printf("ログインページ表示")
 		data := domain.TemplateData{
 			LoginForm: domain.LoginForm{},
 			Success:   r.URL.Query().Get("success") == "true",
@@ -28,13 +26,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// ログイン処理
 	if r.Method == http.MethodPost {
-		log.Printf("ログイン処理開始")
 		r.ParseForm()
 		form := domain.LoginForm{
 			Email:    r.FormValue("email"),
 			Password: r.FormValue("password"),
 		}
-		log.Printf("ログイン試行: email=%s", form.Email)
 
 		// バリデーション
 		var validationErrors []string
@@ -95,9 +91,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		// セッションクッキーの設定
 		middleware.SetSessionCookie(w, session)
-		// ログイン成功後、プロフィールページにリダイレクト
-		log.Printf("ユーザー認証成功: ID=%s, Name=%s", user.ID, user.Name)
-		log.Printf("ログイン成功、ホームページへリダイレクト: userID=%s", user.ID)
 		http.Redirect(w, r, "/profile", http.StatusSeeOther)
 		return
 	}
