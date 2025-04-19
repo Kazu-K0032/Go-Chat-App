@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	// Firebaseの初期化
 	client, err := firebase.InitFirebase()
 	if err != nil {
 		log.Fatalf("Firebase初期化に失敗: %v", err)
@@ -21,18 +22,18 @@ func main() {
 	chatRepo := chat.NewChatRepository(client)
 	chatUsecase := chat.NewChatUsecase(chatRepo)
 	if chatUsecase == nil {
-		log.Fatal("chatUsecaseがnilです")
+		log.Fatal("チャットのユースケースの実装に不備があります")
 	}
 
 	// ルーティングの設定
-	mux := router.SetupRouter(chatUsecase)
-	if mux == nil {
-		log.Fatal("muxがnilです")
+	httpRouter := router.SetupRouter(chatUsecase)
+	if httpRouter == nil {
+		log.Fatal("ルーティングの設定に不備があります")
 	}
 
 	// サーバーを起動
 	log.Printf("サーバーを起動します。ポート: %s", config.Config.Port)
-	if err := http.ListenAndServe(":"+config.Config.Port, mux); err != nil {
-		log.Fatal(err)
+	if err := http.ListenAndServe(":"+config.Config.Port, httpRouter); err != nil {
+		log.Fatal("サーバーの起動に失敗しました")
 	}
 }

@@ -12,50 +12,8 @@ import (
 	"security_chat_app/internal/infrastructure/firebase"
 )
 
-// CreateSession セッションを作成する
-func CreateSession(user *domain.User) (*domain.Session, error) {
-	// セッションIDの生成
-	bytes := make([]byte, 32)
-	if _, err := rand.Read(bytes); err != nil {
-		return nil, err
-	}
-	sessionID := base64.URLEncoding.EncodeToString(bytes)
 
-	// セッションの作成
-	session := &domain.Session{
-		ID:        sessionID,                           // セッションID
-		User:      user,                                // ユーザー
-		Token:     sessionID,                           // セッショントークン
-		CreatedAt: time.Now(),                          // セッションの作成日時
-		UpdatedAt: time.Now(),                          // セッションの更新日時
-		ExpiredAt: time.Now().Add(30 * 24 * time.Hour), // 30日間有効
-		IsValid:   true,                                // セッションが有効かどうか
-	}
-
-	// Firestoreにセッションを保存
-	err := firebase.AddData("sessions", session, sessionID)
-	if err != nil {
-		return nil, err
-	}
-
-	return session, nil
-}
-
-// SetSessionCookie セッションクッキーを設定する
-func SetSessionCookie(w http.ResponseWriter, session *domain.Session) {
-	cookie := &http.Cookie{
-		Name:     "session_id",
-		Value:    session.ID,
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   false,                // 開発環境ではfalseに設定
-		SameSite: http.SameSiteLaxMode, // 開発環境ではLaxに設定
-		MaxAge:   86400 * 30,           // 30日
-	}
-	http.SetCookie(w, cookie)
-}
-
-// ValidateSession セッションを検証する
+// セッションを検証
 func ValidateSession(w http.ResponseWriter, r *http.Request) (*domain.Session, error) {
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
@@ -86,7 +44,6 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*domain.Session, e
 		return nil, err
 	}
 
-	// セッションの有効性をチェック
 	if !session.CheckSession() {
 		log.Printf("セッションが無効です: sessionID=%s", sessionID)
 		return nil, fmt.Errorf("セッションが無効です")
@@ -94,7 +51,50 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*domain.Session, e
 	return &session, nil
 }
 
-// UpdateSession セッションを更新する
+// セッションを作成
+func CreateSession(user *domain.User) (*domain.Session, error) {
+	// セッションIDの生成
+	bytes := make([]byte, 32)
+	if _, err := rand.Read(bytes); err != nil {
+		return nil, err
+	}
+	sessionID := base64.URLEncoding.EncodeToString(bytes)
+
+	// セッションの作成
+	session := &domain.Session{
+		ID:        sessionID,                           // セッションID
+		User:      user,                                // ユーザー
+		Token:     sessionID,                           // セッショントークン
+		CreatedAt: time.Now(),                          // セッションの作成日時
+		UpdatedAt: time.Now(),                          // セッションの更新日時
+		ExpiredAt: time.Now().Add(30 * 24 * time.Hour), // 30日間有効
+		IsValid:   true,                                // セッションが有効かどうか
+	}
+
+	// Firestoreにセッションを保存
+	err := firebase.AddData("sessions", session, sessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	return session, nil
+}
+
+// セッションクッキーを設定
+func SetSessionCookie(w http.ResponseWriter, session *domain.Session) {
+	cookie := &http.Cookie{
+		Name:     "session_id",
+		Value:    session.ID,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   false,                // 開発環境ではfalseに設定
+		SameSite: http.SameSiteLaxMode, // 開発環境ではLaxに設定
+		MaxAge:   86400 * 30,           // 30日
+	}
+	http.SetCookie(w, cookie)
+}
+
+// セッションを更新
 func UpdateSession(w http.ResponseWriter, r *http.Request, session *domain.Session) error {
 	// Firestoreにセッションを保存（セッションIDをドキュメントIDとして使用）
 	err := firebase.AddData("sessions", session, session.ID)
@@ -108,7 +108,7 @@ func UpdateSession(w http.ResponseWriter, r *http.Request, session *domain.Sessi
 	return nil
 }
 
-// DeleteSession セッションを削除する
+// セッションを削除
 func DeleteSession(w http.ResponseWriter, r *http.Request) error {
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
@@ -133,25 +133,4 @@ func DeleteSession(w http.ResponseWriter, r *http.Request) error {
 	http.SetCookie(w, cookie)
 
 	return nil
-}
-
-// ログアウト処理
-func Logout(w http.ResponseWriter, r *http.Request) {
-	// セッションを削除
-	err := DeleteSession(w, r)
-	if err != nil {
-		// エラーが発生してもログアウトは成功したものとして扱う
-	}
-
-	// フラッシュメッセージを設定
-	flash := &http.Cookie{
-		Name:   "flash",
-		Value:  "ログアウトしました",
-		Path:   "/",
-		MaxAge: 1,
-	}
-	http.SetCookie(w, flash)
-
-	// トップページにリダイレクト
-	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
