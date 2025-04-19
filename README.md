@@ -1,15 +1,16 @@
-# security_chat_app
+# go-chat-app
 
 Goを使用した基本的なチャットアプリになります。
 
 ## アプリURL
 https://tmp.kuji-server.com/search
 
-## スクリーンショット(2025.04.13時点)
-<img src="https://github.com/user-attachments/assets/95b74b85-780b-4213-9b30-c1aa09b91593" width="400">
-<img src="https://github.com/user-attachments/assets/5926a535-a794-4e32-b324-a1c1cbc07857" width="400">
+## スクリーンショット(2025.04.19時点)
+<img src="https://github.com/user-attachments/assets/2db48f5c-f321-47e0-8f1b-c85e8f208684" width="400">
+<img src="https://github.com/user-attachments/assets/af628f92-bf62-4b0b-a164-90bc0fcd9e45" width="400">
 <img src="https://github.com/user-attachments/assets/3d0c6fc1-b7d6-49cf-9dc6-c70a10aaa6dd" width="400">
 <img src="https://github.com/user-attachments/assets/352cb22a-1f25-412c-8630-091e8dcc0c21" width="400">
+
 
 ## 実装済み機能
 - 認証機能（登録/ログイン/ログアウト）
@@ -28,7 +29,7 @@ https://tmp.kuji-server.com/search
 1. **プロジェクトのclone**
    
     ```bash
-    git clone git@github.com:Kazu-K0032/security_chat_app.git
+    git clone git@github.com:Kazu-K0032/go-chat-app.git
     ```
 
 2. **FirebaseからFirebase Admin SDKの認証ファイルを取り込む**
@@ -102,6 +103,7 @@ https://tmp.kuji-server.com/search
     static = app/views
     
     [firebase]
+    defaultIconDir = icons/default/
     serviceKeyPath = internal/config/serviceAccountKey.json // serviceAccountKey.jsonの相対パス
     projectId = // <プロジェクトの設定> -> <全般> -> <プロジェクトID> の値
     storageBucket = // <Storage> -> <バケット ex: testa87e4.firebasestorage.app>
@@ -126,7 +128,7 @@ https://tmp.kuji-server.com/search
 
    * 以下を実行してください。
       ```:bash
-      cd security_chat_app/
+      cd go-chat-app/
       
       # Go モジュールの初期化
       go mod tidy
