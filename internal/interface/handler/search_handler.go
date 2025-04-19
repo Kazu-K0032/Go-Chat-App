@@ -52,7 +52,7 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 	var users []map[string]interface{}
 	var err error
 
-	// 検索クエリがある場合は検索を実行、ない場合は全ユーザーを取得
+	// 検索クエリがある場合は検索を実行、無い場合は全ユーザーを取得
 	if query != "" {
 		users, err = SearchUsers(query)
 	} else {
@@ -100,7 +100,6 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 	// 自分以外かつチャット履歴のないユーザーをフィルタリング
 	var filteredUsers []map[string]interface{}
 	for _, u := range users {
-		// 大文字の「ID」と小文字の「id」の両方をチェック
 		var userID string
 		var ok bool
 		
@@ -115,7 +114,13 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 			}
 		}
 
-		if userID != user.ID && !chattedUsers[userID] {
+		// 自分自身は除外
+		if userID == user.ID {
+			continue
+		}
+
+		// チャット履歴のないユーザーのみを追加
+		if !chattedUsers[userID] {
 			// テンプレートで使用するフィールド名に合わせてデータを整形
 			userData := map[string]interface{}{
 				"id":       userID,
@@ -156,25 +161,20 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 
 // ユーザーを検索
 func SearchUsers(query string) ([]map[string]interface{}, error) {
-	// ユーザーを検索
 	users, err := firebase.SearchUser(query)
 	if err != nil {
 		return nil, fmt.Errorf("ユーザーの検索に失敗しました: %v", err)
 	}
-
-	// 検索結果をログ出力
 	return users, nil
 }
 
 // ユーザー情報を取得
 func GetUserData(userID string) (*domain.User, error) {
-	// ユーザー情報を取得
 	userData, err := firebase.GetData("users", userID)
 	if err != nil {
 		return nil, fmt.Errorf("ユーザー情報の取得に失敗しました: %v", err)
 	}
 
-	// 必要なフィールドの存在確認と型アサーション
 	var id string
 	var ok bool
 	

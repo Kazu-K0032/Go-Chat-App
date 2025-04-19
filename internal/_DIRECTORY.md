@@ -32,7 +32,7 @@ internal/
 │   │   ├── logout_hander.go
 │   │   ├── profile_handler.go
 │   │   ├── reset_password_handler.go
-│   │   ├── serach_handler.go
+│   │   ├── search_handler.go
 │   │   ├── settings_handler.go
 │   │   └── signup_handler.go
 │   ├── middleware/

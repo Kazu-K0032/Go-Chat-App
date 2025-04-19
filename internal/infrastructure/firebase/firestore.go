@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
@@ -20,10 +21,8 @@ func AddData(collection string, data interface{}, docID string) error {
 
 	ctx := context.Background()
 	if docID != "" {
-		// カスタムドキュメントIDを使用
 		_, err = client.Collection(collection).Doc(docID).Set(ctx, data)
 	} else {
-		// 自動生成のドキュメントIDを使用
 		_, _, err = client.Collection(collection).Add(ctx, data)
 	}
 	if err != nil {
@@ -126,11 +125,9 @@ func GetAllData(collection string, userID string) ([]map[string]interface{}, err
 	var err2 error
 	
 	if collection == "chats" {
-		// チャットの場合は、participantsフィールドに基づいてフィルタリング
 		query := client.Collection(collection).Where("participants", "array-contains", userID)
 		docs, err2 = query.Documents(ctx).GetAll()
 	} else {
-		// その他のコレクションは従来通り全件取得
 		docs, err2 = client.Collection(collection).Documents(ctx).GetAll()
 	}
 	
@@ -141,7 +138,7 @@ func GetAllData(collection string, userID string) ([]map[string]interface{}, err
 	var results []map[string]interface{}
 	for _, doc := range docs {
 		data := doc.Data()
-		data["id"] = doc.Ref.ID // ドキュメントIDをidフィールドとして追加
+		data["id"] = doc.Ref.ID
 		results = append(results, data)
 	}
 
@@ -158,24 +155,32 @@ func SearchUser(searchQuery string) ([]map[string]interface{}, error) {
 
 	ctx := context.Background()
 
-	// ユーザー名で部分一致検索（大文字小文字を区別しない）
-	usersQuery := client.Collection("users").
-		Where("Name", ">=", searchQuery).
-		Where("Name", "<=", searchQuery+"\uf8ff").
-		Limit(20)
-
-	docs, err := usersQuery.Documents(ctx).GetAll()
+	// すべてのユーザーを取得
+	usersRef := client.Collection("users")
+	docs, err := usersRef.Documents(ctx).GetAll()
 	if err != nil {
 		log.Printf("ユーザー検索エラー: %v", err)
 		return nil, err
 	}
 
+	// 検索クエリを小文字に変換
+	searchQueryLower := strings.ToLower(searchQuery)
+
 	var results []map[string]interface{}
 	for _, doc := range docs {
 		data := doc.Data()
-		data["ID"] = doc.Ref.ID // ドキュメントIDをIDフィールドとして追加
-		log.Printf("検索結果のユーザーデータ: %+v", data)
-		results = append(results, data)
+		data["ID"] = doc.Ref.ID
+
+		// ユーザー名を取得
+		name, ok := data["Name"].(string)
+		if !ok {
+			continue
+		}
+
+		// 大文字小文字を区別せずに部分一致検索
+		if strings.Contains(strings.ToLower(name), searchQueryLower) {
+			results = append(results, data)
+		}
 	}
 
 	return results, nil
@@ -318,7 +323,7 @@ func GetChatParticipants(chatID string) ([]string, error) {
 	return result, nil
 }
 
-// GetAllChats は指定されたユーザーIDが参加者として含まれるチャットを全て取得します
+// 指定されたユーザーIDが参加者として含まれるチャットを全て取得します
 func GetAllChats(userID string) ([]map[string]interface{}, error) {
 	client, err := InitFirebase()
 	if err != nil {
