@@ -45,9 +45,8 @@ func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 対象ユーザーの存在確認
-	targetUser, err := GetUserData(targetUserID)
+	_, err = GetUserData(targetUserID)
 	if err != nil {
-		log.Printf("対象ユーザーの取得に失敗: %v", err)
 		http.Error(w, "対象ユーザーが見つかりません", http.StatusNotFound)
 		return
 	}
@@ -55,7 +54,6 @@ func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 	// チャットを開始
 	chatID, err := firebase.StartChat(user.ID, targetUserID)
 	if err != nil {
-		log.Printf("チャット開始に失敗: %v", err)
 		http.Error(w, "チャットの開始に失敗しました", http.StatusInternalServerError)
 		return
 	}

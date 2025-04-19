@@ -2,13 +2,11 @@ package firebase
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"security_chat_app/internal/config"

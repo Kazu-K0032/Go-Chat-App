@@ -28,6 +28,21 @@ type chatUsecaseImpl struct {
 }
 
 // **************************************************
+// main.go で使用するメソッド **************
+// **************************************************
+
+// チャットのリポジトリを生成する
+func NewChatRepository(client *firestore.Client) domain.ChatRepository {
+	return &chatRepository{client: client}
+}
+
+// チャットのユースケースの実装を生成する
+func NewChatUsecase(repo domain.ChatRepository) domain.ChatUsecase {
+	return &chatUsecaseImpl{repo: repo}
+}
+
+
+// **************************************************
 // ChatUsecaseの定義 **************
 // **************************************************
 
@@ -131,14 +146,4 @@ func (c *ChatController) HandleGetChatHistory(user *domain.User) ([]domain.Chat,
 // HandleGetContactsメソッドの実装
 func (c *ChatController) HandleGetContacts(user *domain.User) ([]domain.Contact, error) {
 	return c.chatUsecase.GetContacts(user)
-}
-
-// チャットのユースケースの実装を生成する
-func NewChatUsecase(repo domain.ChatRepository) domain.ChatUsecase {
-	return &chatUsecaseImpl{repo: repo}
-}
-
-// チャットのリポジトリを生成する
-func NewChatRepository(client *firestore.Client) domain.ChatRepository {
-	return &chatRepository{client: client}
 }
