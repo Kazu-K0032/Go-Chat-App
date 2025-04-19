@@ -23,7 +23,7 @@
     {{ if .Query }} {{ if .Users }}
     <ul class="p-userList">
       {{ range .Users }} {{ $name := .name }} {{ $icon := .icon }} {{ $isOnline
-      := .isOnline }} {{ $id := .id }}
+      := .IsOnline }} {{ $id := .id }}
       <li class="p-userList__item">
         <div
           id="js-iconWrap"
@@ -44,6 +44,9 @@
             class="p-userList__icon c-icon__img"
           />
           {{ end }}
+          <span
+            class="p-userList__status-indicator {{ if $isOnline }}p-userList__status-indicator--online{{ else }}p-userList__status-indicator--offline{{ end }}"
+          ></span>
         </div>
         <div class="p-userList__info">
           <p class="p-userList__name">{{ $name }}</p>
@@ -70,7 +73,7 @@
     {{ if .Users }}
     <ul class="p-userList">
       {{ range .Users }} {{ $name := .name }} {{ $icon := .icon }} {{ $isOnline
-      := .isOnline }} {{ $id := .id }}
+      := .IsOnline }} {{ $id := .id }}
       <li class="p-userList__item">
         <div
           id="js-iconWrap"
@@ -91,6 +94,9 @@
             class="p-userList__icon c-icon__img"
           />
           {{ end }}
+          <span
+            class="p-userList__status-indicator {{ if $isOnline }}p-userList__status-indicator--online{{ else }}p-userList__status-indicator--offline{{ end }}"
+          ></span>
         </div>
         <div class="p-userList__info">
           <p class="p-userList__name">{{ $name }}</p>

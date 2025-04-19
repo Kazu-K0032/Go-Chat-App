@@ -126,7 +126,7 @@ func getSearchPageData(user *domain.User, r *http.Request) (SearchPageData, erro
 				"id":       userID,
 				"name":     u["Name"],
 				"icon":     u["Icon"],
-				"isOnline": u["IsOnline"],
+				"IsOnline": u["IsOnline"],
 			}
 			filteredUsers = append(filteredUsers, userData)
 		}
