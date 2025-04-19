@@ -8,21 +8,21 @@ type LoginForm struct {
 
 // サインアップフォームのデータ構造体
 type SignupForm struct {
-	Name     string
-	Email    string
-	Password string
+	Name     string // 名前
+	Email    string // メールアドレス
+	Password string // パスワード
 }
 
 // パスワードリセットフォームのデータ構造体
 type ResetForm struct {
-	Email           string
-	Password        string
-	PasswordConfirm string
+	Email           string // メールアドレス
+	Password        string // パスワード
+	PasswordConfirm string // パスワード確認
 }
 
 // パスワード変更フォームのデータ構造体
 type PasswordForm struct {
-	CurrentPassword    string
-	NewPassword       string
-	NewPasswordConfirm string
+	CurrentPassword    string // 現在のパスワード
+	NewPassword        string // 新しいパスワード
+	NewPasswordConfirm string // 新しいパスワード確認
 }
