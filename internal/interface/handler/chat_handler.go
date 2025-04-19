@@ -394,6 +394,7 @@ func getChatHistory(user *domain.User) ([]domain.Chat, error) {
 				Username: targetUser.Name,
 				Icon:     targetUser.Icon,
 				LastSeen: time.Now(),
+				IsOnline: targetUser.IsOnline,
 			},
 			Messages:  messages,
 			UpdatedAt: lastMessageTime,

@@ -29,7 +29,7 @@
             />
             {{ end }}
             <span
-              class="p-chatCard__status-indicator {{ if .Contact.Online }}p-chatCard__status-indicator--online{{ else }}p-chatCard__status-indicator--offline{{ end }}"
+              class="p-chatCard__status-indicator {{ if .Contact.IsOnline }}p-chatCard__status-indicator--online{{ else }}p-chatCard__status-indicator--offline{{ end }}"
             ></span>
           </div>
           <div class="p-chatCard__info">
