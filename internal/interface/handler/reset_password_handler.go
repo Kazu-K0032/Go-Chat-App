@@ -7,10 +7,10 @@ import (
 	"security_chat_app/internal/domain"
 	"security_chat_app/internal/infrastructure/firebase"
 	"security_chat_app/internal/interface/markup"
-	"security_chat_app/internal/utils/uuid"
+	utils "security_chat_app/internal/utils/uuid"
 )
 
-// ResetPasswordHandler パスワード再設定処理を実行
+// パスワード再設定処理を実行
 func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		data := domain.TemplateData{
@@ -29,7 +29,6 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 		passwordConfirm := r.FormValue("password_confirm")
 
-		// バリデーション
 		var validationErrors []string
 		if form.Email == "" {
 			validationErrors = append(validationErrors, "メールアドレスを入力してください")
@@ -80,7 +79,7 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// パスワードのハッシュ化
-		hashedPassword, err := uuid.HashPassword(password)
+		hashedPassword, err := utils.HashPassword(password)
 		if err != nil {
 			log.Printf("パスワードハッシュ化エラー: %v", err)
 			data := domain.TemplateData{
@@ -112,5 +111,5 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// その他のHTTPメソッドは許可しない
-	http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	http.Error(w, "メソッドが許可されていません", http.StatusMethodNotAllowed)
 }
