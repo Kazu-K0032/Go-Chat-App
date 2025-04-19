@@ -95,7 +95,7 @@ func validateConfig(config *ConfigList) {
 		config.Static = "app/views"
 	}
 	if config.DefaultIconDir == "" {
-		config.DefaultIconDir = "icons/default/"
+		config.DefaultIconDir = "internal/web/images/defaultIcon"
 	}
 
 	// ファイルの存在確認
