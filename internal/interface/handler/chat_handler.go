@@ -33,14 +33,12 @@ func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 	// セッションからユーザー情報を取得
 	user, err := repository.GetUserByID(session.User.ID)
 	if err != nil {
-		log.Printf("ユーザー情報の取得に失敗: %v", err)
 		http.Error(w, "ユーザー情報の取得に失敗しました", http.StatusInternalServerError)
 		return
 	}
 
 	// URLから対象ユーザーIDを取得
 	targetUserID := r.URL.Path[len("/chat/"):]
-	log.Printf("対象ユーザーID: %s", targetUserID)
 	if targetUserID == "" {
 		http.Error(w, "ユーザーIDが指定されていません", http.StatusBadRequest)
 		return
@@ -53,7 +51,6 @@ func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "対象ユーザーが見つかりません", http.StatusNotFound)
 		return
 	}
-	log.Printf("対象ユーザー情報: %+v", targetUser)
 
 	// チャットを開始
 	chatID, err := firebase.StartChat(user.ID, targetUserID)
@@ -62,7 +59,6 @@ func StartChatHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "チャットの開始に失敗しました", http.StatusInternalServerError)
 		return
 	}
-	log.Printf("チャットID: %s", chatID)
 
 	// チャットページにリダイレクト
 	redirectURL := fmt.Sprintf("/chat?chat_id=%s", chatID)

@@ -136,9 +136,7 @@ func initDefaultIcons(app *firebase.App) error {
 			if err := writer.Close(); err != nil {
 				log.Printf("ファイル %s のアップロード完了に失敗: %v", filePath, err)
 				continue
-			}
-			
-			log.Printf("デフォルトアイコン %s をアップロードしました", file.Name())
+			}			
 		}
 	}
 	

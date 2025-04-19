@@ -15,8 +15,6 @@ import (
 
 // SignupHandler 新規登録画面の表示と確認画面への遷移を処理
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("サインアップリクエスト受信: %s %s", r.Method, r.URL.Path)
-
 	// サインアップ画面の表示
 	if r.Method == http.MethodGet {
 		log.Printf("サインアップページ表示")
@@ -29,14 +27,12 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 	// サインアップ処理
 	if r.Method == http.MethodPost {
-		log.Printf("サインアップ処理開始")
 		r.ParseForm()
 		form := domain.SignupForm{
 			Name:     r.FormValue("name"),
 			Email:    r.FormValue("email"),
 			Password: r.FormValue("password"),
 		}
-		log.Printf("サインアップ試行: name=%s, email=%s", form.Name, form.Email)
 
 		// バリデーション
 		var validationErrors []string
@@ -155,9 +151,6 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 		// セッションクッキーの設定
 		middleware.SetSessionCookie(w, session)
-		// サインアップ成功後、プロフィールページにリダイレクト
-		log.Printf("ユーザー作成成功: ID=%s, Name=%s", user.ID, user.Name)
-		log.Printf("サインアップ成功、プロフィールページへリダイレクト: userID=%s", user.ID)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
