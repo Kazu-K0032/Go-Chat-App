@@ -1,0 +1,14 @@
+.git
+.gitignore
+.cursor
+node_modules
+debug.log
+config.local.ini
+serviceAccountKey.json
+*.md
+docs
+.vscode
+.idea
+*.log
+.DS_Store
+

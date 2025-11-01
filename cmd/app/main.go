@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"security_chat_app/internal/config"
 	"security_chat_app/internal/infrastructure/firebase"
@@ -32,8 +33,14 @@ func main() {
 	}
 
 	// サーバーを起動
-	log.Printf("サーバーを起動します。ポート: %s", config.Config.Port)
-	if err := http.ListenAndServe(":"+config.Config.Port, httpRouter); err != nil {
+	// Cloud Runは環境変数PORTを自動設定するため、それを優先する
+	port := config.Config.Port
+	if envPort := os.Getenv("PORT"); envPort != "" {
+		port = envPort
+		log.Printf("環境変数PORTを検出しました: %s", envPort)
+	}
+	log.Printf("サーバーを起動します。ポート: %s", port)
+	if err := http.ListenAndServe(":"+port, httpRouter); err != nil {
 		log.Fatal("サーバーの起動に失敗しました")
 	}
 }

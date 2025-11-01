@@ -19,14 +19,27 @@ import (
 )
 
 func InitFirebase() (*firestore.Client, error) {
-	opt := option.WithCredentialsFile(config.Config.ServiceKeyPath)
+	var opts []option.ClientOption
+
+	// ServiceKeyPathが設定されている場合はファイルから読み込む
+	// そうでない場合はCloud Runのデフォルト認証情報を使用
+	if config.Config.ServiceKeyPath != "" {
+		opts = append(opts, option.WithCredentialsFile(config.Config.ServiceKeyPath))
+	}
+	// ServiceKeyPathが空の場合は、デフォルト認証情報（Cloud Runのサービスアカウントなど）を使用
 
 	firebaseConfig := &firebase.Config{
 		ProjectID:     config.Config.ProjectId,
 		StorageBucket: config.Config.StorageBucket,
 	}
 
-	app, err := firebase.NewApp(context.Background(), firebaseConfig, opt)
+	var app *firebase.App
+	var err error
+	if len(opts) > 0 {
+		app, err = firebase.NewApp(context.Background(), firebaseConfig, opts...)
+	} else {
+		app, err = firebase.NewApp(context.Background(), firebaseConfig)
+	}
 	if err != nil {
 		log.Printf("Firebaseアプリの初期化に失敗: %v", err)
 		return nil, err
@@ -60,11 +73,11 @@ func initDefaultIcons(app *firebase.App) error {
 	if err != nil {
 		return fmt.Errorf("デフォルトバケットの取得に失敗: %v", err)
 	}
-	
+
 	// デフォルトアイコンディレクトリの存在確認
 	storagePrefix := "icons/default/"
 	it := bucket.Objects(ctx, &storage.Query{Prefix: storagePrefix})
-	
+
 	hasObjects := false
 	for {
 		_, err := it.Next()
@@ -77,7 +90,7 @@ func initDefaultIcons(app *firebase.App) error {
 		hasObjects = true
 		break
 	}
-	
+
 	// デフォルトアイコンが存在しない場合、アップロードする
 	if !hasObjects {
 		localIconDir := config.Config.DefaultIconDir
@@ -100,7 +113,7 @@ func initDefaultIcons(app *firebase.App) error {
 			if file.IsDir() {
 				continue
 			}
-			
+
 			filePath := filepath.Join(localIconDir, file.Name())
 			fileContent, err := os.Open(filePath)
 			if err != nil {
@@ -127,9 +140,9 @@ func initDefaultIcons(app *firebase.App) error {
 			if err := writer.Close(); err != nil {
 				log.Printf("ファイル %s のアップロード完了に失敗: %v", filePath, err)
 				continue
-			}			
+			}
 		}
-	}	
+	}
 	return nil
 }
 
