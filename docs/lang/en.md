@@ -119,7 +119,7 @@ A basic chat application using Go
 
    ### Reference (storageBucket)
 
-   <img src="../images/setup-8.png" height="300">
+   <img src="../images/setup-1.png" height="300">
 
 6. **Module initialization and dependency resolution**
 

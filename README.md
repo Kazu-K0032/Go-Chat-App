@@ -119,7 +119,7 @@ Go を使用した基本的なチャットアプリ
 
    ### 参考(storageBucket)
 
-   <img src="./docs/images/setup-8.png" height="300">
+   <img src="./docs/images/setup-1.png" height="300">
 
 6. **モジュール初期化および依存解決**
 

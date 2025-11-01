@@ -5,3 +5,5 @@ node_modules/
 config.local.ini
 .cursor/*
 .htaccess
+package-lock.json
+pnpm-lock.yaml
